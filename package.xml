@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+  <name>phin</name>
+  <channel>pear.phin-tool.org</channel>
+  <summary>Framework-agnostic command-line util for PHP development</summary>
+  <description>
+    A handy command-line tool to provide structure to any commands / tasks you need to run on the command line.
+  </description>
+  <lead>
+    <name>Stuart Herbert</name>
+    <user>stuherbert</user>
+    <email>stuart.herbert@gradwell.com</email>
+    <active>yes</active>
+  </lead>
+  <date>${build.date}</date>
+  <time>${build.time}</time>
+  <version>
+  <release>${project.majorVersion}.${project.minorVersion}.${project.patchLevel}</release>
+    <api>${project.majorVersion}.${project.minorVersion}</api>
+  </version>
+  <stability>
+    <release>stable</release>
+    <api>stable</api>
+  </stability>
+  <license>All rights reserved.</license>
+  <notes>
+    No notes.
+  </notes>
+  <contents>
+    <dir baseinstalldir="/" name="/">
+${contents}
+    </dir>
+  </contents>
+  <dependencies>
+    <required>
+      <php>
+        <min>5.3.0</min>
+      </php>
+      <pearinstaller>
+        <min>1.6.0</min>
+      </pearinstaller>
+      <package>
+        <name>GWC_Autoloader</name>
+        <channel>pear.dev.gradwell.com</channel>
+        <min>1.0.0</min>
+	      <max>1.999.9999</max>
+      </package>
+      <package>
+        <name>ConsoleTools</name>
+        <channel>components.ez.no</channel>
+        <min>1.0.0</min>
+        <max>1.999.9999</max>
+      </package>
+    </required>
+  </dependencies>
+  <phprelease />
+  <changelog>
+    <release>
+      <version>
+        <release>0.1.0</release>
+        <api>0.0</api>
+      </version>
+      <stability>
+        <release>stable</release>
+        <api>stable</api>
+      </stability>
+      <date>2010-11-04</date>
+      <license>New-BSD</license>
+      <notes>
+See http://phin-tool.org for more details.
+      </notes>
+    </release>
+  </changelog>
+</package>
+<!-- vim: set tabstop=2 shiftwidth=2 expandtab: -->
