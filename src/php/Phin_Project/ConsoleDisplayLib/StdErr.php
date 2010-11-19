@@ -46,13 +46,5 @@ namespace Phin_Project\ConsoleDisplayLib;
 
 class StdErr extends ConsoleDisplay
 {
-        public function output($string)
-        {
-                $this->outputToTarget('php://stderr', $string);
-        }
-
-        public function outputLine($string)
-        {
-                $this->outputLineToTarget('php://stderr', $string);
-        }
+        protected $target = 'php://stderr';
 }

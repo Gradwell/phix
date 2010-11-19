@@ -97,7 +97,22 @@ class ConsoleDisplay
         {
                 return sprintf($this->escapeSequence, $this->default);
         }
-        
+
+        public function output($colors, $string)
+        {
+                $this->outputToTarget($this->target, $colors, $string);
+        }
+
+        public function outputLine($colors, $string)
+        {
+                $this->outputLineToTarget($this->target, $colors, $string);
+        }
+
+        public function outputBlankLine()
+        {
+                $this->outputBlankLineToTarget($this->target);
+        }
+
         protected function outputToTarget($target, $colors, $string)
         {
                 $fp = fopen($target, 'w+');
@@ -125,6 +140,13 @@ class ConsoleDisplay
                 {
                         fwrite($fp, $this->resetStyle());
                 }
+                fwrite($fp, PHP_EOL);
+                fclose($fp);
+        }
+
+        protected function outputBlankLineToTarget($target)
+        {
+                $fp = fopen($target, 'w+');
                 fwrite($fp, PHP_EOL);
                 fclose($fp);
         }

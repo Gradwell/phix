@@ -46,13 +46,5 @@ namespace Phin_Project\ConsoleDisplayLib;
 
 class StdOut extends ConsoleDisplay
 {
-        public function output($colors, $string)
-        {
-                $this->outputToTarget('php://stdout', $colors, $string);
-        }
-
-        public function outputLine($colors, $string)
-        {
-                $this->outputLineToTarget('php://stdout', $colors, $string);
-        }
+        protected $target = 'php://stdout';
 }
