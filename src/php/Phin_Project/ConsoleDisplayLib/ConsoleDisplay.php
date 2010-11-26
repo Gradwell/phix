@@ -81,6 +81,12 @@ class ConsoleDisplay
          */
         private $escapeSequence = "\033[%sm";
 
+        protected $wrapAt = 78;
+        protected $indent = 0;
+
+        // state to track the current line
+        protected $currentLineLength = 0;
+
         public function style($codes)
         {
                 if (is_array($codes))
@@ -113,6 +119,16 @@ class ConsoleDisplay
                 $this->outputBlankLineToTarget($this->target);
         }
 
+        public function setIndent($indent)
+        {
+                $this->indent = $indent;
+        }
+
+        public function addIndent($indent)
+        {
+                $this->indent += $indent;
+        }
+        
         protected function outputToTarget($target, $colors, $string)
         {
                 $fp = fopen($target, 'w+');
@@ -120,7 +136,7 @@ class ConsoleDisplay
                 {
                         fwrite($fp, $colors);
                 }
-                fwrite($fp, $string);
+                $this->writeWrappedStrings($fp, $string);
                 if (posix_isatty($fp))
                 {
                         fwrite($fp, $this->resetStyle());
@@ -135,19 +151,99 @@ class ConsoleDisplay
                 {
                         fwrite($fp, $colors);
                 }
-                fwrite($fp, $string);
+                $this->writeWrappedStrings($fp, $string);
                 if (posix_isatty($fp))
                 {
                         fwrite($fp, $this->resetStyle());
                 }
                 fwrite($fp, PHP_EOL);
+                $this->currentLineLength = 0;
                 fclose($fp);
         }
 
         protected function outputBlankLineToTarget($target)
         {
                 $fp = fopen($target, 'w+');
-                fwrite($fp, PHP_EOL);
+                $string = PHP_EOL;
+                if ($this->currentLineLength !== 0)
+                {
+                        $string .= PHP_EOL;
+                        $this->currentLineLength = 0;
+                }
+                fwrite($fp, $string);
                 fclose($fp);
+        }
+
+        protected function writeWrappedStrings($fp, $string)
+        {
+                $strings = explode(PHP_EOL, $string);
+                $append = false;
+
+                foreach ($strings as $string)
+                {
+                        if ($append)
+                        {
+                                fwrite($fp, PHP_EOL);
+                                $this->currentLineLength = 0;
+                        }
+                        $append = true;
+                        if (strlen($string) > 0)
+                        {
+                                $this->writeWrappedString($fp, $string);
+
+                        }
+                }
+        }
+
+        protected function writeWrappedString($fp, $string)
+        {
+                while (strlen($string) > 0)
+                {
+                        // step 1: are we at the beginning of the line?
+                        if (($this->currentLineLength == 0) && ($this->indent > 0))
+                        {
+                                // we need to write out the indent
+                                fwrite($fp, \str_repeat(' ', $this->indent));
+                                $this->currentLineLength += $this->indent;
+                        }
+
+                        // step 2: do we need to split the line?
+                        if ($this->currentLineLength + strlen($string) <= $this->wrapAt)
+                        {
+                                // no; just output and go
+                                fwrite($fp, $string);
+                                $this->currentLineLength += strlen($string);
+                                return;
+                        }
+
+                        // if we get here, the string needs wrapping (if possible)
+                        $rawWrapPoint = $this->wrapAt - $this->currentLineLength;
+                        $wrapPoint = $rawWrapPoint;
+                        while ($wrapPoint > 0 && $string{$wrapPoint} !== ' ')
+                        {
+                                $wrapPoint--;
+                        }
+
+                        if ($wrapPoint == 0)
+                        {
+                                // we will have to wrap in the middle of this
+                                // silly length string
+                                if (strlen($string) > $this->wrapAt)
+                                {
+                                        $wrapPoint = $rawWrapPoint;
+                                }
+                        }
+
+                        if ($wrapPoint > 0)
+                        {
+                                fwrite($fp, substr($string, 0, $wrapPoint) . PHP_EOL);
+                                $string = substr($string, $wrapPoint + 1);
+                        }
+                        else
+                        {
+                                fwrite($fp, PHP_EOL);
+                        }
+                        $this->currentLineLength = 0;
+                }
         }
 }
