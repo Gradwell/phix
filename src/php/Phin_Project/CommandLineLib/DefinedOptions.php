@@ -176,4 +176,9 @@ class DefinedOptions
 
                 return true;
         }
+
+        public function getSwitches()
+        {
+                return $this->switches;
+        }
 }
