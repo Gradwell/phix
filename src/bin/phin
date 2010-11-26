@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+require_once("@VENDOR_LIB@/gwc.autoloader.php");
+gwc_autoloader_alsoSearch("@VENDOR_LIB@");
+
+$tool = new Phin();
+$tool->addCommandsFolder("@VENDOR_LIB@/Phin_Project/Phin_Ext");
+return $tool->main($argv);
