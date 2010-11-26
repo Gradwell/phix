@@ -71,6 +71,19 @@ class PhinSwitches
 
                 // phin -I<path> || phin --include=<path>
                 $options->addSwitch('include', 'add a folder to load commands from')
+                        ->setLongDesc("phin finds all of its commands by searching PHP's include_path for files with "
+                                        . "the file extension '.phin.php'. If you want to phin to look in other folders "
+                                        . "without having to add them to PHP's include_path, use --include to tell phin "
+                                        . "to look in these folders."
+                                        . \PHP_EOL . \PHP_EOL
+                                        . "phin expects '<path>' to point to a folder that conforms to the PSR0 standard "
+                                        . "for autoloaders."
+                                        . \PHP_EOL . \PHP_EOL
+                                        . "For example, if your command is the class '\Me\Tools\ScheduledTask', phin would "
+                                        . "expect to autoload this class from the 'Me/Tools/ScheduledTask.phin.php' file."
+                                        . \PHP_EOL . \PHP_EOL
+                                        . "If your class lives in the './myApp/lib/Me/Tools' folder, you would call phin "
+                                        . "with 'phin --include=./myApp/lib'")
                         ->setWithShortSwitch('I')
                         ->setWithLongSwitch('include')
                         ->setWithRequiredArg('<path>', 'The path to the folder to include')
