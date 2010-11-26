@@ -48,6 +48,7 @@ class DefinedSwitch
 {
         public $name;
         public $desc;
+        public $longdesc;
         public $shortSwitches = array();
         public $longSwitches = array();
         public $arg = null;
@@ -156,6 +157,18 @@ class DefinedSwitch
         }
 
         /**
+         * Provide a longer description of this switch, to be shown during
+         * the output of extended help information
+         * 
+         * @param string $desc
+         * @return DefinedSwitch $this
+         */
+        public function setLongDesc($desc)
+        {
+                $this->longdesc = $desc;
+                return $this;
+        }
+        /**
          * Obtain a list of the short switches that have been defined
          *
          * @return array
@@ -262,6 +275,29 @@ class DefinedSwitch
                         return true;
                 }
                 return false;
+        }
+
+        public function getHumanReadableSwitchList()
+        {
+                $return = array();
+                $shortSwitches = array();
+                $longSwitches = array();
+
+                foreach ($this->shortSwitches as $shortSwitch)
+                {
+                        $switch = '-' . $shortSwitch;
+                        $shortSwitches[$switch] = $switch;
+                }
+                foreach ($this->longSwitches as $longSwitch)
+                {
+                        $switch = '--' . $longSwitch;
+                        $longSwitches[$switch] = $switch;
+                }
+
+                \ksort($shortSwitches);
+                \ksort($longSwitches);
+
+                return array_merge($shortSwitches, $longSwitches);
         }
 
         /**
