@@ -86,16 +86,7 @@ class HelpCommand extends CommandBase
                 $so->outputLine($context->urlStyle, ' http://www.phin-tool.org');
                 $so->outputLine(null, 'Copyright (c) 2010 Gradwell dot com Ltd. Released under the BSD license');
                 $so->outputBlankLine();
-                $so->outputLine(null, 'SYNOPSIS');
-                $so->setIndent(4);
-                $so->output($context->commandStyle, 'phin');
                 $this->showPhinSwitchSummary($context, $sortedSwitches);
-                $so->outputLine(null, ' [ command ] [ command-options ]');
-                $so->outputBlankLine();
-                $so->setIndent(0);
-                $so->outputLine(null, 'OPTIONS');
-                $so->outputBlankLine();
-                $so->setIndent(4);
                 $this->showPhinSwitchDetails($context, $sortedSwitches);
                 $this->showCommands($context);
         }
@@ -169,6 +160,10 @@ class HelpCommand extends CommandBase
         {
                 $so = $context->stdout;
 
+                $so->outputLine(null, 'SYNOPSIS');
+                $so->setIndent(4);
+                $so->output($context->commandStyle, 'phin');
+
                 if (count($sortedSwitches['shortSwitchesWithoutArgs']) > 0)
                 {
                         $so->output(null, ' [ ');
@@ -211,10 +206,19 @@ class HelpCommand extends CommandBase
                                 $so->output(null, ' ]');
                         }
                 }
+                
+                $so->outputLine(null, ' [ command ] [ command-options ]');
+                $so->outputBlankLine();
         }
 
         protected function showPhinSwitchDetails(Context $context, $sortedSwitches)
         {
+                $so = $context->stdout;
+                
+                $so->setIndent(0);
+                $so->outputLine(null, 'OPTIONS');
+                $so->outputBlankLine();
+                $so->setIndent(4);
                 // keep track of the switches we have seen, to avoid
                 // any duplication of output
                 $seenSwitches = array();
@@ -276,6 +280,44 @@ class HelpCommand extends CommandBase
 
         protected function showCommands(Context $context)
         {
-                
+                $so = $context->stdout;
+
+                $so->setIndent(0);
+                $so->outputLine(null, 'COMMANDS');
+                $so->setIndent(4);
+
+                $sortedCommands = $context->commandsList->getListOfCommands();
+                \ksort($sortedCommands);
+
+                $append = false;
+                foreach ($sortedCommands as $commandName => $command)
+                {
+                        if ($append)
+                        {
+                                $so->outputBlankLine();
+                        }
+                        $append = true;
+                        
+                        $command->outputShortHelp($context);
+                }
+        }
+
+        public function outputShortHelp(Context $context)
+        {
+                $so = $context->stdout;
+
+                $so->outputLine($context->commandStyle, $this->getCommandName());
+                $so->addIndent(4);
+                $so->outputLine(null, "Show this help message");
+                $this->outputImplementationDetails($context);
+                $so->addIndent(-4);
+                $so->outputBlankLine();
+
+                $so->output($context->commandStyle, $this->getCommandName());
+                $so->outputLine($context->argStyle, ' <command>');
+                $so->addIndent(4);
+                $so->outputLine(null, "Show detailed help for <command>");
+                $this->outputImplementationDetails($context);
+                $so->addIndent(-4);
         }
 }

@@ -67,18 +67,26 @@ class Context
 
         public $version = '@@PACKAGE_VERSION@@';
 
-        public $highlightStyle = null;
-        public $switchStyle = null;
         public $argStyle = null;
+        public $commentStyle = null;
         public $errorStyle = null;
         public $exampleStyle = null;
+        public $highlightStyle = null;
+        public $switchStyle = null;
         public $urlStyle = null;
 
+        public $errorPrefix = '*** error: ';
         /**
          *
          * @var int
          */
         public $debugLevel = 0;
+
+        /**
+         *
+         * @var CommandsList
+         */
+        public $commandsList = null;
 
         public function __construct()
         {
@@ -96,12 +104,13 @@ class Context
         protected function setupStyles()
         {
                 $so = $this->stdout;
-                $this->highlightStyle = $so->style(array($so->bold, $so->fgGreen));
-                $this->commandStyle = $so->style(array($so->bold, $so->fgGreen));
-                $this->switchStyle = $so->style(array($so->bold, $so->fgYellow));
                 $this->argStyle = $so->style(array($so->bold, $so->fgBlue));
+                $this->commandStyle = $so->style(array($so->bold, $so->fgGreen));
+                $this->commentStyle = $so->style(array($so->fgBlue));
                 $this->errorStyle = $so->style(array($so->bold, $so->fgRed));
                 $this->exampleStyle = $so->style(array($so->bold, $so->fgYellow));
+                $this->highlightStyle = $so->style(array($so->bold, $so->fgGreen));
+                $this->switchStyle = $so->style(array($so->bold, $so->fgYellow));
                 $this->urlStyle = $so->style(array($so->fgBlue, $so->bold));
         }
 }

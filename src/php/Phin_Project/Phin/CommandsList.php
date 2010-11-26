@@ -52,8 +52,7 @@ use Phin_Project\PhinExtensions\DefinedCommand;
 
 class CommandsList
 {
-        protected $commandsByVerb = array();
-        protected $commandsByFullName = array();
+        public $commands = array();
 
         public function importCommandsFromExtension($phinExtensionClassName)
         {
@@ -62,21 +61,12 @@ class CommandsList
                 $commandName = $newCommand->getCommandName();
                 $commandDesc = $newCommand->getCommandDesc();
 
-                // we sort things by verb
-                $verb = $this->retrieveVerbFromCommandName($commandName);
-                $this->commandsByVerb[$verb] = $newCommand;
-                $this->commandsByFullName[$commandName] = $newCommand;
-        }
-
-        protected function retrieveVerbFromCommandName($commandName)
-        {
-                $parts = explode(':', $commandName);
-                return $parts[0];
+                $this->commands[$commandName] = $newCommand;
         }
 
         public function testHasCommand($commandName)
         {
-                if (isset($this->commandsByFullName[$commandName]))
+                if (isset($this->commands[$commandName]))
                 {
                         return true;
                 }
@@ -91,6 +81,11 @@ class CommandsList
                         throw new \Exception("unknown command " . $commandName);
                 }
 
-                return $this->commandsByFullName[$commandName];
+                return $this->commands[$commandName];
+        }
+
+        public function getListOfCommands()
+        {
+                return $this->commands;
         }
 }

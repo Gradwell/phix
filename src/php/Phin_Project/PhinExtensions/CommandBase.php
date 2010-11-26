@@ -73,4 +73,22 @@ class CommandBase implements CommandInterface
         {
                 throw new \Exception(__METHOD__ . '() not implemented');
         }
+
+        public function outputShortHelp(Context $context)
+        {
+                $so = $context->stdout;
+
+                $so->outputLine($context->commandStyle, $this->getCommandName());
+                $so->addIndent(4);
+                $so->outputLine(null, $this->getCommandDesc());
+                $this->outputImplementationDetails($context);
+                $so->addIndent(-4);
+        }
+
+        public function outputImplementationDetails(Context $context)
+        {
+                $so = $context->stdout;
+
+                $so->outputLine($context->commentStyle, '# implemented in: ' . get_class($this));
+        }
 }
