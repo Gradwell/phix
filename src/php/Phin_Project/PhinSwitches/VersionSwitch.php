@@ -44,14 +44,14 @@
 
 namespace Phin_Project\PhinSwitches;
 use Phin_Project\Phin\Context;
+use Phin_Project\PhinExtensions\SwitchBase;
 
 class VersionSwitch extends SwitchBase
 {
         static public function processBeforeExtensionLoad(Context $context, $args)
         {
                 $s = $context->stdout;
-                $s->outputLine($s->style(array($s->bold, $s->fgGreen)), $context->version);
-                $s->outputLine($s->style($s->fgBlue), 'Copyright (c) 2010 Gradwell dot com Ltd. All rights reserved');
+                $s->outputLine($context->highlightStyle, $context->version);
                 return 0;
         }
 }

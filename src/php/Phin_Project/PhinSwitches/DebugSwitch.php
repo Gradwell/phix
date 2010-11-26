@@ -44,6 +44,7 @@
 
 namespace Phin_Project\PhinSwitches;
 use Phin_Project\Phin\Context;
+use Phin_Project\PhinExtensions\SwitchBase;
 
 class DebugSwitch extends SwitchBase
 {
