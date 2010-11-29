@@ -162,7 +162,9 @@ class Main
                 if ($parsedOptions->testHasSwitch("include"))
                 {
                         $switch = $parsedOptions->getSwitch("include");
-                        foreach ($switch['args'] as $path)
+                        $args   = $parsedOptions->getArgsForSwitch("include");
+
+                        foreach ($args as $path)
                         {
                                 $extensionsFinder->addFolderToSearch($path);
                         }
