@@ -62,7 +62,7 @@ class HelpCommand extends CommandBase
                 return 'get detailed help about a specific phin command';
         }
 
-        public function parseAndValidate($args, $argsIndex, Context $context)
+        public function validateAndExecute($args, $argsIndex, Context $context)
         {
                 // $argsIndex points to the first of our arguments
                 // ... if it is set at all
@@ -72,7 +72,31 @@ class HelpCommand extends CommandBase
                         $this->showGeneralHelp($context);
                         return 0;
                 }
+
+                // if we get here, the user wants detailed help with a
+                // specific command
                 $commandForHelp = $args[$argsIndex];
+                $se = $context->stderr;
+
+                // is this a valid command?
+                if (!$context->commandsList->testHasCommand($commandForHelp))
+                {
+                        $se->output($context->errorStyle, $context->errorPrefix);
+                        $se->outputLine(null, ' unknown command ' . $commandForHelp);
+                        $se->output(null, 'use ');
+                        $se->output($context->commandStyle, 'phin --help');
+                        $se->outputLine(null, ' for a list of all available commands');
+                        return 1;
+                }
+
+                // we have a command to show the details of
+                $so = $context->stdout;
+
+                $command = $context->commandsList->getCommand($commandForHelp);
+                $command->outputHelp($context);
+
+
+                return 0;
         }
 
         protected function showGeneralHelp(Context $context)
@@ -88,7 +112,7 @@ class HelpCommand extends CommandBase
                 $so->outputBlankLine();
                 $this->showPhinSwitchSummary($context, $sortedSwitches);
                 $this->showPhinSwitchDetails($context, $sortedSwitches);
-                $this->showCommands($context);
+                $this->showCommandsList($context);
         }
 
         protected function calculatePhinSwitchDisplayOrder(Context $context)
@@ -162,7 +186,7 @@ class HelpCommand extends CommandBase
 
                 $so->outputLine(null, 'SYNOPSIS');
                 $so->setIndent(4);
-                $so->output($context->commandStyle, 'phin');
+                $so->output($context->commandStyle, $context->argvZero);
 
                 if (count($sortedSwitches['shortSwitchesWithoutArgs']) > 0)
                 {
@@ -217,8 +241,9 @@ class HelpCommand extends CommandBase
                 
                 $so->setIndent(0);
                 $so->outputLine(null, 'OPTIONS');
+                $so->addIndent(4);
+                $so->outputLine(null, 'Use the following switches in front of any <command> to have the following effects.');
                 $so->outputBlankLine();
-                $so->setIndent(4);
                 // keep track of the switches we have seen, to avoid
                 // any duplication of output
                 $seenSwitches = array();
@@ -278,42 +303,55 @@ class HelpCommand extends CommandBase
                 $so->outputBlankLine();
         }
 
-        protected function showCommands(Context $context)
+        protected function showCommandsList(Context $context)
         {
                 $so = $context->stdout;
 
                 $so->setIndent(0);
                 $so->outputLine(null, 'COMMANDS');
-                $so->setIndent(4);
+                $so->addIndent(4);
 
                 $sortedCommands = $context->commandsList->getListOfCommands();
                 \ksort($sortedCommands);
 
-                $append = false;
+                // work out our longest command name length
+                $maxlen = 0;
                 foreach ($sortedCommands as $commandName => $command)
                 {
-                        if ($append)
+                        if (strlen($commandName) > $maxlen)
                         {
-                                $so->outputBlankLine();
+                                $maxlen = strlen($commandName);
                         }
-                        $append = true;
-                        
-                        $command->outputShortHelp($context);
                 }
+
+                foreach ($sortedCommands as $commandName => $command)
+                {
+                        $so->output($context->commandStyle, $commandName);
+                        $so->addIndent($maxlen + 1);
+                        $so->output($context->commentStyle, '# ');
+                        $so->addIndent(2);
+                        $so->outputLine(null, $command->getCommandDesc());
+                        $so->addIndent(0 - $maxlen - 3);
+                }
+
+                $so->outputBlankLine();
+                $so->output(null, 'See ');
+                $so->output($context->commandStyle, $context->argvZero . ' help <command>');
+                $so->outputLine(null, ' for detailed help on <command>');
         }
 
-        public function outputShortHelp(Context $context)
+        public function outputHelp(Context $context)
         {
                 $so = $context->stdout;
 
-                $so->outputLine($context->commandStyle, $this->getCommandName());
+                $so->outputLine($context->commandStyle, $context->argvZero . ' ' . $this->getCommandName());
                 $so->addIndent(4);
                 $so->outputLine(null, "Show this help message");
                 $this->outputImplementationDetails($context);
                 $so->addIndent(-4);
                 $so->outputBlankLine();
 
-                $so->output($context->commandStyle, $this->getCommandName());
+                $so->output($context->commandStyle, $context->argvZero . ' ' . $this->getCommandName());
                 $so->outputLine($context->argStyle, ' <command>');
                 $so->addIndent(4);
                 $so->outputLine(null, "Show detailed help for <command>");

@@ -63,7 +63,6 @@ class Context
 
         public $phinDefinedOptions = null;
         public $searchPaths = array();
-        public $commands = null;
 
         public $version = '@@PACKAGE_VERSION@@';
 
@@ -87,6 +86,8 @@ class Context
          * @var CommandsList
          */
         public $commandsList = null;
+
+        public $argvZero = null;
 
         public function __construct()
         {

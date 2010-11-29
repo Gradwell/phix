@@ -63,12 +63,13 @@ class Main
         {
                 // step 0: create some plumbing
                 $context = new Context();
+                $context->argvZero = $argv[0];
 
                 // step 1: parse the command-line args
                 // we do this first because it may change where we look
                 // for our commands
                 $context->phinDefinedOptions = $this->buildPhinOptions();
-                list($phinParsedSwitches, $argsIndex) = $this->parsePhinArgs($context, $argv, $context->phinDefinedOptions);
+                list($phinParsedSwitches, $argsIndex) = $this->parsePhinArgs($context, $argv);
 
                 // step 2: process the switches we have just parsed
                 //
@@ -223,13 +224,7 @@ class Main
 
                 $command = $context->commandsList->getCommand($commandName);
 
-                $errCode = $command->parseAndValidate($argv, $argsIndex, $context);
-                if ($errCode !== null)
-                {
-                        return $errCode;
-                }
-
-                $errCode = $command->processCommand($context);
+                $errCode = $command->validateAndExecute($argv, $argsIndex, $context);
                 return $errCode;
         }
 

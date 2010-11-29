@@ -69,12 +69,12 @@ class CommandBase implements CommandInterface
          * @param array $parsedArgs
          * @param DefinedOptions $validOptions
          */
-        public function parseAndValidate($argv, $argsIndex, Context $context)
+        public function validateAndExecute($argv, $argsIndex, Context $context)
         {
                 throw new \Exception(__METHOD__ . '() not implemented');
         }
 
-        public function outputShortHelp(Context $context)
+        public function outputHelp(Context $context)
         {
                 $so = $context->stdout;
 
