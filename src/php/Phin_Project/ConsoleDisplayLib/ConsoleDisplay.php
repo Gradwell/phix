@@ -200,11 +200,12 @@ class ConsoleDisplay
                 while (strlen($string) > 0)
                 {
                         // step 1: are we at the beginning of the line?
-                        if (($this->currentLineLength == 0) && ($this->indent > 0))
+                        if ($this->currentLineLength < $this->indent)
                         {
+                                $indent = $this->indent - $this->currentLineLength;
                                 // we need to write out the indent
-                                fwrite($fp, \str_repeat(' ', $this->indent));
-                                $this->currentLineLength += $this->indent;
+                                fwrite($fp, \str_repeat(' ', $indent));
+                                $this->currentLineLength += $indent;
                         }
 
                         // step 2: do we need to split the line?
