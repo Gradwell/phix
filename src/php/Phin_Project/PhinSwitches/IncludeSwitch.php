@@ -50,9 +50,20 @@ class IncludeSwitch extends SwitchBase
 {
         static public function processBeforeExtensionLoad(Context $context, $args)
         {
+                // just in case!
+                $se = $context->stderr;
+
                 foreach ($args as $path)
                 {
+                        if (!is_dir($path))
+                        {
+                                $se->output($context->errorStyle, $context->errorPrefix);
+                                $se->outputLine(null, 'directory "' . $path . '" not found');
+                                return 1;
+                        }
+
                         $context->addSearchPath($path);
+                        \__gwc_autoload_alsoSearch(\realpath($path));
                 }
 
                 // we do not want phin to terminate yet
