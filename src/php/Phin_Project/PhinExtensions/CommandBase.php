@@ -44,6 +44,7 @@
 
 namespace Phin_Project\PhinExtensions;
 use Phin_Project\Phin\Context;
+use Phin_Project\CommandLineLib\DefinedOptions;
 
 class CommandBase implements CommandInterface
 {
@@ -62,6 +63,16 @@ class CommandBase implements CommandInterface
                 throw new \Exception( __METHOD__ . '() not implemented');
         }
 
+        public function getCommandOptions()
+        {
+                return null;
+        }
+
+        public function getCommandArgs()
+        {
+                return array();
+        }
+
         /**
          * Check to make sure that the switches and args are valid
          * 
@@ -78,17 +89,293 @@ class CommandBase implements CommandInterface
         {
                 $so = $context->stdout;
 
-                $so->outputLine($context->commandStyle, $this->getCommandName());
-                $so->addIndent(4);
-                $so->outputLine(null, $this->getCommandDesc());
-                $this->outputImplementationDetails($context);
-                $so->addIndent(-4);
+                $options = $this->getCommandOptions();
+                $args    = $this->getCommandArgs();
+                
+                $sortedSwitches = null;
+                if ($options !== null)
+                {
+                        $sortedSwitches = $this->calculateSwitchDisplayOrder($options);
+                }
+
+                $this->showName($context);
+                $this->showSynopsis($context, $sortedSwitches, $args);
+                $this->showOptions($context, $sortedSwitches, $args);
+                $this->showImplementationDetails($context);
         }
 
-        public function outputImplementationDetails(Context $context)
+        protected function calculateSwitchDisplayOrder(DefinedOptions $options)
+        {
+                // turn the list into something that's suitably sorted
+                $shortSwitchesWithoutArgs = array();
+                $shortSwitchesWithArgs = array();
+                $longSwitchesWithoutArgs = array();
+                $longSwitchesWithArgs = array();
+
+                $allShortSwitches = array();
+                $allLongSwitches = array();
+
+                $allSwitches = $definedOptions->getSwitches();
+
+                foreach ($allSwitches as $switch)
+                {
+                        foreach ($switch->shortSwitches as $shortSwitch)
+                        {
+                                $allShortSwitches['-' . $shortSwitch] = $switch;
+
+                                if ($switch->testHasArgument())
+                                {
+                                        $shortSwitchesWithArgs[$shortSwitch] = $switch;
+                                }
+                                else
+                                {
+                                        $shortSwitchesWithoutArgs[$shortSwitch] = $shortSwitch;
+                                }
+                        }
+
+                        foreach ($switch->longSwitches as $longSwitch)
+                        {
+                                $allLongSwitches['--' . $longSwitch] = $switch;
+
+                                if ($switch->testHasArgument())
+                                {
+                                        $longSwitchesWithArgs[$longSwitch] = $switch;
+                                }
+                                else
+                                {
+                                        $longSwitchesWithoutArgs[$longSwitch] = $longSwitch;
+                                }
+                        }
+                }
+
+                // we have all the switches that phin supports
+                // let's put them into sensible orders, and then display
+                // them
+                \ksort($shortSwitchesWithArgs);
+                \ksort($shortSwitchesWithoutArgs);
+                \ksort($longSwitchesWithArgs);
+                \ksort($longSwitchesWithoutArgs);
+                \ksort($allShortSwitches);
+                \ksort($allLongSwitches);
+
+                $return = array (
+                        'shortSwitchesWithArgs' => $shortSwitchesWithArgs,
+                        'shortSwitchesWithoutArgs' => $shortSwitchesWithoutArgs,
+                        'longSwitchesWithArgs' => $longSwitchesWithArgs,
+                        'longSwitchesWithoutArgs' => $longSwitchesWithoutArgs,
+                        'allSwitches' => array_merge($allShortSwitches, $allLongSwitches),
+                );
+
+                return $return;
+        }
+
+        protected function showName(Context $context)
         {
                 $so = $context->stdout;
 
-                $so->outputLine($context->commentStyle, '# implemented in: ' . get_class($this));
+                $so->outputLine(null, 'NAME');
+                $so->setIndent(4);
+                $so->output($context->commandStyle, $context->argvZero . ' ' . $this->getCommandName());
+                $so->outputLine(null, ' - ' . $this->getCommandDesc());
+                $so->addIndent(-4);
+                $so->outputBlankLine();
+        }
+
+        protected function showSynopsis(Context $context, $sortedSwitches, $args)
+        {
+                $so = $context->stdout;
+
+                $so->outputLine(null, 'SYNOPSIS');
+                $so->setIndent(4);
+
+                $so->output($context->commandStyle, $context->argvZero . ' ' . $this->getCommandName());
+
+                if ($sortedSwitches !== null)
+                {
+                        $this->showSwitchSummary($context, $sortedSwitches);
+                }
+
+                if (count($args) > 0)
+                {
+                        $this->showArgsSummary($context, $args);
+                }
+
+                $so->outputBlankLine();
+        }
+
+        protected function showArgsSummary(Context $context, $args)
+        {
+                $so = $context->stdout;
+
+                foreach ($args as $arg => $argDesc)
+                {
+                        $so->output($context->argStyle, ' ' . $arg);
+                }
+        }
+
+        protected function showSwitchSummary(Context $context, $sortedSwitches)
+        {
+                $so = $context->stdout;
+
+                if (count($sortedSwitches['shortSwitchesWithoutArgs']) > 0)
+                {
+                        $so->output(null, ' [ ');
+                        $so->output($context->switchStyle, '-' . implode('', $sortedSwitches['shortSwitchesWithoutArgs']));
+                        $so->output(null, ' ]');
+                }
+
+                if (count($sortedSwitches['longSwitchesWithoutArgs']) > 0)
+                {
+                        $so->output(null, ' [ ');
+                        $so->output($context->switchStyle, '--' . implode(' --', $sortedSwitches['longSwitchesWithoutArgs']));
+                        $so->output(null, ' ]');
+                }
+
+                if (count($sortedSwitches['shortSwitchesWithArgs']) > 0)
+                {
+                        foreach ($sortedSwitches['shortSwitchesWithArgs'] as $shortSwitch => $switch)
+                        {
+                                $so->output(null, ' [ ');
+                                $so->output($context->switchStyle, '-' . $shortSwitch);
+                                $so->output($context->argStyle, $switch->arg->name);
+                                $so->output(null, ' ]');
+                        }
+                }
+
+                if (count($sortedSwitches['longSwitchesWithArgs']) > 0)
+                {
+                        foreach ($sortedSwitches['longSwitchesWithArgs'] as $longSwitch => $switch)
+                        {
+                                $so->output(null, ' [ ');
+                                if ($switch->testHasArgument())
+                                {
+                                        $so->output($context->switchStyle, '--' . $longSwitch . '=');
+                                        $so->output($context->argStyle, $switch->arg->name);
+                                }
+                                else
+                                {
+                                        $so->output($context->switchStyle, '--' . $longSwitch);
+                                }
+                                $so->output(null, ' ]');
+                        }
+                }
+        }
+
+        protected function showOptions(Context $context, $sortedSwitches, $args)
+        {
+                $so = $context->stdout;
+
+                $so->setIndent(0);
+                $so->outputLine(null, 'OPTIONS');
+                $so->addIndent(4);
+
+                if ($sortedSwitches !== null)
+                {
+                        $this->showSwitchDetails($context, $sortedSwitches);
+                }
+
+                if (count($args) > 0)
+                {
+                        $this->showArgsDetails($context, $args);
+                }
+
+                $so->addIndent(-4);
+        }
+
+        protected function showSwitchDetails(Context $context, $sortedSwitches, $args)
+        {
+                $so = $context->stdout;
+
+                // keep track of the switches we have seen, to avoid
+                // any duplication of output
+                $seenSwitches = array();
+
+                foreach ($sortedSwitches['allSwitches'] as $shortOrLongSwitch => $switch)
+                {
+                       // have we already seen this switch?
+                        if (isset($seenSwitches[$switch->name]))
+                        {
+                                // yes, skip it
+                                continue;
+                        }
+                        $seenSwitches[$switch->name] = $switch;
+
+                        // we have not seen this switch before
+                        $this->showSwitchLongDetails($context, $switch);
+                }
+        }
+
+        protected function showArgsDetails(Context $context, $args)
+        {
+                $so = $context->stdout;
+                
+                foreach ($args as $argName => $argDesc)
+                {
+                        $this->showArgLongDetails($context, $argName, $argDesc);
+                }
+        }
+
+        protected function showSwitchLongDetails(Context $context, DefinedSwitch $switch)
+        {
+                $so = $context->stdout;
+
+                $shortOrLongSwitches = $switch->getHumanReadableSwitchList();
+                $append = false;
+
+                foreach ($shortOrLongSwitches as $shortOrLongSwitch)
+                {
+                        if ($append)
+                        {
+                                $so->output(null, ' | ');
+                        }
+                        $append = true;
+
+                        $so->output($context->switchStyle, $shortOrLongSwitch);
+
+                        // is there an argument?
+                        if ($switch->testHasArgument())
+                        {
+                                if ($shortOrLongSwitch{1} == '-')
+                                {
+                                        $so->output(null, '=');
+                                }
+                                $so->output($context->argStyle, $switch->arg->name);
+                        }
+                }
+
+                $so->outputLine(null, '');
+                $so->addIndent(4);
+                $so->outputLine(null, $switch->desc);
+                if (isset($switch->longdesc))
+                {
+                        $so->outputBlankLine();
+                        $so->outputLine(null, $switch->longdesc);
+                }
+                $so->addIndent(-4);
+                $so->outputBlankLine();
+        }
+
+        protected function showArgLongDetails(Context $context, $argName, $argDesc)
+        {
+                $so = $context->stdout;
+
+                $so->outputLine($context->argStyle, $argName);
+                $so->addIndent(4);
+                $so->outputLine(null, $argDesc);
+                $so->addIndent(-4);
+                $so->outputBlankLine();
+        }
+
+        protected function showImplementationDetails(Context $context)
+        {
+                $so = $context->stdout;
+
+                $so->outputLine(null, 'IMPLEMENTATION');
+                $so->addIndent(4);
+                $so->outputLine(null, 'This command is implemented in class:');
+                $so->outputBlankLine();
+                $so->output($context->commandStyle, '* ');
+                $so->outputLine(null, get_class($this));
+                $so->addIndent(-4);
         }
 }
