@@ -92,6 +92,29 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 }
         }
 
+        public function testCannotCreateShortSwitchThatStartsWithHyphen()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $shortSwitches = array('-h', '--?');
+
+                $obj = new DefinedSwitch($name, $desc);
+                foreach ($shortSwitches as $shortSwitch)
+                {
+                        $hasAsserted = false;
+                        try
+                        {
+                                $obj->setWithShortSwitch($shortSwitch);
+                        }
+                        catch (\Exception $e)
+                        {
+                                $hasAsserted = true;
+                        }
+
+                        $this->assertTrue($hasAsserted);
+                }
+        }
+
         public function testCanCreateWithLongSwitch()
         {
                 $name = 'help';
@@ -126,6 +149,29 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 foreach ($longSwitches as $longSwitch)
                 {
                         $this->assertTrue($obj->testHasLongSwitch($longSwitch));
+                }
+        }
+
+        public function testCannotCreateLongSwitchesThatStartWithHyphen()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $longSwitches = array('--help', '-?');
+
+                $obj = new DefinedSwitch($name, $desc);
+                foreach ($longSwitches as $longSwitch)
+                {
+                        $hasAsserted = false;
+                        try
+                        {
+                                $obj->setWithlongSwitch($longSwitch);
+                        }
+                        catch (\Exception $e)
+                        {
+                                $hasAsserted = true;
+                        }
+
+                        $this->assertTrue($hasAsserted);
                 }
         }
 

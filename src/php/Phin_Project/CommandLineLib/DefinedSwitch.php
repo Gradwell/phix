@@ -84,6 +84,13 @@ class DefinedSwitch
          */
         public function setWithShortSwitch($switch)
         {
+                // make sure the switch does not start with a '-'!!
+                if ($switch{0} == '-')
+                {
+                        throw new \Exception("do not start a switch with the '-' character");
+                }
+
+                // if we get here, the switch is fine
                 $this->shortSwitches[$switch] = $switch;
                 return $this;
         }
@@ -97,6 +104,13 @@ class DefinedSwitch
          */
         public function setWithLongSwitch($switch)
         {
+                // make sure the switch does not start with a '-'!!
+                if ($switch{0} == '-')
+                {
+                        throw new \Exception("do not start a switch with the '-' character");
+                }
+
+                // if we get here, the switch is fine
                 $this->longSwitches[$switch] = $switch;
                 return $this;
         }
@@ -153,6 +167,13 @@ class DefinedSwitch
         {
                 $this->requireValidArg();
                 $this->arg->setMustBeValidPath();
+                return $this;
+        }
+
+        public function setArgMustBeValidFile()
+        {
+                $this->requireValidArg();
+                $this->arg->setMustBeValidFile();
                 return $this;
         }
 
