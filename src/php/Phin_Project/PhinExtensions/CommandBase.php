@@ -45,6 +45,7 @@
 namespace Phin_Project\PhinExtensions;
 use Phin_Project\Phin\Context;
 use Phin_Project\CommandLineLib\DefinedOptions;
+use Phin_Project\CommandLineLib\DefinedSwitch;
 
 class CommandBase implements CommandInterface
 {
@@ -115,7 +116,7 @@ class CommandBase implements CommandInterface
                 $allShortSwitches = array();
                 $allLongSwitches = array();
 
-                $allSwitches = $definedOptions->getSwitches();
+                $allSwitches = $options->getSwitches();
 
                 foreach ($allSwitches as $switch)
                 {
@@ -220,14 +221,14 @@ class CommandBase implements CommandInterface
                 if (count($sortedSwitches['shortSwitchesWithoutArgs']) > 0)
                 {
                         $so->output(null, ' [ ');
-                        $so->output($context->switchStyle, '-' . implode('', $sortedSwitches['shortSwitchesWithoutArgs']));
+                        $so->output($context->switchStyle, implode(' -', $sortedSwitches['shortSwitchesWithoutArgs']));
                         $so->output(null, ' ]');
                 }
 
                 if (count($sortedSwitches['longSwitchesWithoutArgs']) > 0)
                 {
                         $so->output(null, ' [ ');
-                        $so->output($context->switchStyle, '--' . implode(' --', $sortedSwitches['longSwitchesWithoutArgs']));
+                        $so->output($context->switchStyle, implode(' --', $sortedSwitches['longSwitchesWithoutArgs']));
                         $so->output(null, ' ]');
                 }
 
@@ -236,7 +237,7 @@ class CommandBase implements CommandInterface
                         foreach ($sortedSwitches['shortSwitchesWithArgs'] as $shortSwitch => $switch)
                         {
                                 $so->output(null, ' [ ');
-                                $so->output($context->switchStyle, '-' . $shortSwitch);
+                                $so->output($context->switchStyle, '-' . $shortSwitch . ' ');
                                 $so->output($context->argStyle, $switch->arg->name);
                                 $so->output(null, ' ]');
                         }
@@ -282,7 +283,7 @@ class CommandBase implements CommandInterface
                 $so->addIndent(-4);
         }
 
-        protected function showSwitchDetails(Context $context, $sortedSwitches, $args)
+        protected function showSwitchDetails(Context $context, $sortedSwitches)
         {
                 $so = $context->stdout;
 
@@ -339,6 +340,10 @@ class CommandBase implements CommandInterface
                                 {
                                         $so->output(null, '=');
                                 }
+                                else
+                                {
+                                        $so->output(null, ' ');
+                                }
                                 $so->output($context->argStyle, $switch->arg->name);
                         }
                 }
@@ -351,6 +356,17 @@ class CommandBase implements CommandInterface
                         $so->outputBlankLine();
                         $so->outputLine(null, $switch->longdesc);
                 }
+
+                // output the default argument, if it is set
+                if ($switch->testHasArgument() && isset($switch->arg->defaultValue))
+                {
+                        $so->outputBlankLine();
+                        $so->output(null, 'The default value for ');
+                        $so->output($context->argStyle, $switch->arg->name);
+                        $so->output(null, ' is: ');
+                        $so->outputLine($context->exampleStyle, $switch->arg->defaultValue);
+                }
+
                 $so->addIndent(-4);
                 $so->outputBlankLine();
         }
@@ -372,10 +388,24 @@ class CommandBase implements CommandInterface
 
                 $so->outputLine(null, 'IMPLEMENTATION');
                 $so->addIndent(4);
-                $so->outputLine(null, 'This command is implemented in class:');
+                $so->outputLine(null, 'This command is implemented in the PHP class:');
                 $so->outputBlankLine();
                 $so->output($context->commandStyle, '* ');
+                $so->addIndent(2);
                 $so->outputLine(null, get_class($this));
-                $so->addIndent(-4);
+                $so->addIndent(-2);
+                $so->outputBlankLine();
+                $so->outputLine(null, 'which is defined in the file:');
+                $so->outputBlankLine();
+                $so->output($context->commandStyle, '* ');
+                $so->addIndent(2);
+                $so->outputLine(null, $this->getSourceFilename());
+                $so->addIndent(-6);
+        }
+
+        protected function getSourceFilename()
+        {
+                $reflect = new \ReflectionClass($this);
+                return $reflect->getFileName();
         }
 }
