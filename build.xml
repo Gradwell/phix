@@ -4,42 +4,48 @@
   <!-- Human-readable info about our component -->
   <property file="build.properties" />
 
-  <property name="project.version"        value="${project.majorVersion}.${project.minorVersion}.${project.patchLevel}" />
-  <property name="project.apiversion"     value="${project.majorVersion}.${project.minorVersion}" />
+  <property name="project.version"         value="${project.majorVersion}.${project.minorVersion}.${project.patchLevel}" />
+  <property name="project.apiversion"      value="${project.majorVersion}.${project.minorVersion}" />
 
   <!-- Paths to the directories that we work with -->
-  <property name="project.srcdir"         value="${project.basedir}/src" override="true" />
-  <property name="project.srcphpdir"      value="${project.srcdir}/php" override="true" />
-  <property name="project.srcbindir"      value="${project.srcdir}/bin" override="true" />
-  <property name="project.srcdatadir"     value="${project.srcdir}/data" override="true" />
-  <property name="project.srctestdir"     value="${project.srcdir}/test" override="true" />
-  <property name="project.srctestunitdir" value="${project.srctestdir}/unit-tests" override="true" />
-  <property name="project.srctestintdir"  value="${project.srctestdir}/integration-tests" override="true" />
-  <property name="project.srctestfuncdir" value="${project.srctestdir}/functional-tests" override="true" />
+  <property name="project.srcdir"          value="${project.basedir}/src" override="true" />
+  <property name="project.src.phpdir"      value="${project.srcdir}/php" override="true" />
+  <property name="project.src.bindir"      value="${project.srcdir}/bin" override="true" />
+  <property name="project.src.datadir"     value="${project.srcdir}/data" override="true" />
+  <property name="project.src.testdir"     value="${project.srcdir}/tests" override="true" />
+  <property name="project.src.testunitdir" value="${project.src.testdir}/unit-tests" override="true" />
+  <property name="project.src.testintdir"  value="${project.src.testdir}/integration-tests" override="true" />
+  <property name="project.src.testfuncdir" value="${project.src.testdir}/functional-tests" override="true" />
 
-  <property name="project.reviewdir"     value="${project.basedir}/review" override="true" />
-  <property name="project.logsdir"       value="${project.reviewdir}/logs" override="true" />
-  <property name="project.docsdir"       value="${project.reviewdir}/docs" override="true" />
+  <property name="project.reviewdir"       value="${project.basedir}/review" override="true" />
+  <property name="project.review.logsdir"  value="${project.basedir}/review/logs" override="true" />
+  <property name="project.review.docsdir"  value="${project.reviewdir}/docs" override="true" />
+  <property name="project.review.codebrowserdir" value="${project.reviewdir}/code-browser" override="true" />
+  <property name="project.review.codecoveragedir" value="${project.reviewdir}/code-coverage" override="true" />
 
-  <property name="project.builddir"      value="${project.basedir}/.build"  override="true" />
-  <property name="project.pkgdir"        value="${project.builddir}/${project.name}-${project.version}"  override="true" />
-  <property name="project.tmpdir"        value="${project.basedir}/.tmp" override="true" />
-  <property name="project.vendordir"     value="${project.basedir}/vendor" override="true" />
-  <property name="project.vendorbindir"  value="${project.vendordir}/bin" override="true" />
-  <property name="project.vendordatadir" value="${project.vendordir}/data" override="true" />
-  <property name="project.vendorlibdir"  value="${project.vendordir}/lib" override="true" />
-  <property name="project.distdir"       value="${project.basedir}/dist" />
+  <property name="project.builddir"        value="${project.basedir}/.build"  override="true" />
+  <property name="project.pkgdir"          value="${project.builddir}/${project.name}-${project.version}" override="true" />
+  <property name="project.tmpdir"          value="${project.basedir}/.tmp" override="true" />
 
-  <property name="project.tarfilename"   value="${project.name}-${project.version}.tgz" />
-  <property name="project.tarfile"       value="${project.distdir}/${project.tarfilename}" />
+  <property name="project.vendordir"       value="${project.basedir}/vendor" override="true" />
+  <property name="project.vendor.bindir"   value="${project.vendordir}/bin" override="true" />
+  <property name="project.vendor.datadir"  value="${project.vendordir}/data" override="true" />
+  <property name="project.vendor.phpdir"   value="${project.vendordir}/php" override="true" />
+  <property name="project.vendor.testdir"  value="${project.vendordir}/tests" override="true" />
+  <property name="project.vendor.docdir"   value="${project.vendordir}/docs" override="true" />
+  <property name="project.vendor.wwwdir"   value="${project.vendordir}/www" override="true" />
+
+  <property name="project.distdir"         value="${project.basedir}/dist" />
+  <property name="project.tarfilename"     value="${project.name}-${project.version}.tgz" />
+  <property name="project.tarfile"         value="${project.distdir}/${project.tarfilename}" />
+
+  <!-- a user to use to publish on the pear server -->
+  <property name="remote.user" value="" override="true" />
 
   <!-- a list of the files that make up our package -->
   <fileset dir="${project.srcdir}" id="srcfiles">
     <include name="**/**"/>
   </fileset>
-
-  <!-- a placeholder for when we publish pear packages -->
-  <property name="remote.user" value="" override="true" />
 
   <!-- Tell the user what this build file supports -->
   <target name="help">
@@ -50,19 +56,24 @@
     <echo message="test" />
     <echo message="  Run the component's PHPUnit tests" />
     <echo message="code-review" />
-    <echo message="  Run code quality tests (pdepend, phpmd, phpcpd, phpcs)" />
+    <echo message="  Run all of the code quality targets:" />
+    <echo message="" />
+    <echo message="  code-browser" />
+    <echo message="    Run code quality tests for PHP_CodeBrowser" />
+    <echo message="  phpcpd" />
+    <echo message="    Check for cut and paste problems" />
+    <echo message="  phpdoc" />
+    <echo message="    Create the PHP docs from source code" />
+    <echo message="" />
     <echo message="build-vendor" />
     <echo message="  Populate vendor/ with this package's dependencies" />
-    <echo message="  (used for running unit tests)" />
     <echo message="pear-package" />
     <echo message="  Create a PEAR-compatible package" />
     <echo message="install.local" />
     <echo message="  Install this component from source" />
-    <echo message="  You must be root to run this target!!" />
+    <echo message="  You must be root to run this target on Linux!!" />
     <echo message="publish" />
     <echo message="  Publish the pear package onto the channel server" />
-    <echo message="hg-push" />
-    <echo message="  Push the changes back to the Mercurial master repo" />
     <echo message="clean" />
     <echo message="  Remove all temporary folders created by this build file" />
   </target>
@@ -70,7 +81,7 @@
   <!-- Run PHP lint on all of the source code -->
   <target name="lint">
     <phplint>
-      <fileset dir="${project.srcphpdir}">
+      <fileset dir="${project.src.phpdir}">
         <include name="**/*.php" />
       </fileset>
     </phplint>
@@ -78,49 +89,57 @@
 
   <!-- Run the unit tests for this module -->
   <target name="run-unittests" depends="lint">
-    <delete dir="${project.reviewdir}/code-coverage" />
-    <mkdir dir="${project.reviewdir}/code-coverage" />
-    <exec command="phpunit --bootstrap=${project.testsdir}/bootstrap.php --coverage-html ${project.reviewdir}/code-coverage ${project.srctestsunitdir}" checkreturn="true" logoutput="true"/>
+    <delete dir="${project.review.codecoveragedir}" />
+    <mkdir dir="${project.review.codecoveragedir}" />
+    <mkdir dir="${project.review.logsdir}" />
+    <exec command="phpunit --bootstrap=${project.src.testunitdir}/bootstrap.php --coverage-html ${project.review.codecoveragedir} --coverage-clover ${project.review.logsdir}/phpunit.xml ${project.src.testunitdir}" checkreturn="true" logoutput="true"/>
     <echo/>
-    <echo>The code coverage report is in ${project.reviewdir}/code-coverage</echo>
+    <echo>The code coverage report is in ${project.review.codecoveragedir}</echo>
   </target>
 
+  <!-- Run all the tests for this module -->
+  <target name="test" depends="run-unittests" />
+
   <!-- Run the code review quality tests -->
-  <target name="code-review" depends="pdepend, phpmd, phpcpd, phpcs" />
+  <target name="code-review" depends="run-unittests, code-browser, phpcpd, pdepend" />
+
+  <!-- Run all of the targets for setting up the code browser -->
+  <target name="code-browser" depends="phpmd, phpcs, phpcb" />
 
   <target name="pdepend">
-    <mkdir dir="${project.reviewdir}/logs" />
-    <mkdir dir="${project.reviewdir}/pdepend" />
-    <exec command="pdepend --jdepend-xml=${project.reviewdir}/logs/jdepend.xml --jdepend-chart=${project.reviewdir}/pdepend/dependencies.svg --overview-pyramid=${project.reviewdir}/pdepend/overview-pyramid.svg ${project.srcphpdir}" />
+    <mkdir dir="${project.review.logsdir}" />
+    <exec command="pdepend --phpunit-xml=${project.review.logsdir}/pdepend.xml --jdepend-xml=${project.review.logsdir}/jdepend.xml --jdepend-chart=${project.review.logsdir}/dependencies.svg --overview-pyramid=${project.review.logsdir}/overview-pyramid.svg ${project.src.phpdir}" logoutput="true"/>
   </target>
 
   <!-- Generate package docs -->
   <target name="phpdoc">
-    <delete dir="${project.docsdir}" />
-    <mkdir dir="${project.docsdir}" />
-    <exec command="phpdoc -d ${project.srcphpdir} -t ${project.docsdir} "/>
+    <mkdir dir="${project.review.logsdir}" />
+    <exec command="phpdoc -d ${project.src.phpdir} -t ${project.review.docsdir}" logoutput="true"/>
+    <echo message="You will find the PHPDoc for your project at: ${project.review.docsdir}/index.html"/>
   </target>
 
   <!-- Check code for code smells -->
   <target name="phpmd">
-    <mkdir dir="${project.reviewdir}/logs" />
-    <exec command="phpmd ${project.srcphpdir} xml codesize,design,naming,unusedcode --reportfile=${project.logsdir}/pmd.xml" />
+    <mkdir dir="${project.review.logsdir}" />
+    <exec command="phpmd ${project.src.phpdir} xml codesize,design,naming,unusedcode --reportfile ${project.review.logsdir}/phpmd.xml" logoutput="true" />
   </target>
 
   <target name="phpcpd">
-    <exec command="phpcpd --log-pmd ${project.logsdir}/pmd-cpd.xml ${project.srcphpdir}" />
+    <mkdir dir="${project.review.logsdir}"/>
+    <exec command="phpcpd --log-pmd ${project.review.logsdir}/pmd-cpd.xml ${project.src.phpdir}" logoutput="true" />
   </target>
 
   <!-- Check the code for style violations -->
   <target name="phpcs">
-    <exec command="phpcs --report=checkstyle --report-file=${project.logsdir}/checkstyle.xml --standard=Sebastian --extensions=php ${project.srcphpdir}" />
+    <mkdir dir="${project.review.logsdir}" />
+    <exec command="phpcs --report=xml --report-file=${project.review.logsdir}/checkstyle.xml --standard=${checkstyle.standard} --extensions=php ${project.src.phpdir}" logoutput="true"/>
   </target>
 
   <!-- Build the code-browser files -->
-  <target name="phpcb">
-    <delete dir="${project.reviewdir}/code-browser" />
-    <mkdir dir="${project.reviewdir}/code-browser" />
-    <exec command="phpcb --log ${project.logsdir} --source ${project.srcphpdir} --output ${project.reviewdir}/code-browser" />
+  <target name="phpcb" depends="phpmd">
+    <delete dir="${project.review.codebrowserdir}" />
+    <mkdir dir="${project.review.codebrowserdir}" />
+    <exec command="phpcb --log ${project.review.logsdir} --source ${project.src.phpdir} --output ${project.review.codebrowserdir}" logoutput="true" />
   </target>
 
   <!-- Populate vendor with the dependencies for this component -->
@@ -128,14 +147,16 @@
     <echo>Populating lib/vendor with dependencies</echo>
     <delete dir="${project.vendordir}" />
     <mkdir dir="${project.vendordir}" />
-    <mkdir dir="${project.vendorlibdir}" />
     <delete dir="${project.tmpdir}" />
     <mkdir dir="${project.tmpdir}" />
     <exec command="pear config-create ${project.tmpdir} ${project.tmpdir}/pear-config" checkreturn="true" logoutput="true" />
     <exec command="pear -c ${project.tmpdir}/pear-config config-set preferred_state alpha" checkreturn="true" logoutput="true" />
-    <exec command="pear -c ${project.tmpdir}/pear-config config-set php_dir ${project.vendorlibdir}" checkreturn="true" logoutput="true" />
-    <exec command="pear -c ${project.tmpdir}/pear-config config-set bin_dir ${project.vendorbindir}" checkreturn="true" logoutput="true" />
-    <exec command="pear -c ${project.tmpdir}/pear-config config-set data_dir ${project.vendordatadir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set php_dir ${project.vendor.phpdir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set bin_dir ${project.vendor.bindir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set data_dir ${project.vendor.datadir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set doc_dir ${project.vendor.docdir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set test_dir ${project.vendor.testdir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set www_dir ${project.vendor.wwwdir}" checkreturn="true" logoutput="true" />
     <exec command="php tools/registerchannels.php build.properties package.xml ${project.tmpdir}/pear-config ${project.vendordir}" checkreturn="true" logoutput="true" />
     <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.builddir}/package.xml" logoutput="true" checkreturn="true"/>
   </target>
