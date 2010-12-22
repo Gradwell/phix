@@ -143,6 +143,13 @@ class DefinedSwitch
                 return $this;
         }
 
+        public function setArgHasDefaultValueOf($value)
+        {
+                $this->requireValidArg();
+                $this->arg->setDefaultValue($value);
+                return $this;
+        }
+
         public function setArgMustBeValidCommand()
         {
                 $this->requireValidArg();

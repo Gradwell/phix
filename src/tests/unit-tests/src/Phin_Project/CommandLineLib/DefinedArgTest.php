@@ -165,4 +165,17 @@ class DefinedArgTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($obj->testMustBeWriteable());
         }
 
+        public function testCanSetDefaultValueForArg()
+        {
+                $name = '<command>';
+                $desc = 'The <command> you need help with';
+
+                $obj = new DefinedArg($name, $desc);
+                $obj->setDefaultValue('help');
+
+                // did it work?
+                $this->assertEquals($name, $obj->name);
+                $this->assertEquals($desc, $obj->desc);
+                $this->assertEquals('help', $obj->defaultValue);
+        }
 }

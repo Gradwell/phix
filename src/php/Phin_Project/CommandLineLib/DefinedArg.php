@@ -57,6 +57,7 @@ class DefinedArg
         public $name;
         public $desc;
         public $flags = 0;
+        public $defaultValue = null;
 
         /**
          * Define an argument to a switch
@@ -254,5 +255,17 @@ class DefinedArg
                 }
 
                 return false;
+        }
+
+        /**
+         * Remember the default value for this arg
+         * 
+         * @param mixed $value
+         * @return DefinedArg $this
+         */
+        public function setDefaultValue($value)
+        {
+                $this->defaultValue = $value;
+                return $this;
         }
 }

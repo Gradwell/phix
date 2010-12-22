@@ -263,4 +263,27 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($obj->testHasRequiredArgument());
                 $this->assertFalse($obj->testHasOptionalArgument());
         }
+
+        public function testCanCreateArgWithDefaultValue()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $shortSwitch = 'h';
+
+                $argName = '<command>';
+                $argDesc = 'The <command> you want help with';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithShortSwitch($shortSwitch)
+                    ->setWithRequiredArg($argName, $argDesc)
+                    ->setArgHasDefaultValueOf('trout');
+
+                // has it worked?
+                $this->assertEquals($obj->name, $name);
+                $this->assertEquals($obj->desc, $desc);
+                $this->assertEquals($obj->arg->defaultValue, 'trout');
+                $this->assertTrue($obj->testHasShortSwitch($shortSwitch));
+                $this->assertTrue($obj->testHasRequiredArgument());
+                $this->assertFalse($obj->testHasOptionalArgument());
+        }
 }
