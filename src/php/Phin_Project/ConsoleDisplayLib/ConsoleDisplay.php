@@ -197,6 +197,13 @@ class ConsoleDisplay
 
         protected function writeWrappedString($fp, $string)
         {
+                // what will we split the line on?
+                $separators = array(' ' => true, '\\' => true, '/' => true);
+
+                // which characters do we wish to skip when splitting
+                // the line?
+                $whitespace = array(' ' => true);
+
                 while (strlen($string) > 0)
                 {
                         // step 1: are we at the beginning of the line?
@@ -220,7 +227,7 @@ class ConsoleDisplay
                         // if we get here, the string needs wrapping (if possible)
                         $rawWrapPoint = $this->wrapAt - $this->currentLineLength;
                         $wrapPoint = $rawWrapPoint;
-                        while ($wrapPoint > 0 && $string{$wrapPoint} !== ' ')
+                        while ($wrapPoint > 0 && !isset($separators[$string{$wrapPoint}]))
                         {
                                 $wrapPoint--;
                         }
@@ -238,7 +245,11 @@ class ConsoleDisplay
                         if ($wrapPoint > 0)
                         {
                                 fwrite($fp, substr($string, 0, $wrapPoint) . PHP_EOL);
-                                $string = substr($string, $wrapPoint + 1);
+                                if (isset($whitespace[$string{$wrapPoint}]))
+                                {
+                                        $wrapPoint++;
+                                }
+                                $string = substr($string, $wrapPoint);
                         }
                         else
                         {
