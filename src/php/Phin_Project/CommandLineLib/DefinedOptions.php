@@ -181,4 +181,23 @@ class DefinedOptions
         {
                 return $this->switches;
         }
+
+        public function getDefaultValues()
+        {
+                $return = array();
+
+                foreach ($this->switches as $name => $switch)
+                {
+                        if ($switch->testHasArgument() && isset($switch->arg->defaultValue))
+                        {
+                                $return[$name] = $switch->arg->defaultValue;
+                        }
+                        else
+                        {
+                                $return[$name] = null;
+                        }
+                }
+
+                return $return;
+        }
 }

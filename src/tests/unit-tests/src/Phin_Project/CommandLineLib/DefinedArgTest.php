@@ -44,6 +44,10 @@
 
 namespace Phin_Project\CommandLineLib;
 
+use Phin_Project\ValidationLib\MustBeValidFile;
+use Phin_Project\ValidationLib\MustBeValidPath;
+use Phin_Project\ValidationLib\MustBeWriteable;
+
 class DefinedArgTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanCreate()
@@ -90,49 +94,19 @@ class DefinedArgTest extends \PHPUnit_Framework_TestCase
                 $this->assertFalse($obj->testIsOptional());
         }
 
-        public function testCanRequireAValidCommand()
-        {
-                $name = '<command>';
-                $desc = 'The <command> you need help with';
-
-                $obj = new DefinedArg($name, $desc);
-                $obj->setMustBeValidCommand();
-
-                // did it work?
-                $this->assertEquals($name, $obj->name);
-                $this->assertEquals($desc, $obj->desc);
-                $this->assertTrue($obj->testIsOptional());
-                $this->assertTrue($obj->testMustBeValidCommand());
-        }
-
         public function testCanRequireAValidFile()
         {
                 $name = '<command>';
                 $desc = 'The <command> you need help with';
 
                 $obj = new DefinedArg($name, $desc);
-                $obj->setMustBeValidFile();
+                $obj->setValidator(new MustBeValidFile());
 
                 // did it work?
                 $this->assertEquals($name, $obj->name);
                 $this->assertEquals($desc, $obj->desc);
                 $this->assertTrue($obj->testIsOptional());
-                $this->assertTrue($obj->testMustBeValidFile());
-        }
-
-        public function testCanRequireAValidNamespace()
-        {
-                $name = '<command>';
-                $desc = 'The <command> you need help with';
-
-                $obj = new DefinedArg($name, $desc);
-                $obj->setMustBeValidNamespace();
-
-                // did it work?
-                $this->assertEquals($name, $obj->name);
-                $this->assertEquals($desc, $obj->desc);
-                $this->assertTrue($obj->testIsOptional());
-                $this->assertTrue($obj->testMustBeValidNamespace());
+                $this->assertTrue($obj->testMustValidateWith('Phin_Project\ValidationLib\MustBeValidFile'));
         }
 
         public function testCanRequireAValidPath()
@@ -141,13 +115,13 @@ class DefinedArgTest extends \PHPUnit_Framework_TestCase
                 $desc = 'The <command> you need help with';
 
                 $obj = new DefinedArg($name, $desc);
-                $obj->setMustBeValidPath();
+                $obj->setValidator(new MustBeValidPath());
 
                 // did it work?
                 $this->assertEquals($name, $obj->name);
                 $this->assertEquals($desc, $obj->desc);
                 $this->assertTrue($obj->testIsOptional());
-                $this->assertTrue($obj->testMustBeValidPath());
+                $this->assertTrue($obj->testMustValidateWith('Phin_Project\ValidationLib\MustBeValidPath'));
         }
 
         public function testCanRequireWriteableArg()
@@ -156,13 +130,13 @@ class DefinedArgTest extends \PHPUnit_Framework_TestCase
                 $desc = 'The <command> you need help with';
 
                 $obj = new DefinedArg($name, $desc);
-                $obj->setMustBeWriteable();
+                $obj->setValidator(new MustBeWriteable());
 
                 // did it work?
                 $this->assertEquals($name, $obj->name);
                 $this->assertEquals($desc, $obj->desc);
                 $this->assertTrue($obj->testIsOptional());
-                $this->assertTrue($obj->testMustBeWriteable());
+                $this->assertTrue($obj->testMustValidateWith('Phin_Project\ValidationLib\MustBeWriteable'));
         }
 
         public function testCanSetDefaultValueForArg()

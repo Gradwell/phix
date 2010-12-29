@@ -44,20 +44,16 @@
 
 namespace Phin_Project\CommandLineLib;
 
+use Phin_Project\ValidationLib\ValidatorInterface;
+
 class DefinedArg
 {
-        const FLAG_NONE = 0;
-        const FLAG_MUSTBEVALIDFILE    = 1;
-        const FLAG_MUSTBEWRITEABLE    = 2;
-        const FLAG_MUSTBEVALIDPATH    = 4;
-        const FLAG_MUSTBEVALIDCOMMAND = 8;
-        const FLAG_ISREQUIRED         = 16;
-        const FLAG_MUSTBEVALIDNAMESPACE = 32;
-
         public $name;
         public $desc;
-        public $flags = 0;
         public $defaultValue = null;
+        public $isRequired = false;
+
+        protected $validators = array();
 
         /**
          * Define an argument to a switch
@@ -78,10 +74,7 @@ class DefinedArg
          */
         public function setIsOptional()
         {
-                if ($this->flags & self::FLAG_ISREQUIRED)
-                {
-                        $this->flags ^= self::FLAG_ISREQUIRED;
-                }
+                $this->isRequired = false;
                 return $this;
         }
 
@@ -92,63 +85,13 @@ class DefinedArg
          */
         public function setIsRequired()
         {
-                $this->flags |= self::FLAG_ISREQUIRED;
+                $this->isRequired = true;
                 return $this;
         }
 
-        /**
-         * Define that this argument must be a valid command
-         *
-         * @return DefinedArg $this
-         */
-        public function setMustBeValidCommand()
+        public function setValidator(ValidatorInterface $validator)
         {
-                $this->flags |= self::FLAG_MUSTBEVALIDCOMMAND;
-                return $this;
-        }
-
-        /**
-         * Define that this argument must be a valid file on disk
-         *
-         * @return DefinedArg $this
-         */
-        public function setMustBeValidFile()
-        {
-                $this->flags |= self::FLAG_MUSTBEVALIDFILE;
-                return $this;
-        }
-
-        /**
-         * Define that this argument must be a valid PHP namespace
-         *
-         * @return DefinedArg $this
-         */
-        public function setMustBeValidNamespace()
-        {
-                $this->flags |= self::FLAG_MUSTBEVALIDNAMESPACE;
-                return $this;
-        }
-
-        /**
-         * Define that this argument must be a valid folder on disk
-         *
-         * @return DefinedArg $this
-         */
-        public function setMustBeValidPath()
-        {
-                $this->flags |= self::FLAG_MUSTBEVALIDPATH;
-                return $this;
-        }
-
-        /**
-         * Define that this argument must be writeable (combine with
-         * $this->setMustBeValidFile() or $this->setMustBeValidPath())
-         *
-         * @return DefinedArg $this
-         */
-        public function setMustBeWriteable()
-        {
-                $this->flags |= self::FLAG_MUSTBEWRITEABLE;
+                $this->validators[] = $validator;
                 return $this;
         }
 
@@ -159,12 +102,11 @@ class DefinedArg
          */
         public function testIsOptional()
         {
-                if ($this->flags & self::FLAG_ISREQUIRED)
+                if ($this->isRequired == false)
                 {
-                        return false;
+                        return true;
                 }
-
-                return true;
+                return false;
         }
 
         /**
@@ -174,87 +116,51 @@ class DefinedArg
          */
         public function testIsRequired()
         {
-                if ($this->flags & self::FLAG_ISREQUIRED)
+                return $this->isRequired;
+        }
+
+        /**
+         * Does this arg have a specific validator defined?
+         * 
+         * @param string $validatorName
+         * @return boolean
+         */
+        public function testMustValidateWith($validatorName)
+        {
+                foreach ($this->validators as $validator)
                 {
-                        return true;
+                        if (get_class($validator) == $validatorName)
+                        {
+                                return true;
+                        }
                 }
 
                 return false;
         }
 
         /**
-         * Must this argument be a valid command?
+         * Test a value to see if it is a permitted value for this argument
          *
-         * @return boolean
+         * We return an array of error messages. If the value is valid,
+         * the returned array will be empty.
+         *
+         * @param mixed $value
+         * @return array
          */
-        public function testMustBeValidCommand()
+        public function testIsValid($value)
         {
-                if ($this->flags & self::FLAG_MUSTBEVALIDCOMMAND)
+                foreach ($this->validators as $validator)
                 {
-                        return true;
+                        if (!$validator->isValid($value))
+                        {
+                                // validation failed
+                                return $validator->getMessages();
+                        }
                 }
 
-                return false;
-        }
-
-        /**
-         * Must this argument be a valid file?
-         *
-         * @return boolean
-         */
-        public function testMustBeValidFile()
-        {
-                if ($this->flags & self::FLAG_MUSTBEVALIDFILE)
-                {
-                        return true;
-                }
-
-                return false;
-        }
-
-        /**
-         * Must this argument be a valid namespace?
-         *
-         * @return boolean
-         */
-        public function testMustBeValidNamespace()
-        {
-                if ($this->flags & self::FLAG_MUSTBEVALIDNAMESPACE)
-                {
-                        return true;
-                }
-
-                return false;
-        }
-
-        /**
-         * Must this argument be a valid path?
-         *
-         * @return boolean
-         */
-        public function testMustBeValidPath()
-        {
-                if ($this->flags & self::FLAG_MUSTBEVALIDPATH)
-                {
-                        return true;
-                }
-
-                return false;
-        }
-
-        /**
-         * Must this argument be writeable?
-         *
-         * @return boolean
-         */
-        public function testMustBeWriteable()
-        {
-                if ($this->flags & self::FLAG_MUSTBEWRITEABLE)
-                {
-                        return true;
-                }
-
-                return false;
+                // if we get here, then the value is valid
+                // we return an empty array
+                return array();
         }
 
         /**

@@ -44,6 +44,8 @@
 
 namespace Phin_Project\CommandLineLib;
 
+use Phin_Project\ValidationLib\ValidatorInterface;
+
 class DefinedSwitch
 {
         public $name;
@@ -150,37 +152,10 @@ class DefinedSwitch
                 return $this;
         }
 
-        public function setArgMustBeValidCommand()
+        public function setArgValidator(ValidatorInterface $validator)
         {
                 $this->requireValidArg();
-                $this->arg->setMustBeValidCommand();
-                return $this;
-        }
-
-        public function setArgMustBeValidNamespace()
-        {
-                $this->requireValidArg();
-                $this->arg->setMustBeValidNamespace();
-                return $this;
-        }
-
-        /**
-         * Tell the argument that the user must provide a valid path to
-         * a folder
-         * 
-         * @return DefinedSwitch
-         */
-        public function setArgMustBeValidPath()
-        {
-                $this->requireValidArg();
-                $this->arg->setMustBeValidPath();
-                return $this;
-        }
-
-        public function setArgMustBeValidFile()
-        {
-                $this->requireValidArg();
-                $this->arg->setMustBeValidFile();
+                $this->arg->setValidator($validator);
                 return $this;
         }
 

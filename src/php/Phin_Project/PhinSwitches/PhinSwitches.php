@@ -44,6 +44,7 @@
 
 namespace Phin_Project\PhinSwitches;
 use Phin_Project\CommandLineLib\DefinedOptions;
+use Phin_Project\ValidationLib\MustBeValidPath;
 
 class PhinSwitches
 {
@@ -87,7 +88,7 @@ class PhinSwitches
                         ->setWithShortSwitch('I')
                         ->setWithLongSwitch('include')
                         ->setWithRequiredArg('<path>', 'The path to the folder to include')
-                        ->setArgMustBeValidPath()
+                        ->setArgValidator(new MustBeValidPath())
                         ->setSwitchIsRepeatable();
         }
 }

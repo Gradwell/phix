@@ -102,6 +102,26 @@ class ParsedOptions
                 return $this->invokeCount[$switchName];
         }
 
+        public function getMergedSwitchValues($defaults)
+        {
+                $return = array();
+
+                foreach ($defaults as $name => $defaultValue)
+                {
+                        // have we seen this switch?
+                        if ($this->testHasSwitch($name))
+                        {
+                                $return[$name] = $this->getArgsForSwitch($name);
+                        }
+                        else
+                        {
+                                $return[$name][] = $defaultValue;
+                        }
+                }
+
+                return $return;
+        }
+
         protected function requireValidSwitchName($switchName)
         {
                 if (!$this->testHasSwitch($switchName))
