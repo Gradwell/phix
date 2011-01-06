@@ -50,7 +50,7 @@ use Phin_Project\CommandLineLib\ParsedOptions;
 
 use Phin_Project\PhinSwitches\PhinSwitches;
 
-class Main
+class Phin
 {
         protected $libraryNamespaces = array();
         
@@ -127,7 +127,7 @@ class Main
                 // that command
 
                 $parser = new CommandLineParser();
-                return $parser->parseSwitches($argv, $context->phinDefinedOptions);
+                return $parser->parseSwitches($argv, 1, $context->phinDefinedOptions);
         }
 
         protected function processPhinSwitchesBeforeExtensionLoad(Context $context, ParsedOptions $parsedOptions)

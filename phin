@@ -5,5 +5,5 @@ require_once("vendor/lib/gwc.autoloader.php");
 __gwc_autoload_alsoSearch(__DIR__ . "/vendor/lib");
 __gwc_autoload_alsoSearch(__DIR__ . "/src/php");
 
-$tool = new \Phin_Project\Phin\Main();
+$tool = new \Phin_Project\Phin\Phin();
 return $tool->main($argv);
