@@ -46,13 +46,13 @@ namespace Phin_Project\CommandLineLib;
 
 class CommandLineParser
 {
-        public function parseSwitches($args, DefinedOptions $expectedOptions, $argIndex = 1)
+        public function parseSwitches($args, $argIndex, DefinedOptions $expectedOptions)
         {
                 // make sure $expectedOptions knows what switches have been defined
                 $expectedOptions->allSwitchesAreLoaded();
 
                 // create our return values
-                $parsedOptions = new ParsedOptions();
+                $parsedOptions = new ParsedOptions($expectedOptions);                
                 $argCount = count($args);
                 
                 // let's work through the args from left to right
@@ -89,6 +89,17 @@ class CommandLineParser
                         }
                 }
 
+                // now, we need to merge in the default values for any
+                // arguments that have not been specified by the user
+                $defaultValues = $expectedOptions->getDefaultValues();
+                foreach ($defaultValues as $name => $value)
+                {
+                        if ($value !== null)
+                        {
+                                $parsedOptions->addDefaultValue($expectedOptions, $name, $value);
+                        }
+                }
+                
                 return array($parsedOptions, $argIndex);
         }
 
@@ -111,7 +122,7 @@ class CommandLineParser
 
                         // yes it is
                         $switch = $expectedOptions->getShortSwitch($shortSwitch);
-                        $arg    = null;
+                        $arg    = true;
 
                         // should it have an argument?
                         if ($switch->testHasArgument())
@@ -155,8 +166,17 @@ class CommandLineParser
                                 }
                         }
 
+			// did the switch have an arg, in the end?
+			// if not, we add it with the value 'true'
+			// to make our parsedOptions more useful to
+			// the caller
+			if ($arg === null)
+			{
+				$arg = true;
+			}
+
                         // var_dump("Adding switch " . $switch->name);
-                        $parsedOptions->addSwitch($switch, $arg);
+                        $parsedOptions->addSwitch($expectedOptions, $switch->name, $arg);
                 }
 
                 // increment our counter through the args
@@ -214,7 +234,11 @@ class CommandLineParser
                 $argIndex++;
 
                 // remember the switch we've parsed
-                $parsedOptions->addSwitch($switch, $arg);
+		if ($arg === null)
+		{
+			$arg = true;
+		}
+                $parsedOptions->addSwitch($expectedOptions, $switch->name, $arg);
 
                 // all done
                 return $argIndex;

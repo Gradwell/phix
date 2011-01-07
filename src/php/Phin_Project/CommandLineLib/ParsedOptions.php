@@ -46,27 +46,87 @@ namespace Phin_Project\CommandLineLib;
 
 class ParsedOptions
 {
-        protected $switchesByName = array();
-        protected $argsForSwitches = array();
-        protected $invokeCount = array();
+        /**
+         *
+         * @var array
+         */
+        protected $switchesByName  = array();
 
-        public function addSwitch(DefinedSwitch $switch, $arg = null)
+        /**
+         *
+         * @var array
+         */
+	protected $switchesByOrder = array();
+
+        public function addSwitch(DefinedOptions $expectedOptions, $name, $arg = true)
         {
-                // store the switch if we haven't seen it before
-                if (!isset($this->switchesByName[$switch->name]))
+                $this->requireValidExpectedSwitchName($expectedOptions, $name);
+                $this->addSwitchByName($expectedOptions, $name, $arg);
+                $this->addSwitchByOrder($expectedOptions, $name, $arg);
+        }
+
+        protected function addSwitchByName(DefinedOptions $expectedOptions, $name, $arg, $isDefaultValue = false)
+        {
+                if (!isset($this->switchesByName[$name]))
                 {
-                        $this->switchesByName[$switch->name] = $switch;
-                        $this->argsForSwitches[$switch->name] = array();
-                        $this->invokeCount[$switch->name] = 0;
+                        $this->switchesByName[$name] = new ParsedSwitch($expectedOptions->getSwitchByName($name));
+                }
+                $this->switchesByName[$name]->addToInvokeCount();
+                $this->switchesByName[$name]->addValue($arg);
+
+                if ($isDefaultValue)
+                {
+                        $this->switchesByName[$name]->setIsUsingDefaultValue();
+                }
+        }
+
+        protected function addSwitchByOrder(DefinedOptions $expectedOptions, $name, $arg, $isDefaultValue = false)
+        {
+                $parsedOption = new ParsedSwitch($expectedOptions->getSwitchByName($name));
+                $parsedOption->addToInvokeCount();
+                $parsedOption->addValue($arg);
+                if ($isDefaultValue)
+                {
+                        $parsedOption->setIsUsingDefaultValue();
                 }
 
-                // keep track of how many times this switch has
-                // been used on the command line
-                $this->invokeCount[$switch->name]++;
+		$this->switchesByOrder[] = $parsedOption;
+        }
 
-                // keep track of the arguments passed in for
-                // this switch
-                $this->argsForSwitches[$switch->name][] = $arg;
+        public function addDefaultValue(DefinedOptions $expectedOptions, $switchName, $value)
+        {
+                $this->requireValidExpectedSwitchName($expectedOptions, $switchName);
+                $this->addDefaultValueToNamedSwitches($expectedOptions, $switchName, $value);
+                $this->addDefaultValueToOrderedSwitches($expectedOptions, $switchName, $value);
+        }
+
+        protected function addDefaultValueToNamedSwitches(DefinedOptions $expectedOptions, $switchName, $value)
+        {
+                // do we have a named switch already?
+                if (!isset($this->switchesByName[$switchName]))
+                {
+                        // no we do not
+                        $this->addSwitchByName($expectedOptions, $switchName, $value, true);
+                }
+                else
+                {
+                        // yes we do
+                        // do nothing
+                }
+        }
+
+        protected function addDefaultValueToOrderedSwitches(DefinedOptions $expectedOptions, $switchName, $value)
+        {
+                // has this switch already been invoked?
+                if (isset($this->switchesByName[$switchName]))
+                {
+                        // yes ... do nothing
+                        return;
+                }
+                else
+                {
+                        $this->addSwitchByOrder($expectedOptions, $name, $value, true);
+                }
         }
 
         public function testHasSwitch($switchName)
@@ -90,33 +150,43 @@ class ParsedOptions
                 return $this->switchesByName[$switchName];
         }
 
+	public function getSwitchesByOrder()
+	{
+		return $this->switchesByOrder;
+	}
+
         public function getArgsForSwitch($switchName)
         {
                 $this->requireValidSwitchName($switchName);
-                return $this->argsForSwitches[$switchName];
+                return $this->switchesByName[$switchName]->values;
+        }
+
+        public function getFirstArgForSwitch($switchName)
+        {
+                $this->requireValidSwitchName($switchName);
+                if (isset($this->switchesByName[$switchName]->values[0]))
+                {
+                        return $this->switchesByName[$switchName]->values[0];
+                }
+
+                // no argument found for the switch
+                return null;
         }
 
         public function getInvokeCountForSwitch($switchName)
         {
                 $this->requireValidSwitchName($switchName);
-                return $this->invokeCount[$switchName];
+                return $this->switchesByName[$switchName]->invokes;
         }
 
-        public function getMergedSwitchValues($defaults)
+        public function validateSwitchValues()
         {
                 $return = array();
 
-                foreach ($defaults as $name => $defaultValue)
+                // loop over the switches
+                foreach ($this->switchesByName as $name => $switch)
                 {
-                        // have we seen this switch?
-                        if ($this->testHasSwitch($name))
-                        {
-                                $return[$name] = $this->getArgsForSwitch($name);
-                        }
-                        else
-                        {
-                                $return[$name][] = $defaultValue;
-                        }
+                        array_merge($return, $switch->validateValues());
                 }
 
                 return $return;
@@ -125,6 +195,14 @@ class ParsedOptions
         protected function requireValidSwitchName($switchName)
         {
                 if (!$this->testHasSwitch($switchName))
+                {
+                        throw new \Exception("Unknown switch name " . $switchName);
+                }
+        }
+
+        protected function requireValidExpectedSwitchName(DefinedOptions $expectedOptions, $switchName)
+        {
+                if (!$expectedOptions->testHasSwitchByName($switchName))
                 {
                         throw new \Exception("Unknown switch name " . $switchName);
                 }

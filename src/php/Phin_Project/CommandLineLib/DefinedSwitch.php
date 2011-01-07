@@ -53,6 +53,10 @@ class DefinedSwitch
         public $longdesc;
         public $shortSwitches = array();
         public $longSwitches = array();
+
+        /**
+         * @var DefinedArg
+         */
         public $arg = null;
         public $flags = null;
 

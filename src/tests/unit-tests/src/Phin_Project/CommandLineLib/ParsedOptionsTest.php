@@ -48,14 +48,16 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanAddSwitch()
         {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+
                 // create the switch to add
                 $switchName = 'fred';
                 $switchDesc = 'trout';
-                $switch = new DefinedSwitch($switchName, $switchDesc);
+                $expectedOptions->addSwitch($switchName, $switchDesc);
 
-                // add the switch
-                $parsedOptions = new ParsedOptions();
-                $parsedOptions->addSwitch($switch);
+                // create the parsedOptions object
+                $parsedOptions = new ParsedOptions($expectedOptions);
 
                 // did it work?
                 $this->assertTrue($parsedOptions->testHasSwitch($switchName));
@@ -63,14 +65,16 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
 
         public function testCanCheckForSwitch()
         {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+
                 // create the switch to add
                 $switchName = 'fred';
                 $switchDesc = 'trout';
-                $switch = new DefinedSwitch($switchName, $switchDesc);
+                $expectedOptions->addSwitch($switchName, $switchDesc);
 
-                // add the switch
-                $parsedOptions = new ParsedOptions();
-                $parsedOptions->addSwitch($switch);
+                // create the parsedOptions object
+                $parsedOptions = new ParsedOptions($expectedOptions);
 
                 // did it work?
                 $this->assertTrue($parsedOptions->testHasSwitch($switchName));
@@ -78,62 +82,78 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
 
         public function testCanGetSwitchByName()
         {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+
                 // create the switches to add
                 $switchName1 = 'fred';
                 $switchDesc1 = 'trout';
-                $switch1 = new DefinedSwitch($switchName1, $switchDesc1);
+                $expectedOptions->addSwitch($switchName1, $switchDesc1);
+                $switch1 = $expectedOptions->getSwitchByName($switchName1);
 
                 $switchName2 = 'harry';
                 $switchDesc2 = 'salmon';
-                $switch2 = new DefinedSwitch($switchName2, $switchDesc2);
+                $expectedOptions->addSwitch($switchName2, $switchDesc2);
+                $switch2 = $expectedOptions->getSwitchByName($switchName2);
 
-                // add the switch
-                $parsedOptions = new ParsedOptions();
-                $parsedOptions->addSwitch($switch1);
-                $parsedOptions->addSwitch($switch2);
+                // create the parsedOptions object
+                $parsedOptions = new ParsedOptions($expectedOptions);
 
                 // did it work?
                 $retrievedSwitch1 = $parsedOptions->getSwitch($switchName1);
                 $retrievedSwitch2 = $parsedOptions->getSwitch($switchName2);
 
-                $this->assertSame($switch1, $retrievedSwitch1);
-                $this->assertSame($switch2, $retrievedSwitch2);
+                $this->assertTrue($retrievedSwitch1 instanceof ParsedSwitch);
+                $this->assertEquals($switch1->name, $retrievedSwitch1->name);
+                $this->assertSame($switch1, $retrievedSwitch1->definition);
+
+                $this->assertTrue($retrievedSwitch2 instanceof ParsedSwitch);
+                $this->assertEquals($switch2->name, $retrievedSwitch2->name);
+                $this->assertSame($switch2, $retrievedSwitch2->definition);
         }
 
         public function testCanGetAllSwitches()
         {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+
                 // create the switches to add
                 $switchName1 = 'fred';
                 $switchDesc1 = 'trout';
-                $switch1 = new DefinedSwitch($switchName1, $switchDesc1);
+                $expectedOptions->addSwitch($switchName1, $switchDesc1);
+                $switch1 = $expectedOptions->getSwitchByName($switchName1);
 
                 $switchName2 = 'harry';
                 $switchDesc2 = 'salmon';
-                $switch2 = new DefinedSwitch($switchName2, $switchDesc2);
+                $expectedOptions->addSwitch($switchName2, $switchDesc2);
+                $switch2 = $expectedOptions->getSwitchByName($switchName2);
 
-                // add the switch
-                $parsedOptions = new ParsedOptions();
-                $parsedOptions->addSwitch($switch1);
-                $parsedOptions->addSwitch($switch2);
+                // create the parsedOptions object
+                $parsedOptions = new ParsedOptions($expectedOptions);
 
                 // did it work?
                 $switches = $parsedOptions->getSwitches();
                 $this->assertEquals(2, count($switches));
-                $this->assertSame($switch1, $switches[$switchName1]);
-                $this->assertSame($switch2, $switches[$switchName2]);
+                $this->assertSame($switch1, $switches[$switchName1]->definition);
+                $this->assertSame($switch2, $switches[$switchName2]->definition);
         }
 
         public function testCanAddRepeatedSwitches()
         {
-                // create the switches to add
-                $switchName1 = 'fred';
-                $switchDesc1 = 'trout';
-                $switch1 = new DefinedSwitch($switchName1, $switchDesc1);
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
 
-                // add the switch
-                $parsedOptions = new ParsedOptions();
-                $parsedOptions->addSwitch($switch1);
-                $parsedOptions->addSwitch($switch1);
+                // create the switch to add
+                $switchName = 'fred';
+                $switchDesc = 'trout';
+                $expectedOptions->addSwitch($switchName, $switchDesc);
+
+                // create the parsedOptions object
+                $parsedOptions = new ParsedOptions($expectedOptions);
+
+                // repeat the switch
+                $parsedOptions->addSwitch($switchName);
+                $parsedOptions->addSwitch($switchName);
 
                 // did it work?
                 $switches = $parsedOptions->getSwitches();
@@ -179,5 +199,4 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals(count($args), $parsedOptions->getInvokeCountForSwitch($switchName1));
                 $this->assertEquals($args, $parsedOptions->getArgsForSwitch($switchName1));
         }
-
 }
