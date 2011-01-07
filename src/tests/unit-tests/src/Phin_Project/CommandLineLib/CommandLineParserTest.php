@@ -107,8 +107,6 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
                 $parser = new CommandLineParser();
                 list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
 
-                var_dump($parsedOptions);
-                
                 // did it work?
                 $this->assertTrue ($parsedOptions instanceof ParsedOptions);
                 $this->assertTrue (is_int($argsIndex));
