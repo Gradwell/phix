@@ -44,6 +44,9 @@
 
 namespace Phin_Project\CommandLineLib;
 
+use Phin_Project\ValidationLib\MustBeWriteable;
+use Phin_Project\ValidationLib\MustBeValidPath;
+
 class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanCreateDefinedSwitch()
@@ -115,6 +118,36 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 }
         }
 
+        public function testCanTestForShortSwitch()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $shortSwitch = 'h';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithShortSwitch($shortSwitch);
+
+                // has it worked?
+                $this->assertEquals($obj->name, $name);
+                $this->assertEquals($obj->desc, $desc);
+                $this->assertTrue($obj->testHasShortSwitch($shortSwitch));
+        }
+
+        public function testTestReturnsFalseIfShortSwitchNotDefined()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $shortSwitch = 'h';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithShortSwitch($shortSwitch);
+
+                // has it worked?
+                $this->assertEquals($obj->name, $name);
+                $this->assertEquals($obj->desc, $desc);
+                $this->assertFalse($obj->testHasShortSwitch('v'));
+        }
+
         public function testCanCreateWithLongSwitch()
         {
                 $name = 'help';
@@ -128,7 +161,6 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals($obj->name, $name);
                 $this->assertEquals($obj->desc, $desc);
                 $this->assertTrue($obj->testHasLongSwitch($longSwitch));
-
         }
 
         public function testCanCreateWithMultipleLongSwitches()
@@ -175,6 +207,36 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 }
         }
 
+        public function testCanTestForLongSwitch()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $longSwitch = 'help';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithLongSwitch($longSwitch);
+
+                // has it worked?
+                $this->assertEquals($obj->name, $name);
+                $this->assertEquals($obj->desc, $desc);
+                $this->assertTrue($obj->testHasLongSwitch($longSwitch));
+        }
+
+        public function testReturnsFalseIfLongSwitchNotDefined()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $longSwitch = 'help';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithLongSwitch($longSwitch);
+
+                // has it worked?
+                $this->assertEquals($obj->name, $name);
+                $this->assertEquals($obj->desc, $desc);
+                $this->assertFalse($obj->testHasLongSwitch('version'));
+        }
+
         public function testCanCreateWithMultipleMixedSwitches()
         {
                 $name = 'help';
@@ -212,13 +274,15 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 $shortSwitch = 'h';
 
                 $obj = new DefinedSwitch($name, $desc);
-                $obj->setWithShortSwitch($shortSwitch)
-                    ->setSwitchIsRepeatable();
+                $obj->setWithShortSwitch($shortSwitch);
 
                 // has it worked?
                 $this->assertEquals($obj->name, $name);
                 $this->assertEquals($obj->desc, $desc);
                 $this->assertTrue($obj->testHasShortSwitch($shortSwitch));
+                $this->assertFalse($obj->testIsRepeatable());
+
+                $obj->setSwitchIsRepeatable();
                 $this->assertTrue($obj->testIsRepeatable());
         }
 
@@ -285,5 +349,109 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($obj->testHasShortSwitch($shortSwitch));
                 $this->assertTrue($obj->testHasRequiredArgument());
                 $this->assertFalse($obj->testHasOptionalArgument());
+        }
+
+        public function testCanSetArgValidator()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $shortSwitch = 'h';
+
+                $argName = '<command>';
+                $argDesc = 'The <command> you want help with';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithShortSwitch($shortSwitch)
+                    ->setWithRequiredArg($argName, $argDesc)
+                    ->setArgHasDefaultValueOf('trout')
+                    ->setArgValidator(new MustBeWriteable());
+
+                // did it work?
+                $this->assertTrue($obj->arg->testMustValidateWith('Phin_Project\ValidationLib\MustBeWriteable'));
+        }
+
+        public function testCanTestForOptionalArguments()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $shortSwitch = 'h';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithShortSwitch($shortSwitch);
+
+                $this->assertEquals($obj->name, $name);
+                $this->assertEquals($obj->desc, $desc);
+                $this->assertTrue($obj->testHasShortSwitch($shortSwitch));
+
+                // if we try and test for an arg when none is defined,
+                // there should be no error
+                $this->assertFalse($obj->testHasArgument());
+                $this->assertFalse($obj->testHasOptionalArgument());
+                $this->assertFalse($obj->testHasRequiredArgument());
+        }
+
+        public function testCannotSetOptionsOnArgUntilItIsDefined()
+        {
+                $name = 'help';
+                $desc = 'display this help message';
+                $shortSwitch = 'h';
+
+                $obj = new DefinedSwitch($name, $desc);
+                $obj->setWithShortSwitch($shortSwitch);
+
+                $caughtException = false;
+                try
+                {
+                        $obj->setArgHasDefaultValueOf(0);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
+
+                $caughtException = false;
+                try
+                {
+                        $obj->setArgValidator(new MustBeValidPath());
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
+        }
+
+        public function testCanAutoGenerateAHumanReadableDesc()
+        {
+                $obj = new DefinedSwitch('include', 'add a folder to load commands from');
+                $obj->setLongDesc("phin finds all of its commands by searching PHP's include_path for files with "
+                                  . "the file extension '.phin.php'. If you want to phin to look in other folders "
+                                  . "without having to add them to PHP's include_path, use --include to tell phin "
+                                  . "to look in these folders."
+                                  . \PHP_EOL . \PHP_EOL
+                                  . "phin expects '<path>' to point to a folder that conforms to the PSR0 standard "
+                                  . "for autoloaders."
+                                  . \PHP_EOL . \PHP_EOL
+                                  . "For example, if your command is the class '\Me\Tools\ScheduledTask', phin would "
+                                  . "expect to autoload this class from the 'Me/Tools/ScheduledTask.phin.php' file."
+                                  . \PHP_EOL . \PHP_EOL
+                                  . "If your class lives in the './myApp/lib/Me/Tools' folder, you would call phin "
+                                  . "with 'phin --include=./myApp/lib'")
+                    ->setWithShortSwitch('I')
+                    ->setWithLongSwitch('include')
+                    ->setWithRequiredArg('<path>', 'The path to the folder to include')
+                    ->setArgValidator(new MustBeValidPath())
+                    ->setSwitchIsRepeatable();
+
+                $desc = $obj->getHumanReadableSwitchList();
+
+                $expectedArray = array
+                (
+                        "-I" => "-I",
+                        "--include" => "--include"
+                );
+
+                $this->assertEquals($expectedArray, $desc);
         }
 }

@@ -314,7 +314,7 @@ class DefinedSwitch
         {
                 if (! $this->arg instanceof DefinedArg)
                 {
-                        throw new Exception("You must set a require or an optional argument before you can set options on it");
+                        throw new \Exception("You must set a require or an optional argument before you can set options on it");
                 }
         }
 }
