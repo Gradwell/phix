@@ -44,6 +44,9 @@
 
 namespace Phin_Project\CommandLineLib;
 
+use Phin_Project\ValidationLib\MustBeString;
+use Phin_Project\ValidationLib\MustBeInteger;
+
 class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanAddSwitch()
@@ -62,6 +65,19 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
 
                 // did it work?
                 $this->assertTrue($parsedOptions->testHasSwitch($switchName));
+
+                // and what happens if we try to add a switch
+                // that has not been defined?
+                $caughtException = false;
+                try
+                {
+                        $parsedOptions->addSwitch($expectedOptions, 'harry');
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
         }
 
         public function testCanCheckForSwitch()
@@ -80,6 +96,9 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
 
                 // did it work?
                 $this->assertTrue($parsedOptions->testHasSwitch($switchName));
+
+                // if the switch is not there?
+                $this->assertFalse($parsedOptions->testHasSwitch('harry'));
         }
 
         public function testCanGetSwitchByName()
@@ -114,6 +133,74 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($retrievedSwitch2 instanceof ParsedSwitch);
                 $this->assertEquals($switch2->name, $retrievedSwitch2->name);
                 $this->assertSame($switch2, $retrievedSwitch2->definition);
+
+                // and if the switch is not there?
+                $caughtException = false;
+                try
+                {
+                        $parsedOptions->getSwitch('notdefined');
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
+        }
+
+        public function testCanGetSwitchArgValues()
+        {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+
+                $expectedOptions->addSwitch('fred', 'trout')
+                                ->setWithOptionalArg('<fish>', 'which kind of fish you like');
+
+                $parsedOptions = new ParsedOptions();
+                $parsedOptions->addSwitch($expectedOptions, 'fred', 'salmon');
+
+                // can we do this?
+                $retrievedArgs = $parsedOptions->getArgsForSwitch('fred');
+
+                // did it work?
+                $this->assertTrue(is_array($retrievedArgs));
+                $this->assertEquals(1, count($retrievedArgs));
+                $this->assertEquals('salmon', $retrievedArgs[0]);
+        }
+
+        public function testCanGetSwitchArgFirstValue()
+        {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+
+                $expectedOptions->addSwitch('fred', 'trout')
+                                ->setWithOptionalArg('<fish>', 'which kind of fish you like');
+
+                $parsedOptions = new ParsedOptions();
+                $parsedOptions->addSwitch($expectedOptions, 'fred', 'salmon');
+
+                // can we do this?
+                $retrievedArg = $parsedOptions->getFirstArgForSwitch('fred');
+
+                // did it work?
+                $this->assertEquals('salmon', $retrievedArg);
+        }
+
+        public function testReturnsTrueIfSwitchArgFirstValueMissing()
+        {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+
+                $expectedOptions->addSwitch('fred', 'trout')
+                                ->setWithOptionalArg('<fish>', 'which kind of fish you like');
+
+                $parsedOptions = new ParsedOptions();
+                $parsedOptions->addSwitch($expectedOptions, 'fred');
+
+                // can we do this?
+                $retrievedArg = $parsedOptions->getFirstArgForSwitch('fred');
+
+                // did it work?
+                $this->assertTrue($retrievedArg);
         }
 
         public function testCanGetAllSwitches()
@@ -206,5 +293,30 @@ class ParsedOptionsTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals(count($args), count($parsedOptions->getArgsForSwitch($switchName)));
                 $this->assertEquals(count($args), $parsedOptions->getInvokeCountForSwitch($switchName));
                 $this->assertEquals($args, $parsedOptions->getArgsForSwitch($switchName));
+        }
+
+        public function testCanValidateAllSwitchValuesInOneGo()
+        {
+                // define the options we are expecting
+                $expectedOptions = new DefinedOptions();
+                $switch1 = $expectedOptions->addSwitch('fred', 'desc 1')
+                         ->setWithOptionalArg("<fish>", 'the fish that fred likes most')
+                         ->setArgValidator(new MustBeString());
+
+                $switch2 = $expectedOptions->addSwitch('harry', 'desc 2')
+                         ->setWithOptionalArg('<sauce>', 'the sauce that harry likes most')
+                         ->setArgValidator(new MustBeInteger());
+
+                // add the parsed results
+                $parsedOptions = new ParsedOptions();
+                $parsedOptions->addSwitch($expectedOptions, 'fred', 'trout');
+                $parsedOptions->addSwitch($expectedOptions, 'harry', 'salmon');
+
+                // now, can we validate or not?
+                $results = $parsedOptions->validateSwitchValues();
+
+                // what happened?
+                $this->assertTrue(is_array($results));
+                $this->assertEquals(1, count($results));
         }
 }

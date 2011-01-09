@@ -127,10 +127,10 @@ class ParsedOptions
                 return $this->switchesByName[$switchName];
         }
 
-	public function getSwitchesByOrder()
-	{
-		return $this->switchesByOrder;
-	}
+        public function getSwitchesByOrder()
+        {
+                return $this->switchesByOrder;
+        }
 
         public function getArgsForSwitch($switchName)
         {
@@ -141,13 +141,7 @@ class ParsedOptions
         public function getFirstArgForSwitch($switchName)
         {
                 $this->requireValidSwitchName($switchName);
-                if (isset($this->switchesByName[$switchName]->values[0]))
-                {
-                        return $this->switchesByName[$switchName]->values[0];
-                }
-
-                // no argument found for the switch
-                return null;
+                return $this->switchesByName[$switchName]->values[0];
         }
 
         public function getInvokeCountForSwitch($switchName)
@@ -163,7 +157,8 @@ class ParsedOptions
                 // loop over the switches
                 foreach ($this->switchesByName as $name => $switch)
                 {
-                        array_merge($return, $switch->validateValues());
+                        $validationErrors = $switch->validateValues();
+                        $return = array_merge($return, $validationErrors);
                 }
 
                 return $return;

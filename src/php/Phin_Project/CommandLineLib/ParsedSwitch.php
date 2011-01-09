@@ -100,30 +100,20 @@ class ParsedSwitch
         {
                 $return = array();
 
-                // step 1: is the switch required?
-                if ($definition->testIsRequired())
+                // do we have any arguments at all?
+                if (!$this->definition->testHasArgument())
                 {
-                        // yes ... so has it been specified?
-                        // or does it have a default value?
-                        if ($this->invokes == 0 && count($this->values) == 0)
-                        {
-                                // missing switch
-                                $shortOrLongSwitches = $definition->getHumanReadableSwitches();
-                                $return[] = "expected switch " . explode(' | ', $shortOrLongSwitches);
-                                continue;
-                        }
+                        // no, so impossible to fail validation
+                        return $return;
                 }
 
-                // step 2: are all the arguments valid?
-                if ($definition->testHasArgument())
+                // are all the arguments valid?
+                foreach ($this->values as $value)
                 {
-                        foreach ($this->values as $value)
+                        $errors = $this->definition->arg->testIsValid($value);
+                        if (count($errors) > 0)
                         {
-                                $errors = $definition->arg->testIsValid($value);
-                                if (count($errors) > 0)
-                                {
-                                        $return = array_merge($return, $errors);
-                                }
+                                $return = array_merge($return, $errors);
                         }
                 }
 
