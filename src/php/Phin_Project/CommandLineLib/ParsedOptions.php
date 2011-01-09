@@ -96,37 +96,14 @@ class ParsedOptions
         public function addDefaultValue(DefinedOptions $expectedOptions, $switchName, $value)
         {
                 $this->requireValidExpectedSwitchName($expectedOptions, $switchName);
-                $this->addDefaultValueToNamedSwitches($expectedOptions, $switchName, $value);
-                $this->addDefaultValueToOrderedSwitches($expectedOptions, $switchName, $value);
-        }
-
-        protected function addDefaultValueToNamedSwitches(DefinedOptions $expectedOptions, $switchName, $value)
-        {
-                // do we have a named switch already?
-                if (!isset($this->switchesByName[$switchName]))
-                {
-                        // no we do not
-                        $this->addSwitchByName($expectedOptions, $switchName, $value, true);
-                }
-                else
-                {
-                        // yes we do
-                        // do nothing
-                }
-        }
-
-        protected function addDefaultValueToOrderedSwitches(DefinedOptions $expectedOptions, $switchName, $value)
-        {
-                // has this switch already been invoked?
+                // has this switch already been invoked by the user?
                 if (isset($this->switchesByName[$switchName]))
                 {
-                        // yes ... do nothing
+                        // yes
                         return;
                 }
-                else
-                {
-                        $this->addSwitchByOrder($expectedOptions, $name, $value, true);
-                }
+                $this->addSwitchByName($expectedOptions, $switchName, $value, true);
+                $this->addSwitchByOrder($expectedOptions, $switchName, $value, true);
         }
 
         public function testHasSwitch($switchName)

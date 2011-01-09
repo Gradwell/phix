@@ -140,4 +140,9 @@ class ParsedSwitch
 
                 return null;
         }
+
+        public function testIsDefaultValue()
+        {
+                return $this->isUsingDefaultValue;
+        }
 }

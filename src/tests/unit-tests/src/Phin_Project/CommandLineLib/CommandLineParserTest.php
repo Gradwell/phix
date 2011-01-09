@@ -125,11 +125,14 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($parsedOptions->testHasSwitch('version'));
 
                 $switches = $parsedOptions->getSwitchesByOrder();
-                $this->assertEquals(2, count($switches));
+                $this->assertEquals(3, count($switches));
                 $this->assertEquals('version', $switches[0]->name);
                 $this->assertTrue($switches[0]->values[0]);
                 $this->assertEquals('shortHelp', $switches[1]->name);
                 $this->assertTrue($switches[1]->values[0]);
+                $this->assertEquals('warnings', $switches[2]->name);
+                $this->assertEquals('all', $switches[2]->values[0]);
+                $this->assertTrue($switches[2]->testIsDefaultValue());
         }
 
         public function testCanParseShortSwitchWithArg()
@@ -382,11 +385,14 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($parsedOptions->testHasSwitch('version'));
 
                 $switches = $parsedOptions->getSwitchesByOrder();
-                $this->assertEquals(2, count($switches));
+                $this->assertEquals(3, count($switches));
                 $this->assertEquals('version', $switches[0]->name);
                 $this->assertTrue($switches[0]->values[0]);
                 $this->assertEquals('shortHelp', $switches[1]->name);
                 $this->assertTrue($switches[1]->values[0]);
+                $this->assertEquals('warnings', $switches[2]->name);
+                $this->assertEquals('all', $switches[2]->values[0]);
+                $this->assertTrue($switches[2]->testIsDefaultValue());
         }
 
         public function testParserThrowsExceptionWhenUnexpectedShortSwitch()
@@ -576,13 +582,18 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($parsedOptions->testHasSwitch('include'));
 
                 $switches = $parsedOptions->getSwitchesByOrder();
-                $this->assertEquals(3, count($switches));
+                $this->assertEquals(4, count($switches));
                 $this->assertEquals('version', $switches[0]->name);
                 $this->assertTrue($switches[0]->values[0]);
                 $this->assertEquals('shortHelp', $switches[1]->name);
                 $this->assertTrue($switches[1]->values[0]);
                 $this->assertEquals('include', $switches[2]->name);
                 $this->assertEquals('/fred', $switches[2]->values[0]);
+
+                // don't forget the switch with the default value
+                $this->assertEquals('warnings', $switches[3]->name);
+                $this->assertEquals('all', $switches[3]->values[0]);
+                $this->assertTrue($switches[3]->testIsDefaultValue());
         }
         
         public function testCanLumpShortSwitchesTogetherWithLastOneHavingAOptionalArgument()
