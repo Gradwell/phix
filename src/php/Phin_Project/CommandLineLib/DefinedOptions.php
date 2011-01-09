@@ -53,7 +53,12 @@ class DefinedOptions
         public $shortSwitches = array();
         public $longSwitches = array();
         public $switches = array();
-        public $args = array();
+
+        /**
+         *
+         * @var boolean
+         */
+        protected $allSwitchesLoaded = false;
 
         /**
          * Add a switch to the list of allowed switches
@@ -64,50 +69,18 @@ class DefinedOptions
          */
         public function addSwitch($name, $desc)
         {
+                // note that our cache of introspected switches
+                // is now invalid
+                $this->allSwitchesLoaded = false;
+
+                // create and add the switch
                 $this->switches[$name] = new DefinedSwitch($name, $desc);
+
+                // return the switch for further configuration
+                // by the caller
                 return $this->switches[$name];
         }
 
-        /**
-         * Tell this object that we've finished adding switches, so that
-         * it can work out what short and long switches have been defined
-         */
-        public function allSwitchesAreLoaded()
-        {
-                foreach ($this->switches as $switch)
-                {
-                        foreach ($switch->getShortSwitches() as $shortSwitch)
-                        {
-                                $this->shortSwitches[$shortSwitch] = $switch;
-                        }
-                        
-                        foreach ($switch->getLongSwitches() as $longSwitch)
-                        {
-                                $this->longSwitches[$longSwitch] = $switch;
-                        }
-                }
-        }
-
-        public function testHasArgByName($argName)
-        {
-                if (isset($this->args[$argName]))
-                {
-                        return true;
-                }
-
-                return false;
-        }
-
-        public function getArgByName($argName)
-        {
-                if (!isset($this->args[$argName]))
-                {
-                        throw new Exception('Unknown argument ' . $argName);
-                }
-
-                return $this->args[$argName];
-        }
-        
         public function testHasSwitchByName($switchName)
         {
                 if (isset($this->switches[$switchName]))
@@ -120,6 +93,9 @@ class DefinedOptions
         
         public function testHasShortSwitch($switch)
         {
+                // make sure the cache is complete
+                $this->ensureSwitchCacheIsComplete();
+
                 if (isset($this->shortSwitches[$switch]))
                 {
                         return true;
@@ -130,16 +106,22 @@ class DefinedOptions
 
         public function getShortSwitch($switchName)
         {
+                // make sure the cache is complete
+                $this->ensureSwitchCacheIsComplete();
+
                 if (isset($this->shortSwitches[$switchName]))
                 {
                         return $this->shortSwitches[$switchName];
                 }
 
-                throw new CommandException("unknown switch $switch");
+                throw new \Exception("unknown switch $switch");
         }
 
         public function testHasLongSwitch($switch)
         {
+                // make sure the cache is complete
+                $this->ensureSwitchCacheIsComplete();
+
                 if (isset($this->longSwitches[$switch]))
                 {
                         return true;
@@ -149,12 +131,15 @@ class DefinedOptions
         }
         public function getLongSwitch($switch)
         {
+                // make sure the cache is complete
+                $this->ensureSwitchCacheIsComplete();
+
                 if (isset($this->longSwitches[$switch]))
                 {
                         return $this->longSwitches[$switch];
                 }
 
-                throw new CommandException("unknown switch $switch");
+                throw new \Exception("unknown switch $switch");
         }
 
         public function getSwitchByName($name)
@@ -164,17 +149,7 @@ class DefinedOptions
                         return $this->switches[$name];
                 }
 
-                throw new CommandException("unknown switch $switch");
-        }
-
-        public function testHasListOfLongAndShortSwitches()
-        {
-                if (count($this->shortSwitches) == 0 && count($this->longSwitches) == 0)
-                {
-                        return false;
-                }
-
-                return true;
+                throw new \Exception("unknown switch $switch");
         }
 
         public function getSwitches()
@@ -199,5 +174,36 @@ class DefinedOptions
                 }
 
                 return $return;
+        }
+
+        /**
+         * Tell this object that we've finished adding switches, so that
+         * it can work out what short and long switches have been defined
+         */
+        protected function ensureSwitchCacheIsComplete()
+        {
+                // is the cache up to date?
+                if ($this->allSwitchesLoaded)
+                {
+                        // yes ... no action needed
+                        return;
+                }
+
+                // if we get here, the cache needs rebuilding
+                foreach ($this->switches as $switch)
+                {
+                        foreach ($switch->getShortSwitches() as $shortSwitch)
+                        {
+                                $this->shortSwitches[$shortSwitch] = $switch;
+                        }
+
+                        foreach ($switch->getLongSwitches() as $longSwitch)
+                        {
+                                $this->longSwitches[$longSwitch] = $switch;
+                        }
+                }
+
+                // all done
+                $this->allSwitchesLoaded = true;
         }
 }

@@ -61,8 +61,6 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $origSwitch = $obj->addSwitch($switchName, $switchDesc);
                 $origSwitch->setWithShortSwitch('h');
 
-                $obj->allSwitchesAreLoaded();
-
                 // did it work?
                 $this->assertTrue($obj->testHasSwitchByName($switchName));
         }
@@ -76,12 +74,25 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $origSwitch = $obj->addSwitch($switchName, $switchDesc);
                 $origSwitch->setWithShortSwitch('h');
 
-                $obj->allSwitchesAreLoaded();
-
                 // did it work?
                 $this->assertTrue($obj->testHasSwitchByName($switchName));
                 $retrievedSwitch = $obj->getSwitchByName($switchName);
                 $this->assertSame($origSwitch, $retrievedSwitch);
+
+                // what happens if we look for a switch that does
+                // not exist?
+                $notASwitchName = 'version';
+                $this->assertFalse($obj->testHasSwitchByName($notASwitchName));
+                $caughtException = false;
+                try
+                {
+                        $retrievedSwitch = $obj->getSwitchByName($notASwitchName);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
         }
 
         public function testCanRetrieveSwitchByShortSwitch()
@@ -94,8 +105,6 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $origSwitch->setWithShortSwitch('h')
                            ->setWithShortSwitch('?');
 
-                $obj->allSwitchesAreLoaded();
-
                 // did it work?
                 $this->assertTrue($obj->testHasSwitchByName($switchName));
                 $retrievedSwitch1 = $obj->getShortSwitch('h');
@@ -103,6 +112,21 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $retrievedSwitch2 = $obj->getShortSwitch('?');
                 $this->assertSame($origSwitch, $retrievedSwitch2);
                 $this->assertSame($retrievedSwitch1, $retrievedSwitch2);
+
+                // what happens if we try to retrieve a short switch
+                // that does not exist?
+                $notASwitchName = 'version';
+                $this->assertFalse($obj->testHasSwitchByName($notASwitchName));
+                $caughtException = false;
+                try
+                {
+                        $retrievedSwitch = $obj->getShortSwitch('v');
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
         }
 
         public function testCanRetrieveSwitchByLongSwitch()
@@ -115,8 +139,6 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $origSwitch->setWithLongSwitch('help')
                            ->setWithLongSwitch('?');
 
-                $obj->allSwitchesAreLoaded();
-
                 // did it work?
                 $this->assertTrue($obj->testHasSwitchByName($switchName));
                 $retrievedSwitch1 = $obj->getLongSwitch('help');
@@ -124,6 +146,21 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $retrievedSwitch2 = $obj->getLongSwitch('?');
                 $this->assertSame($origSwitch, $retrievedSwitch2);
                 $this->assertSame($retrievedSwitch1, $retrievedSwitch2);
+
+                // what happens if we try to retrieve a long switch
+                // that does not exist?
+                $notASwitchName = 'version';
+                $this->assertFalse($obj->testHasSwitchByName($notASwitchName));
+                $caughtException = false;
+                try
+                {
+                        $retrievedSwitch = $obj->getLongSwitch($notASwitchName);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
         }
 
         public function testCanRetrieveBothShortAndLongSwitches()
@@ -137,8 +174,6 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                            ->setWithShortSwitch('?')
                            ->setWithLongSwitch('help')
                            ->setWithLongSwitch('?');
-
-                $obj->allSwitchesAreLoaded();
 
                 // did it work?
                 $this->assertTrue($obj->testHasSwitchByName($switchName));
@@ -154,5 +189,38 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $this->assertSame($retrievedSwitch1, $retrievedSwitch2);
                 $this->assertSame($retrievedSwitch1, $retrievedSwitch3);
                 $this->assertSame($retrievedSwitch1, $retrievedSwitch4);
+        }
+
+        public function testCanRetrieveArrayOfAllSwitches()
+        {
+                $switch1Name = 'help';
+                $switch1Desc = 'Display this help message';
+
+                $obj = new DefinedOptions();
+                $switch1 = $obj->addSwitch($switch1Name, $switch1Desc);
+                $switch1->setWithShortSwitch('h')
+                        ->setWithShortSwitch('?')
+                        ->setWithLongSwitch('help')
+                        ->setWithLongSwitch('?');
+
+                $switch2Name = 'version';
+                $switch2Desc = 'Display the version number of this app';
+
+                $switch2 = $obj->addSwitch($switch2Name, $switch2Desc);
+                $switch2->setWithShortSwitch('v')
+                        ->setWithShortSwitch('?')
+                        ->setWithLongSwitch('?')
+                        ->setWithLongSwitch('version');
+
+                // did it work?
+                $switches = $obj->getSwitches();
+                $this->assertTrue(is_array($switches));
+                $this->assertEquals(2, count($switches));
+
+                $this->assertTrue(isset($switches[$switch1Name]));
+                $this->assertSame($switch1, $switches[$switch1Name]);
+
+                $this->assertTrue(isset($switches[$switch2Name]));
+                $this->assertSame($switch2, $switches[$switch2Name]);
         }
 }

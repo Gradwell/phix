@@ -48,9 +48,6 @@ class CommandLineParser
 {
         public function parseSwitches($args, $argIndex, DefinedOptions $expectedOptions)
         {
-                // make sure $expectedOptions knows what switches have been defined
-                $expectedOptions->allSwitchesAreLoaded();
-
                 // create our return values
                 $parsedOptions = new ParsedOptions($expectedOptions);                
                 $argCount = count($args);
