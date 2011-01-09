@@ -83,6 +83,12 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 			->setWithRequiredArg('<srcFolder>', 'path to the folder to load source code from')
 			->setArgHasDefaultValueOf('/usr/bin/php');
 
+                $options->addSwitch('warnings', 'enable warnings')
+                        ->setWithShortSwitch('W')
+                        ->setWithLongSwitch('warnings')
+                        ->setWithOptionalArg('<warnings>', 'comma-separated list of warnings to enable')
+                        ->setSwitchIsRepeatable();
+
                 return $options;
         }
 
@@ -330,5 +336,320 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
                 // did we get the include switch?
                 $this->assertEquals('shortHelp', $switches['shortHelp']->name);
                 $this->assertEquals('longHelp', $switches['longHelp']->name);
+        }
+
+        public function testParserStopsOnDoubleDash()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '-vh',
+                        '--',
+                        'help'
+                );
+
+                $parser = new CommandLineParser();
+                list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+
+                // did it work?
+                $this->assertTrue ($parsedOptions instanceof ParsedOptions);
+                $this->assertTrue (is_int($argsIndex));
+
+                $this->assertEquals(3, $argsIndex);
+                $this->assertTrue($parsedOptions->testHasSwitch('shortHelp'));
+                $this->assertTrue($parsedOptions->testHasSwitch('version'));
+
+                $switches = $parsedOptions->getSwitchesByOrder();
+                $this->assertEquals(2, count($switches));
+                $this->assertEquals('version', $switches[0]->name);
+                $this->assertTrue($switches[0]->values[0]);
+                $this->assertEquals('shortHelp', $switches[1]->name);
+                $this->assertTrue($switches[1]->values[0]);
+        }
+
+        public function testParserThrowsExceptionWhenUnexpectedShortSwitch()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '-vhx',
+                        'help'
+                );
+
+                $caughtException = false;
+                try
+                {
+                        $parser = new CommandLineParser();
+                        list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+
+                // did it work?
+                $this->assertTrue ($caughtException);
+        }
+
+        public function testParserThrowsExceptionWhenUnexpectedLongSwitch()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '--panic',
+                        'help'
+                );
+
+                $caughtException = false;
+                try
+                {
+                        $parser = new CommandLineParser();
+                        list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+
+                // did it work?
+                $this->assertTrue ($caughtException);
+        }
+
+        public function testParserThrowsExceptionWhenShortSwitchMissingArg()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '-I'
+                );
+
+                $caughtException = false;
+                try
+                {
+                        $parser = new CommandLineParser();
+                        list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                        $this->assertEquals("switch -I expected argument", $e->getMessage());
+                }
+
+                // did it work?
+                $this->assertTrue ($caughtException);
+        }
+
+        public function testParserThrowsExceptionWhenLongSwitchMissingArg()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '--include'
+                );
+
+                $caughtException = false;
+                try
+                {
+                        $parser = new CommandLineParser();
+                        list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                        $this->assertEquals("switch --include expected argument", $e->getMessage());
+                }
+
+                // did it work?
+                $this->assertTrue ($caughtException);
+
+                // there is more than one way to leave out an argument
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '--include='
+                );
+
+                $caughtException = false;
+                try
+                {
+                        $parser = new CommandLineParser();
+                        list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                        $this->assertEquals("switch --include expected argument", $e->getMessage());
+                }
+
+                // did it work?
+                $this->assertTrue ($caughtException);
+        }
+
+        public function testParserThrowsExceptionWhenSwitchInMiddleMissingArg()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '-vIh'
+                );
+
+                $caughtException = false;
+                try
+                {
+                        $parser = new CommandLineParser();
+                        list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                        $this->assertEquals("switch -I expected argument", $e->getMessage());
+                }
+
+                // did it work?
+                $this->assertTrue ($caughtException);
+        }
+
+        public function testCanLumpShortSwitchesTogetherWithLastOneRequiringAnArgument()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '-vhI',
+                        '/fred'
+                );
+
+                $parser = new CommandLineParser();
+                list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+
+                // did it work?
+                $this->assertTrue ($parsedOptions instanceof ParsedOptions);
+                $this->assertTrue (is_int($argsIndex));
+
+                $this->assertEquals(3, $argsIndex);
+                $this->assertTrue($parsedOptions->testHasSwitch('shortHelp'));
+                $this->assertTrue($parsedOptions->testHasSwitch('version'));
+                $this->assertTrue($parsedOptions->testHasSwitch('include'));
+
+                $switches = $parsedOptions->getSwitchesByOrder();
+                $this->assertEquals(3, count($switches));
+                $this->assertEquals('version', $switches[0]->name);
+                $this->assertTrue($switches[0]->values[0]);
+                $this->assertEquals('shortHelp', $switches[1]->name);
+                $this->assertTrue($switches[1]->values[0]);
+                $this->assertEquals('include', $switches[2]->name);
+                $this->assertEquals('/fred', $switches[2]->values[0]);
+        }
+        
+        public function testCanLumpShortSwitchesTogetherWithLastOneHavingAAArgument()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '-vhs',
+                );
+
+                $parser = new CommandLineParser();
+                list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+
+                // did it work?
+                $this->assertTrue ($parsedOptions instanceof ParsedOptions);
+                $this->assertTrue (is_int($argsIndex));
+
+                $this->assertEquals(3, $argsIndex);
+                $this->assertTrue($parsedOptions->testHasSwitch('shortHelp'));
+                $this->assertTrue($parsedOptions->testHasSwitch('version'));
+                $this->assertTrue($parsedOptions->testHasSwitch('srcFolder'));
+
+                $switches = $parsedOptions->getSwitchesByOrder();
+                $this->assertEquals(3, count($switches));
+                $this->assertEquals('version', $switches[0]->name);
+                $this->assertTrue($switches[0]->values[0]);
+                $this->assertEquals('shortHelp', $switches[1]->name);
+                $this->assertTrue($switches[1]->values[0]);
+                $this->assertEquals('srcFolder', $switches[2]->name);
+                $this->assertEquals('/usr/bin/php', $switches[2]->values[0]);
+        }
+
+        public function testSwitchesCanHaveOptionalArgs()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '--warnings',
+                );
+
+                $parser = new CommandLineParser();
+                list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+
+                // did it work?
+                $this->assertTrue ($parsedOptions instanceof ParsedOptions);
+
+                $this->assertTrue (is_int($argsIndex));
+                $this->assertEquals(2, $argsIndex);
+
+                $this->assertTrue($parsedOptions->testHasSwitch('warnings'));
+
+                $switches = $parsedOptions->getSwitches();
+                $this->assertEquals(2, count($switches));
+                $this->assertEquals('warnings', $switches['warnings']->name);
+                $this->assertTrue($switches['warnings']->values[0]);
+        }
+
+        public function testOptionalArgsCanHaveValues()
+        {
+                $options = $this->setupOptions();
+                $this->assertTrue($options instanceof DefinedOptions);
+
+                $argv = array
+                (
+                        'phinTest',
+                        '--warnings=all',
+                );
+
+                $parser = new CommandLineParser();
+                list($parsedOptions, $argsIndex) = $parser->parseSwitches($argv, 1, $options);
+
+                // did it work?
+                $this->assertTrue ($parsedOptions instanceof ParsedOptions);
+
+                $this->assertTrue (is_int($argsIndex));
+                $this->assertEquals(2, $argsIndex);
+
+                $this->assertTrue($parsedOptions->testHasSwitch('warnings'));
+
+                $switches = $parsedOptions->getSwitches();
+                $this->assertEquals(2, count($switches));
+                $this->assertEquals('warnings', $switches['warnings']->name);
+                $this->assertEquals('all', $switches['warnings']->values[0]);
         }
 }

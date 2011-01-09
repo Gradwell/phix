@@ -126,10 +126,10 @@ class CommandLineParser
 
                         // should it have an argument?
                         if ($switch->testHasArgument())
-                        {
+                        {                                
                                 // yes, but it may be optional
                                 // are we the first switch in this string?
-                                if ($j = 1)
+                                if ($j == 1)
                                 {
                                         // assume the rest of the string is the argument
                                         if ($j != $switchStringLength - 1)
@@ -150,30 +150,21 @@ class CommandLineParser
                                 }
                                 else
                                 {
-                                        // are we at the end of the list of switches?
-                                        if ($j != $switchLength - 1)
+                                        // are we at the end of the list of switches?                                        
+                                        if ($j != $switchStringLength - 1)
                                         {
                                                 // no, we are not
                                                 // this is invalid behaviour
-                                                throw new \Exception('switch ' . $shortSwitch . ' expected argument');
+                                                throw new \Exception('switch -' . $shortSwitch . ' expected argument');
                                         }
 
-                                        $arg = $this->parseArgument($args[$argIndex + 1], 0, $switch, '-' . $shortSwitch);
+                                        $arg = $this->parseArgument($args, $argIndex + 1, 0, $switch, '-' . $shortSwitch);
                                         if ($arg !== null)
                                         {
                                                 $argIndex++;
                                         }
                                 }
                         }
-
-			// did the switch have an arg, in the end?
-			// if not, we add it with the value 'true'
-			// to make our parsedOptions more useful to
-			// the caller
-			if ($arg === null)
-			{
-				$arg = true;
-			}
 
                         // var_dump("Adding switch " . $switch->name);
                         $parsedOptions->addSwitch($expectedOptions, $switch->name, $arg);
@@ -259,6 +250,10 @@ class CommandLineParser
                                 // yes it is
                                 $arg = substr($args[$argIndex], $startFrom);
                         }
+                        else
+                        {
+                                $arg = $switch->arg->defaultValue;
+                        }
                 }
                 else
                 {
@@ -273,13 +268,13 @@ class CommandLineParser
 
                         // yes it is
                         $arg = substr($args[$argIndex], $startFrom);
-                }
 
-                // did we get an argument?
-                if (strlen(trim($arg)) == 0)
-                {
-                        // no, we did not
-                        throw new \Exception('switch ' . $switchSeen . ' expected argument');
+                        // did we get an argument?
+                        if (strlen(trim($arg)) == 0)
+                        {
+                                // no, we did not
+                                throw new \Exception('switch ' . $switchSeen . ' expected argument');
+                        }
                 }
 
                 return $arg;
