@@ -51,9 +51,12 @@ class CommandLineParser
                 // create our return values
                 $parsedOptions = new ParsedOptions($expectedOptions);                
                 $argCount = count($args);
+
+                // var_dump($args);
                 
                 // let's work through the args from left to right
-                while ($argIndex < $argCount)
+                $done = false;
+                while ($argIndex < $argCount && !$done)
                 {
                         // are we looking at a switch or not?
                         if ($args[$argIndex] == '--')
@@ -62,21 +65,23 @@ class CommandLineParser
                                 // special case - end of switches
                                 // skip over it
                                 $argIndex++;
-                                break;
+                                $done = true;
                         }                        
                         else if ($args[$argIndex]{0} !== '-')
                         {
                                 // var_dump('Not a switch');
                                 // special case - end of switches
-                                break;
+                                $done = true;
                         }
                         // yes we are ... parse it
                         // is it a short switch or a long switch?
                         else if ($args[$argIndex]{1} !== '-')
                         {
                                 // var_dump('Parsing short switch');
+                                // var_dump('$argIndex is: ' . $argIndex);
                                 // it is a short switch
                                 $argIndex = $this->parseShortSwitch($args, $argIndex, $parsedOptions, $expectedOptions);
+                                // var_dump('$argIndex is now: ' . $argIndex);
                         }
                         else
                         {
@@ -91,7 +96,7 @@ class CommandLineParser
                 $defaultValues = $expectedOptions->getDefaultValues();
                 foreach ($defaultValues as $name => $value)
                 {
-                        if ($value !== null)
+                        if ($value !== null && $expectedOptions->getSwitchByName($name)->testHasOptionalArgument())
                         {
                                 $parsedOptions->addDefaultValue($expectedOptions, $name, $value);
                         }
@@ -102,8 +107,8 @@ class CommandLineParser
 
         protected function parseShortSwitch($args, $argIndex, ParsedOptions $parsedOptions, DefinedOptions $expectedOptions)
         {
-                // $args[$i] contains one or more short switches, which
-                // we expect to be defined in $options
+                // $args[$argIndex] contains one or more short switches,
+                // which we expect to be defined in $expectedOptions
 
                 $switchStringLength = strlen($args[$argIndex]);
                 for ($j = 1; $j < $switchStringLength; $j++)
@@ -131,18 +136,14 @@ class CommandLineParser
                                         // assume the rest of the string is the argument
                                         if ($j != $switchStringLength - 1)
                                         {
-                                                $arg = $this->parseArgument($args, $argIndex, 2, $switch, '-' . $shortSwitch);
+                                                list($arg, $argIndex) = $this->parseArgument($args, $argIndex, 2, $switch, '-' . $shortSwitch);
                                                 // we've finished with this string,
                                                 // so set $j to exit the loop
                                                 $j = $switchStringLength - 1;
                                         }
                                         else
                                         {
-                                                $arg = $this->parseArgument($args, $argIndex + 1, 0, $switch, '-' . $shortSwitch);
-                                                if ($arg !== null)
-                                                {
-                                                        $argIndex++;
-                                                }
+                                                list($arg, $argIndex) = $this->parseArgument($args, $argIndex + 1, 0, $switch, '-' . $shortSwitch);
                                         }
                                 }
                                 else
@@ -155,11 +156,7 @@ class CommandLineParser
                                                 throw new \Exception('switch -' . $shortSwitch . ' expected argument');
                                         }
 
-                                        $arg = $this->parseArgument($args, $argIndex + 1, 0, $switch, '-' . $shortSwitch);
-                                        if ($arg !== null)
-                                        {
-                                                $argIndex++;
-                                        }
+                                        list($arg, $argIndex) = $this->parseArgument($args, $argIndex + 1, 0, $switch, '-' . $shortSwitch);
                                 }
                         }
 
@@ -205,27 +202,18 @@ class CommandLineParser
                         if ($equalsPos !== false)
                         {
                                 // yes we did
-                                $arg = $this->parseArgument($args, $argIndex, $equalsPos + 1, $switch, '--' . $longSwitch);
+                                list($arg, $argIndex) = $this->parseArgument($args, $argIndex, $equalsPos + 1, $switch, '--' . $longSwitch);
                         }
                         else
                         {
                                 // no we did not; it might be next
-                                $arg = $this->parseArgument($args, $argIndex + 1, 0, $switch, '--' . $longSwitch);
-                                if ($arg !== null)
-                                {
-                                        $argIndex++;
-                                }
+                                list($arg, $argIndex) = $this->parseArgument($args, $argIndex + 1, 0, $switch, '--' . $longSwitch);
                         }
                 }
 
                 // increment to the next item in the list
                 $argIndex++;
 
-                // remember the switch we've parsed
-		if ($arg === null)
-		{
-			$arg = true;
-		}
                 $parsedOptions->addSwitch($expectedOptions, $switch->name, $arg);
 
                 // all done
@@ -250,6 +238,7 @@ class CommandLineParser
                         else
                         {
                                 $arg = $switch->arg->defaultValue;
+                                $argIndex--;
                         }
                 }
                 else
@@ -274,6 +263,6 @@ class CommandLineParser
                         }
                 }
 
-                return $arg;
+                return array($arg, $argIndex);
         }
 }

@@ -153,7 +153,6 @@ class DefinedSwitch
         {
                 $this->requireValidArg();
                 $this->arg->setDefaultValue($value);
-                $this->arg->setIsOptional();
                 return $this;
         }
 
