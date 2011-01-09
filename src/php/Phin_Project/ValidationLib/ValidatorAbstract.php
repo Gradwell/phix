@@ -75,6 +75,16 @@ abstract class ValidatorAbstract implements ValidatorInterface
                 return $this->errorMsgs;
         }
 
+        public function hasMessages()
+        {
+                if (count($this->errorMsgs) > 0)
+                {
+                        return true;
+                }
+
+                return false;
+        }
+        
         protected function _setValue($value)
         {
                 $this->value = $value;

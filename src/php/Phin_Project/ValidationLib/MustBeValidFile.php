@@ -65,6 +65,6 @@ class MustBeValidFile extends ValidatorAbstract
                         $isValid = false;
                 }
 
-                return true;
+                return $isValid;
         }
 }
