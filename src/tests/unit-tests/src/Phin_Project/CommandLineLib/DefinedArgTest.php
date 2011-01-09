@@ -152,4 +152,78 @@ class DefinedArgTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals($desc, $obj->desc);
                 $this->assertEquals('help', $obj->defaultValue);
         }
+
+        public function testCanCheckToSeeIfAnArgMustValidateWithANamedValidator()
+        {
+                $name = '<command>';
+                $desc = 'The <command> you need help with';
+
+                $obj = new DefinedArg($name, $desc);
+                $obj->setValidator(new MustBeWriteable());
+
+                // did it work?
+                $this->assertEquals($name, $obj->name);
+                $this->assertEquals($desc, $obj->desc);
+                $this->assertTrue($obj->testIsOptional());
+                $this->assertTrue($obj->testMustValidateWith('Phin_Project\ValidationLib\MustBeWriteable'));
+                $this->assertFalse($obj->testMustValidateWith('Phin_Project\ValidationLib\MustBeValidFile'));
+        }
+        
+        public function testAnExceptionIsNotThrownIfValidatorClassDoesNotExist()
+        {
+                $name = '<command>';
+                $desc = 'The <command> you need help with';
+
+                $obj = new DefinedArg($name, $desc);
+                $obj->setValidator(new MustBeWriteable());
+
+                // did it work?
+                $this->assertEquals($name, $obj->name);
+                $this->assertEquals($desc, $obj->desc);
+                $this->assertTrue($obj->testIsOptional());
+                $this->assertFalse($obj->testMustValidateWith('Phin_Project\ValidationLib\MustNotBeWriteable'));
+        }
+
+        public function testCanValidateAnArgsValue()
+        {
+                $name = '<command>';
+                $desc = 'The <command> you need help with';
+
+                $obj = new DefinedArg($name, $desc);
+                $obj->setValidator(new MustBeValidFile());
+
+                $this->assertEquals($name, $obj->name);
+                $this->assertEquals($desc, $obj->desc);
+                $this->assertTrue($obj->testIsOptional());
+                $this->assertTrue($obj->testMustValidateWith('Phin_Project\ValidationLib\MustBeValidFile'));
+
+                // now, validate the data
+                $return = $obj->testIsValid(__FILE__);
+                $this->assertTrue(is_array($return));
+                $this->assertEquals(0, count($return));
+        }
+
+        public function testGetsErrorMessagesWhenValidationFails()
+        {
+                $name = '<command>';
+                $desc = 'The <command> you need help with';
+
+                $obj = new DefinedArg($name, $desc);
+                $obj->setValidator(new MustBeValidPath());
+
+                $this->assertEquals($name, $obj->name);
+                $this->assertEquals($desc, $obj->desc);
+                $this->assertTrue($obj->testIsOptional());
+                $this->assertTrue($obj->testMustValidateWith('Phin_Project\ValidationLib\MustBeValidPath'));
+
+                // now, validate the data
+                $return = $obj->testIsValid(__FILE__);
+                $this->assertTrue(is_array($return));
+                $this->assertEquals(1, count($return));
+
+                // we do not need to test the actual error message here
+                // as the error message may change in future releases
+                //
+                // simply having an error message is enough
+        }
 }
