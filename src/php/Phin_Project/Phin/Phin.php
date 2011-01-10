@@ -68,10 +68,8 @@ class Phin
                 // step 1: parse the command-line args
                 // we do this first because it may change where we look
                 // for our commands
-                $context->phinDefinedSwitches = $this->buildPhinOptions();
+                $context->phinDefinedSwitches = $this->buildPhinSwitches();
                 list($phinParsedSwitches, $argsIndex) = $this->parsePhinArgs($context, $argv);
-
-		var_dump($phinParsedSwitches);
 
                 // step 2: process the switches we have just parsed
                 //
@@ -111,13 +109,13 @@ class Phin
                 return $errCode;
         }
         
-        protected function buildPhinOptions()
+        protected function buildPhinSwitches()
         {
-                $options = new DefinedSwitches();
-                \Phin_Project\PhinSwitches\PhinSwitches::buildOptions($options);
+                $switches = new DefinedSwitches();
+                \Phin_Project\PhinSwitches\PhinSwitches::buildSwitches($switches);
 
                 // all done
-                return $options;
+                return $switches;
         }
 
         protected function parsePhinArgs(Context $context, $argv)

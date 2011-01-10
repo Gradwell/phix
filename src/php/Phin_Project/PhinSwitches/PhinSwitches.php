@@ -48,31 +48,31 @@ use Phin_Project\ValidationLib\MustBeValidPath;
 
 class PhinSwitches
 {
-        static public function buildOptions(DefinedSwitches $options)
+        static public function buildSwitches(DefinedSwitches $switches)
         {
                 // phin -h || phin -?
-                $options->addSwitch('shortHelp', 'display a summary of the command-line structure')
-                        ->setWithShortSwitch('h')
-                        ->setWithShortSwitch('?');
+                $switches->addSwitch('shortHelp', 'display a summary of the command-line structure')
+                         ->setWithShortSwitch('h')
+                         ->setWithShortSwitch('?');
 
                 // phin --help || phin --?
-                $options->addSwitch('longHelp', 'display a full list of supported commands')
-                        ->setWithLongSwitch('help')
-                        ->setWithLongSwitch('?');
+                $switches->addSwitch('longHelp', 'display a full list of supported commands')
+                         ->setWithLongSwitch('help')
+                         ->setWithLongSwitch('?');
                 
                 // phin -v || phin --version
-                $options->addSwitch('version', 'display phin version number')
-                        ->setWithShortSwitch('v')
-                        ->setWithLongSwitch('version');
+                $switches->addSwitch('version', 'display phin version number')
+                         ->setWithShortSwitch('v')
+                         ->setWithLongSwitch('version');
 
                 // phin -d || phin --debug
-                $options->addSwitch('debug', 'enable debugging output')
-                        ->setWithShortSwitch('d')
-                        ->setWithLongSwitch('debug');
+                $switches->addSwitch('debug', 'enable debugging output')
+                         ->setWithShortSwitch('d')
+                         ->setWithLongSwitch('debug');
 
                 // phin -I<path> || phin --include=<path>
-                $options->addSwitch('include', 'add a folder to load commands from')
-                        ->setLongDesc("phin finds all of its commands by searching PHP's include_path for files with "
+                $switches->addSwitch('include', 'add a folder to load commands from')
+                         ->setLongDesc("phin finds all of its commands by searching PHP's include_path for files with "
                                         . "the file extension '.phin.php'. If you want to phin to look in other folders "
                                         . "without having to add them to PHP's include_path, use --include to tell phin "
                                         . "to look in these folders."
@@ -85,10 +85,10 @@ class PhinSwitches
                                         . \PHP_EOL . \PHP_EOL
                                         . "If your class lives in the './myApp/lib/Me/Tools' folder, you would call phin "
                                         . "with 'phin --include=./myApp/lib'")
-                        ->setWithShortSwitch('I')
-                        ->setWithLongSwitch('include')
-                        ->setWithRequiredArg('<path>', 'The path to the folder to include')
-                        ->setArgValidator(new MustBeValidPath())
-                        ->setSwitchIsRepeatable();
+                         ->setWithShortSwitch('I')
+                         ->setWithLongSwitch('include')
+                         ->setWithRequiredArg('<path>', 'The path to the folder to include')
+                         ->setArgValidator(new MustBeValidPath())
+                         ->setSwitchIsRepeatable();
         }
 }
