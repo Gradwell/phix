@@ -73,4 +73,187 @@ class ParsedSwitchTest extends \PHPUnit_Framework_TestCase
                 // did the parsed switch remember its defintion?
                 $this->assertSame($def, $obj->definition);
         }
+
+        public function testCanIncreaseInvokeCount()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                $this->assertEquals(0, $obj->invokes);
+                $obj->addToInvokeCount();
+                $this->assertEquals(1, $obj->invokes);
+        }
+
+        public function testCanAddAValue()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                $this->assertTrue(is_array($obj->values));
+                $this->assertEquals(0, count($obj->values));
+
+                $obj->addValue('alice');
+                $this->assertEquals(1, count($obj->values));
+                $this->assertEquals('alice', $obj->values[0]);
+
+                $obj->addValue('joanne');
+                $this->assertEquals(2, count($obj->values));
+                $this->assertEquals('joanne', $obj->values[1]);
+        }
+
+        public function testCanRetrieveFirstValue()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                $this->assertTrue(is_array($obj->values));
+                $this->assertEquals(0, count($obj->values));
+
+                $obj->addValue('alice');
+                $this->assertEquals(1, count($obj->values));
+                $this->assertEquals('alice', $obj->values[0]);
+
+                $obj->addValue('joanne');
+                $this->assertEquals(2, count($obj->values));
+                $this->assertEquals('joanne', $obj->values[1]);
+
+                // okay ... so can we retrieve the first value correctly?
+                $this->assertEquals('alice', $obj->getFirstValue());
+        }
+
+        public function testGetFirstValueReturnsNullWhenNoValues()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                $this->assertTrue(is_array($obj->values));
+                $this->assertEquals(0, count($obj->values));
+
+                // getFirstValue() should return null now
+                $this->assertEquals(null, $obj->getFirstValue());
+        }
+
+        public function testCanSetIsUsingDefaultValue()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                $this->assertFalse($obj->isUsingDefaultValue);
+                $obj->setIsUsingDefaultValue();
+                $this->assertTrue($obj->isUsingDefaultValue);
+        }
+
+        public function testValidationRetunsEmptyArrayIfNothingToValidate()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                $result = $obj->validateValues();
+                $this->assertTrue(is_array($result));
+                $this->assertEquals(0, count($result));
+        }
+
+        public function testValidationReturnsEmptyArrayIfAllValidationsPass()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+                $def->setWithRequiredArg('harry', 'harry does love his food');
+                $def->setArgValidator(new MustBeString());
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                // add a value for the validator
+                $obj->addValue('trout');
+
+                // run the validation
+                $result = $obj->validateValues();
+                $this->assertTrue(is_array($result));
+                $this->assertEquals(0, count($result));
+        }
+
+        public function testValidationReturnsArrayOfErrorsIfValidationsFail()
+        {
+                // first, we need a definition
+                $name = 'Fred';
+                $desc = 'Fred is a jolly fellow';
+
+                $def = new DefinedSwitch($name, $desc);
+                $this->assertEquals($def->name, $name);
+                $this->assertEquals($def->desc, $desc);
+                $def->setWithRequiredArg('harry', 'harry does love his food');
+                $def->setArgValidator(new MustBeInteger());
+
+                // now, we use the definition to create
+                // the ParsedSwitch
+                $obj = new ParsedSwitch($def);
+
+                // add a value for the validator
+                $obj->addValue('trout');
+
+                // run the validation
+                $result = $obj->validateValues();
+                $this->assertTrue(is_array($result));
+                $this->assertEquals(1, count($result));
+        }
 }

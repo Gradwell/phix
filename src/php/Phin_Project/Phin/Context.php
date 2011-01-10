@@ -61,7 +61,7 @@ class Context
          */
         public $stderr = null;
 
-        public $phinDefinedOptions = null;
+        public $phinDefinedSwitches = null;
         public $searchPaths = array();
 
         public $version = '@@PACKAGE_VERSION@@';

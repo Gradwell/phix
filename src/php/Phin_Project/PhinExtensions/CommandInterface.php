@@ -44,7 +44,7 @@
 
 namespace Phin_Project\PhinExtensions;
 use Phin_Project\Phin\CommandsList;
-use Phin_Project\CommandLineLib\DefinedOptions;
+use Phin_Project\CommandLineLib\DefinedSwitches;
 
 interface CommandInterface
 {

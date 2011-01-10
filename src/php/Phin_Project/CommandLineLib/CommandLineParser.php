@@ -46,10 +46,10 @@ namespace Phin_Project\CommandLineLib;
 
 class CommandLineParser
 {
-        public function parseSwitches($args, $argIndex, DefinedOptions $expectedOptions)
+        public function parseSwitches($args, $argIndex, DefinedSwitches $expectedOptions)
         {
                 // create our return values
-                $parsedOptions = new ParsedOptions($expectedOptions);                
+                $ParsedSwitches = new ParsedSwitches($expectedOptions);                
                 $argCount = count($args);
 
                 // var_dump($args);
@@ -80,14 +80,14 @@ class CommandLineParser
                                 // var_dump('Parsing short switch');
                                 // var_dump('$argIndex is: ' . $argIndex);
                                 // it is a short switch
-                                $argIndex = $this->parseShortSwitch($args, $argIndex, $parsedOptions, $expectedOptions);
+                                $argIndex = $this->parseShortSwitch($args, $argIndex, $ParsedSwitches, $expectedOptions);
                                 // var_dump('$argIndex is now: ' . $argIndex);
                         }
                         else
                         {
                                 // var_dump('Parsing long switch');
                                 // it is a long switch
-                                $argIndex = $this->parseLongSwitch($args, $argIndex, $parsedOptions, $expectedOptions);
+                                $argIndex = $this->parseLongSwitch($args, $argIndex, $ParsedSwitches, $expectedOptions);
                         }
                 }
 
@@ -98,14 +98,14 @@ class CommandLineParser
                 {
                         if ($value !== null && $expectedOptions->getSwitchByName($name)->testHasOptionalArgument())
                         {
-                                $parsedOptions->addDefaultValue($expectedOptions, $name, $value);
+                                $ParsedSwitches->addDefaultValue($expectedOptions, $name, $value);
                         }
                 }
                 
-                return array($parsedOptions, $argIndex);
+                return array($ParsedSwitches, $argIndex);
         }
 
-        protected function parseShortSwitch($args, $argIndex, ParsedOptions $parsedOptions, DefinedOptions $expectedOptions)
+        protected function parseShortSwitch($args, $argIndex, ParsedSwitches $ParsedSwitches, DefinedSwitches $expectedOptions)
         {
                 // $args[$argIndex] contains one or more short switches,
                 // which we expect to be defined in $expectedOptions
@@ -161,7 +161,7 @@ class CommandLineParser
                         }
 
                         // var_dump("Adding switch " . $switch->name);
-                        $parsedOptions->addSwitch($expectedOptions, $switch->name, $arg);
+                        $ParsedSwitches->addSwitch($expectedOptions, $switch->name, $arg);
                 }
 
                 // increment our counter through the args
@@ -171,7 +171,7 @@ class CommandLineParser
                 return $argIndex;
         }
 
-        protected function parseLongSwitch($args, $argIndex, ParsedOptions $parsedOptions, DefinedOptions $expectedOptions)
+        protected function parseLongSwitch($args, $argIndex, ParsedSwitches $ParsedSwitches, DefinedSwitches $expectedOptions)
         {
                 // $args[i] contains a long switch, and might contain
                 // a parameter too
@@ -214,7 +214,7 @@ class CommandLineParser
                 // increment to the next item in the list
                 $argIndex++;
 
-                $parsedOptions->addSwitch($expectedOptions, $switch->name, $arg);
+                $ParsedSwitches->addSwitch($expectedOptions, $switch->name, $arg);
 
                 // all done
                 return $argIndex;

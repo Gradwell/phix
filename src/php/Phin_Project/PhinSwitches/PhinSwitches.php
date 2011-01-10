@@ -43,12 +43,12 @@
  */
 
 namespace Phin_Project\PhinSwitches;
-use Phin_Project\CommandLineLib\DefinedOptions;
+use Phin_Project\CommandLineLib\DefinedSwitches;
 use Phin_Project\ValidationLib\MustBeValidPath;
 
 class PhinSwitches
 {
-        static public function buildOptions(DefinedOptions $options)
+        static public function buildOptions(DefinedSwitches $options)
         {
                 // phin -h || phin -?
                 $options->addSwitch('shortHelp', 'display a summary of the command-line structure')

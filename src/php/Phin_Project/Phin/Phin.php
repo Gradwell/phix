@@ -45,8 +45,8 @@
 namespace Phin_Project\Phin;
 
 use Phin_Project\CommandLineLib\CommandLineParser;
-use Phin_Project\CommandLineLib\DefinedOptions;
-use Phin_Project\CommandLineLib\ParsedOptions;
+use Phin_Project\CommandLineLib\DefinedSwitches;
+use Phin_Project\CommandLineLib\ParsedSwitches;
 
 use Phin_Project\PhinSwitches\PhinSwitches;
 
@@ -68,8 +68,10 @@ class Phin
                 // step 1: parse the command-line args
                 // we do this first because it may change where we look
                 // for our commands
-                $context->phinDefinedOptions = $this->buildPhinOptions();
+                $context->phinDefinedSwitches = $this->buildPhinOptions();
                 list($phinParsedSwitches, $argsIndex) = $this->parsePhinArgs($context, $argv);
+
+		var_dump($phinParsedSwitches);
 
                 // step 2: process the switches we have just parsed
                 //
@@ -111,7 +113,7 @@ class Phin
         
         protected function buildPhinOptions()
         {
-                $options = new DefinedOptions();
+                $options = new DefinedSwitches();
                 \Phin_Project\PhinSwitches\PhinSwitches::buildOptions($options);
 
                 // all done
@@ -127,20 +129,20 @@ class Phin
                 // that command
 
                 $parser = new CommandLineParser();
-                return $parser->parseSwitches($argv, 1, $context->phinDefinedOptions);
+                return $parser->parseSwitches($argv, 1, $context->phinDefinedSwitches);
         }
 
-        protected function processPhinSwitchesBeforeExtensionLoad(Context $context, ParsedOptions $parsedOptions)
+        protected function processPhinSwitchesBeforeExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
         {
                 // what switches do we have?
-                $parsedSwitches = $parsedOptions->getSwitches();
+                $parsedSwitches = $ParsedSwitches->getSwitches();
 
                 // let's deal with them
                 foreach ($parsedSwitches as $parsedSwitch)
                 {
                         $switchName = $parsedSwitch->name;
                         $className = '\\Phin_Project\\PhinSwitches\\' . ucfirst($switchName) . 'Switch';
-                        $errCode = $className::processBeforeExtensionLoad($context, $parsedOptions->getArgsForSwitch($switchName));
+                        $errCode = $className::processBeforeExtensionLoad($context, $ParsedSwitches->getArgsForSwitch($switchName));
                         if ($errCode !== null)
                         {
                                 return $errCode;
@@ -152,17 +154,17 @@ class Phin
                 return null;
         }
 
-        protected function loadPhinExtensions(Context $context, ParsedOptions $parsedOptions)
+        protected function loadPhinExtensions(Context $context, ParsedSwitches $ParsedSwitches)
         {
                 // create something to find the commands
                 $extensionsFinder = new ExtensionsFinder();
 
                 // seed the commandsFinder with a list of where to look
                 // if the user has given us any hints
-                if ($parsedOptions->testHasSwitch("include"))
+                if ($ParsedSwitches->testHasSwitch("include"))
                 {
-                        $switch = $parsedOptions->getSwitch("include");
-                        $args   = $parsedOptions->getArgsForSwitch("include");
+                        $switch = $ParsedSwitches->getSwitch("include");
+                        $args   = $ParsedSwitches->getArgsForSwitch("include");
 
                         foreach ($args as $path)
                         {
@@ -178,17 +180,17 @@ class Phin
                 return $commandsList;
         }
 
-        protected function processPhinSwitchesAfterExtensionLoad(Context $context, ParsedOptions $parsedOptions)
+        protected function processPhinSwitchesAfterExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
         {
                 // what switches do we have?
-                $parsedSwitches = $parsedOptions->getSwitches();
+                $parsedSwitches = $ParsedSwitches->getSwitches();
 
                 // let's deal with them
                 foreach ($parsedSwitches as $parsedSwitch)
                 {
                         $switchName = $parsedSwitch->name;
                         $className = '\\Phin_Project\\PhinSwitches\\' . ucfirst($switchName) . 'Switch';
-                        $errCode = $className::processAfterExtensionLoad($context, $parsedOptions->getArgsForSwitch($switchName));
+                        $errCode = $className::processAfterExtensionLoad($context, $ParsedSwitches->getArgsForSwitch($switchName));
                         if ($errCode !== null)
                         {
                                 return $errCode;

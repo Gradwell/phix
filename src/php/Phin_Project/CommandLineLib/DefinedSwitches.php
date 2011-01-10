@@ -44,7 +44,7 @@
 
 namespace Phin_Project\CommandLineLib;
 
-class DefinedOptions
+class DefinedSwitches
 {
         const FLAG_NONE = 0;
         const FLAG_HASPARAM = 1;

@@ -44,11 +44,11 @@
 
 namespace Phin_Project\CommandLineLib;
 
-class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
+class DefinedSwitchesTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanCreateOptions()
         {
-                $obj = new DefinedOptions();
+                $obj = new DefinedSwitches();
                 $this->assertTrue(true);
         }
 
@@ -57,7 +57,7 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $switchName = 'help';
                 $switchDesc = 'Display this help message';
 
-                $obj = new DefinedOptions();
+                $obj = new DefinedSwitches();
                 $origSwitch = $obj->addSwitch($switchName, $switchDesc);
                 $origSwitch->setWithShortSwitch('h');
 
@@ -70,7 +70,7 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $switchName = 'help';
                 $switchDesc = 'Display this help message';
 
-                $obj = new DefinedOptions();
+                $obj = new DefinedSwitches();
                 $origSwitch = $obj->addSwitch($switchName, $switchDesc);
                 $origSwitch->setWithShortSwitch('h');
 
@@ -100,7 +100,7 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $switchName = 'help';
                 $switchDesc = 'Display this help message';
 
-                $obj = new DefinedOptions();
+                $obj = new DefinedSwitches();
                 $origSwitch = $obj->addSwitch($switchName, $switchDesc);
                 $origSwitch->setWithShortSwitch('h')
                            ->setWithShortSwitch('?');
@@ -134,7 +134,7 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $switchName = 'help';
                 $switchDesc = 'Display this help message';
 
-                $obj = new DefinedOptions();
+                $obj = new DefinedSwitches();
                 $origSwitch = $obj->addSwitch($switchName, $switchDesc);
                 $origSwitch->setWithLongSwitch('help')
                            ->setWithLongSwitch('?');
@@ -168,7 +168,7 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $switchName = 'help';
                 $switchDesc = 'Display this help message';
 
-                $obj = new DefinedOptions();
+                $obj = new DefinedSwitches();
                 $origSwitch = $obj->addSwitch($switchName, $switchDesc);
                 $origSwitch->setWithShortSwitch('h')
                            ->setWithShortSwitch('?')
@@ -196,7 +196,7 @@ class DefinedOptionsTest extends \PHPUnit_Framework_TestCase
                 $switch1Name = 'help';
                 $switch1Desc = 'Display this help message';
 
-                $obj = new DefinedOptions();
+                $obj = new DefinedSwitches();
                 $switch1 = $obj->addSwitch($switch1Name, $switch1Desc);
                 $switch1->setWithShortSwitch('h')
                         ->setWithShortSwitch('?')

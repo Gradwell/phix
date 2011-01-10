@@ -44,7 +44,7 @@
 
 namespace Phin_Project\PhinExtensions;
 use Phin_Project\Phin\Context;
-use Phin_Project\CommandLineLib\DefinedOptions;
+use Phin_Project\CommandLineLib\DefinedSwitches;
 use Phin_Project\CommandLineLib\DefinedSwitch;
 
 class CommandBase implements CommandInterface
@@ -79,7 +79,7 @@ class CommandBase implements CommandInterface
          * 
          * @param array $parsedSwitches
          * @param array $parsedArgs
-         * @param DefinedOptions $validOptions
+         * @param DefinedSwitches $validOptions
          */
         public function validateAndExecute($argv, $argsIndex, Context $context)
         {
@@ -105,7 +105,7 @@ class CommandBase implements CommandInterface
                 $this->showImplementationDetails($context);
         }
 
-        protected function calculateSwitchDisplayOrder(DefinedOptions $options)
+        protected function calculateSwitchDisplayOrder(DefinedSwitches $options)
         {
                 // turn the list into something that's suitably sorted
                 $shortSwitchesWithoutArgs = array();

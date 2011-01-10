@@ -44,7 +44,7 @@
 
 namespace Phin_Project\CommandLineLib;
 
-class ParsedOptions
+class ParsedSwitches
 {
         /**
          *
@@ -58,14 +58,14 @@ class ParsedOptions
          */
 	protected $switchesByOrder = array();
 
-        public function addSwitch(DefinedOptions $expectedOptions, $name, $arg = true)
+        public function addSwitch(DefinedSwitches $expectedOptions, $name, $arg = true)
         {
                 $this->requireValidExpectedSwitchName($expectedOptions, $name);
                 $this->addSwitchByName($expectedOptions, $name, $arg);
                 $this->addSwitchByOrder($expectedOptions, $name, $arg);
         }
 
-        protected function addSwitchByName(DefinedOptions $expectedOptions, $name, $arg, $isDefaultValue = false)
+        protected function addSwitchByName(DefinedSwitches $expectedOptions, $name, $arg, $isDefaultValue = false)
         {
                 if (!isset($this->switchesByName[$name]))
                 {
@@ -80,7 +80,7 @@ class ParsedOptions
                 }
         }
 
-        protected function addSwitchByOrder(DefinedOptions $expectedOptions, $name, $arg, $isDefaultValue = false)
+        protected function addSwitchByOrder(DefinedSwitches $expectedOptions, $name, $arg, $isDefaultValue = false)
         {
                 $parsedOption = new ParsedSwitch($expectedOptions->getSwitchByName($name));
                 $parsedOption->addToInvokeCount();
@@ -93,7 +93,7 @@ class ParsedOptions
 		$this->switchesByOrder[] = $parsedOption;
         }
 
-        public function addDefaultValue(DefinedOptions $expectedOptions, $switchName, $value)
+        public function addDefaultValue(DefinedSwitches $expectedOptions, $switchName, $value)
         {
                 $this->requireValidExpectedSwitchName($expectedOptions, $switchName);
                 // has this switch already been invoked by the user?
@@ -172,7 +172,7 @@ class ParsedOptions
                 }
         }
 
-        protected function requireValidExpectedSwitchName(DefinedOptions $expectedOptions, $switchName)
+        protected function requireValidExpectedSwitchName(DefinedSwitches $expectedOptions, $switchName)
         {
                 if (!$expectedOptions->testHasSwitchByName($switchName))
                 {

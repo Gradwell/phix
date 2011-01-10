@@ -47,7 +47,7 @@ namespace Phin_Project\PhinCommands;
 use Phin_Project\Phin\CommandsList;
 use Phin_Project\Phin\Context;
 use Phin_Project\PhinExtensions\CommandBase;
-use Phin_Project\CommandLineLib\DefinedOptions;
+use Phin_Project\CommandLineLib\DefinedSwitches;
 use Phin_Project\CommandLineLib\DefinedSwitch;
 
 class HelpCommand extends CommandBase
@@ -126,7 +126,7 @@ class HelpCommand extends CommandBase
                 $allShortSwitches = array();
                 $allLongSwitches = array();
 
-                $allSwitches = $context->phinDefinedOptions->getSwitches();
+                $allSwitches = $context->phinDefinedSwitches->getSwitches();
 
                 foreach ($allSwitches as $switch)
                 {
