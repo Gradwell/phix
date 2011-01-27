@@ -94,9 +94,10 @@ class CommandLineParser
                 // now, we need to merge in the default values for any
                 // arguments that have not been specified by the user
                 $defaultValues = $expectedOptions->getDefaultValues();
+                
                 foreach ($defaultValues as $name => $value)
                 {
-                        if ($value !== null && $expectedOptions->getSwitchByName($name)->testHasOptionalArgument())
+                        if ($value !== null && $expectedOptions->getSwitchByName($name)->testHasArgument())
                         {
                                 $ParsedSwitches->addDefaultValue($expectedOptions, $name, $value);
                         }
