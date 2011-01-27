@@ -243,58 +243,72 @@ class ConsoleDisplay
                 while (\strlen($string) > 0)
                 {
                         // step 1: are we at the beginning of the line?
-                        if ($this->currentLineLength < $this->indent)
-                        {
-                                $indent = $this->indent - $this->currentLineLength;
-                                // we need to write out the indent
-                                \fwrite($fp, \str_repeat(' ', $indent));
-                                $this->currentLineLength += $indent;
-                        }
+                        $this->outputLineIndent($fp);
 
                         // step 2: do we need to split the line?
-                        if ($this->currentLineLength + \strlen($string) <= $this->wrapAt)
+                        if (!$this->doesStringNeedWrapping($string))
                         {
                                 // no; just output and go
                                 \fwrite($fp, $string);
                                 $this->currentLineLength += \strlen($string);
-                                return;
-                        }
-
-                        // if we get here, the string needs wrapping (if possible)
-                        $rawWrapPoint = $this->wrapAt - $this->currentLineLength;
-                        $wrapPoint = $rawWrapPoint;
-                        while ($wrapPoint > 0 && !isset($separators[$string{$wrapPoint}]))
-                        {
-                                $wrapPoint--;
-                        }
-
-                        if ($wrapPoint == 0)
-                        {
-                                // we will have to wrap in the middle of this
-                                // silly length string
-                                if (\strlen($string) > $this->wrapAt)
-                                {
-                                        $wrapPoint = $rawWrapPoint;
-                                }
-                        }
-
-                        if ($wrapPoint > 0)
-                        {
-                                \fwrite($fp, \substr($string, 0, $wrapPoint) . \PHP_EOL);
-                                if (isset($whitespace[$string{$wrapPoint}]))
-                                {
-                                        $wrapPoint++;
-                                }
-                                $string = \substr($string, $wrapPoint);
+                                $string = '';
                         }
                         else
                         {
-                                \fwrite($fp, PHP_EOL);
+                                // if we get here, the string needs wrapping (if possible)
+                                $rawWrapPoint = $this->wrapAt - $this->currentLineLength;
+                                $wrapPoint = $rawWrapPoint;
+                                while ($wrapPoint > 0 && !isset($separators[$string{$wrapPoint}]))
+                                {
+                                        $wrapPoint--;
+                                }
+
+                                if ($wrapPoint == 0)
+                                {
+                                        // we will have to wrap in the middle of this
+                                        // silly length string
+                                        if (\strlen($string) > $this->wrapAt)
+                                        {
+                                                $wrapPoint = $rawWrapPoint;
+                                        }
+                                }
+
+                                if ($wrapPoint > 0)
+                                {
+                                        \fwrite($fp, \substr($string, 0, $wrapPoint) . \PHP_EOL);
+                                        if (isset($whitespace[$string{$wrapPoint}]))
+                                        {
+                                                $wrapPoint++;
+                                        }
+                                        $string = \substr($string, $wrapPoint);
+                                }
+                                else
+                                {
+                                        \fwrite($fp, PHP_EOL);
+                                }
+                                $this->currentLineLength = 0;
                         }
-                        $this->currentLineLength = 0;
+                }
+        }
+
+        protected function outputLineIndent($fp)
+        {
+                if ($this->currentLineLength < $this->indent)
+                {
+                        $indent = $this->indent - $this->currentLineLength;
+                        // we need to write out the indent
+                        \fwrite($fp, \str_repeat(' ', $indent));
+                        $this->currentLineLength += $indent;
+                }
+        }
+
+        protected function doesStringNeedWrapping($string)
+        {
+                if ($this->currentLineLength + \strlen($string) <= $this->wrapAt)
+                {
+                        return false;
                 }
 
-                // this line is always unreachable
-                return;
+                return true;
         }
 }
