@@ -44,34 +44,22 @@
 
 namespace Phin_Project\ValidationLib;
 
-class MustBeWriteable extends ValidatorAbstract
+interface Validator
 {
-        const MSG_ISNOTWRITEABLE = 'msgIsNotWriteable';
-        const MSG_DOESNOTEXIST   = 'msgDoesNotExist';
+        /**
+         * Test a value to see if it is valid or not
+         *
+         * @return boolean
+         */
+        public function isValid($value);
 
-        protected $_messageTemplates = array
-        (
-                self::MSG_DOESNOTEXIST  => "'%value%' does not exist; file or directory expected",
-                self::MSG_ISNOTWRITEABLE => "'%value%' exists, but is not writeable",
-        );
-
-        public function isValid($value)
-        {
-                $this->_setValue($value);
-
-                $isValid = true;
-
-                if (!\file_exists($value))
-                {
-                        $this->_error(self::MSG_DOESNOTEXIST);
-                        $isValid = false;
-                }
-                else if (!\is_writable($value))
-                {
-                        $this->_error(self::MSG_ISNOTWRITEABLE);
-                        $isValid = false;
-                }
-
-                return $isValid;
-        }
+        /**
+         * Retrieve a list of the error messages if isValid() returned
+         * FALSE
+         *
+         * If isValid() returned TRUE, this will return an empty array
+         *
+         * @return array
+         */
+        public function getMessages();
 }

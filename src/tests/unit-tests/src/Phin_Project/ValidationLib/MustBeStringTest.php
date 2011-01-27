@@ -44,16 +44,16 @@
 
 namespace Phin_Project\ValidationLib;
 
-class MustBeIntegerTest extends ValidationLibTestBase
+class MustBeStringTest extends ValidationLibTestBase
 {
         /**
          *
-         * @return MustBeInteger 
+         * @return MustBeString
          */
         protected function setupObj()
         {
                 // setup the test
-                $obj = new MustBeInteger();
+                $obj = new MustBeString();
                 $messages = $obj->getMessages();
                 $this->assertTrue(is_array($messages));
                 $this->assertEquals(0, count($messages));
@@ -65,47 +65,45 @@ class MustBeIntegerTest extends ValidationLibTestBase
         {
                 $obj = $this->setupObj();
                 $this->doTestIsValid($obj, '0');
-                $this->doTestIsNotValid($obj, 'fred', array("'fred' (of type string) is not a valid integer"));
+                $this->doTestIsValid($obj, 'fred');
         }
 
         public function testCorrectlyDetectsNulls()
         {
                 $obj = $this->setupObj();
-                $this->doTestIsNotValid($obj, null, array("'' (of type NULL) is not a valid integer"));
+                $this->doTestIsNotValid($obj, null, array("'' (of type NULL) is not a valid string"));
         }
 
         public function testCorrectlyDetectsIntegers()
         {
                 $obj = $this->setupObj();
-                $this->doTestIsValid($obj, 0);
                 $this->doTestIsValid($obj, 1);
-                $this->doTestIsValid($obj, -1);
         }
 
         public function testCorrectlyDetectsFloats()
         {
                 $obj = $this->setupObj();
-                $this->doTestIsNotValid($obj, 3.145297, array("'3.145297' (of type double) is not a valid integer"));
+                $this->doTestIsValid($obj, 3.145297);
         }
 
         public function testCorrectlyDetectsObjects()
         {
                 $obj = $this->setupObj();
-                $this->doTestIsNotValid($obj, $obj, array("'Phin_Project\ValidationLib\MustBeInteger' (of type object) is not a valid integer"));
+                $this->doTestIsNotValid($obj, $obj, array("'Phin_Project\ValidationLib\MustBeString' (of type object) is not a valid string"));
         }
 
         public function testCorrectlyDetectsResources()
         {
                 $obj = $this->setupObj();
                 $res = fopen('php://input', 'r');
-                $this->doTestIsNotValid($obj, $res, array("'' (of type resource) is not a valid integer"));
+                $this->doTestIsNotValid($obj, $res, array("'' (of type resource) is not a valid string"));
         }
 
         public function testCorrectlyDetectsBooleans()
         {
                 $obj = $this->setupObj();
-                $this->doTestIsNotValid($obj, true, array("'TRUE' (of type boolean) is not a valid integer"));
-                $this->doTestIsNotValid($obj, false, array("'FALSE' (of type boolean) is not a valid integer"));
+                $this->doTestIsNotValid($obj, true, array("'TRUE' (of type boolean) is not a valid string"));
+                $this->doTestIsNotValid($obj, false, array("'FALSE' (of type boolean) is not a valid string"));
         }
 
         public function testCorrectlyDetectsClosures()
@@ -113,7 +111,7 @@ class MustBeIntegerTest extends ValidationLibTestBase
                 $obj = $this->setupObj();
                 $func = function() { return true; };
 
-                $this->doTestIsNotValid($obj, $func, array("'Closure' (of type object) is not a valid integer"));
+                $this->doTestIsNotValid($obj, $func, array("'Closure' (of type object) is not a valid string"));
         }
 
         public function testCorrectlyDetectsArrays()
@@ -121,6 +119,6 @@ class MustBeIntegerTest extends ValidationLibTestBase
                 $obj = $this->setupObj();
                 $arr = array (1,2,3,4,5,6,7,8,9,10);
 
-                $this->doTestIsNotValid($obj, $arr, array ("'' (of type array) is not a valid integer"));
+                $this->doTestIsNotValid($obj, $arr, array ("'' (of type array) is not a valid string"));
         }
 }

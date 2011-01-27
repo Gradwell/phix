@@ -44,7 +44,7 @@
 
 namespace Phin_Project\CommandLineLib;
 
-use Phin_Project\ValidationLib\ValidatorInterface;
+use Phin_Project\ValidationLib\Validator;
 
 class DefinedArg
 {
@@ -89,7 +89,7 @@ class DefinedArg
                 return $this;
         }
 
-        public function setValidator(ValidatorInterface $validator)
+        public function setValidator(Validator $validator)
         {
                 $this->validators[] = $validator;
                 return $this;

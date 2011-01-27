@@ -44,7 +44,7 @@
 
 namespace Phin_Project\CommandLineLib;
 
-use Phin_Project\ValidationLib\ValidatorInterface;
+use Phin_Project\ValidationLib\Validator;
 
 class DefinedSwitch
 {
@@ -156,7 +156,7 @@ class DefinedSwitch
                 return $this;
         }
 
-        public function setArgValidator(ValidatorInterface $validator)
+        public function setArgValidator(Validator $validator)
         {
                 $this->requireValidArg();
                 $this->arg->setValidator($validator);

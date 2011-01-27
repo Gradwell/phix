@@ -44,34 +44,18 @@
 
 namespace Phin_Project\ValidationLib;
 
-class MustBeWriteable extends ValidatorAbstract
+class ValidationLibTestBase extends \PHPUnit_Framework_TestCase
 {
-        const MSG_ISNOTWRITEABLE = 'msgIsNotWriteable';
-        const MSG_DOESNOTEXIST   = 'msgDoesNotExist';
-
-        protected $_messageTemplates = array
-        (
-                self::MSG_DOESNOTEXIST  => "'%value%' does not exist; file or directory expected",
-                self::MSG_ISNOTWRITEABLE => "'%value%' exists, but is not writeable",
-        );
-
-        public function isValid($value)
+        protected function doTestIsValid(Validator $validator, $value)
         {
-                $this->_setValue($value);
+                $this->assertTrue($validator->isValid($value));
+                $this->assertEquals(0, count($validator->getMessages()));
+        }
 
-                $isValid = true;
-
-                if (!\file_exists($value))
-                {
-                        $this->_error(self::MSG_DOESNOTEXIST);
-                        $isValid = false;
-                }
-                else if (!\is_writable($value))
-                {
-                        $this->_error(self::MSG_ISNOTWRITEABLE);
-                        $isValid = false;
-                }
-
-                return $isValid;
+        protected function doTestIsNotValid(Validator $validator, $value, $errorMessages)
+        {
+                $this->assertFalse($validator->isValid($value));
+                $this->assertNotEquals(0, count($validator->getMessages()));
+                $this->assertEquals($errorMessages, $validator->getMessages());
         }
 }

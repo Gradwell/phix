@@ -50,7 +50,7 @@ class MustBeString extends ValidatorAbstract
 
         protected $_messageTemplates = array
         (
-                self::MSG_NOTVALIDSTRING => "'%value%' is not a valid string",
+                self::MSG_NOTVALIDSTRING => "'%value%' (of type %type%) is not a valid string",
         );
         
         public function isValid($value)
@@ -59,12 +59,13 @@ class MustBeString extends ValidatorAbstract
 
                 $isValid = true;
 
-                if ($value != (string)$value)
+                // these are the only types that convert to being a string
+                if (!is_int($value) && !is_float($value) && !is_string($value))
                 {
                         $this->_error(self::MSG_NOTVALIDSTRING);
-                        $isValid = false;
+                        return false;
                 }
 
-                return $isValid;
+                return true;
         }
 }

@@ -44,22 +44,39 @@
 
 namespace Phin_Project\ValidationLib;
 
-interface ValidatorInterface
+class MustBeValidFileTest extends ValidationLibTestBase
 {
         /**
-         * Test a value to see if it is valid or not
          *
-         * @return boolean
+         * @return MustBeValidFile
          */
-        public function isValid($value);
+        protected function setupObj()
+        {
+                // setup the test
+                $obj = new MustBeValidFile();
+                $messages = $obj->getMessages();
+                $this->assertTrue(is_array($messages));
+                $this->assertEquals(0, count($messages));
 
-        /**
-         * Retrieve a list of the error messages if isValid() returned
-         * FALSE
-         *
-         * If isValid() returned TRUE, this will return an empty array
-         *
-         * @return array
-         */
-        public function getMessages();
+                return $obj;
+        }
+
+        public function testCorrectlyDetectsAFile()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsValid($obj, __FILE__);
+        }
+
+        public function testCorrectlyDetectsAMissingFile()
+        {
+                $obj = $this->setupObj();
+                $file = __FILE__ . '.bogus';
+                $this->doTestIsNotValid($obj, $file, array("'$file' is not a valid file"));
+        }
+        
+        public function testCorrectlyDetectsADirectory()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsNotValid($obj, __DIR__, array("'" . __DIR__ . "' is not a valid file"));
+        }
 }

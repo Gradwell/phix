@@ -44,34 +44,55 @@
 
 namespace Phin_Project\ValidationLib;
 
-class MustBeWriteable extends ValidatorAbstract
+class MustBeValidPathTest extends ValidationLibTestBase
 {
-        const MSG_ISNOTWRITEABLE = 'msgIsNotWriteable';
-        const MSG_DOESNOTEXIST   = 'msgDoesNotExist';
-
-        protected $_messageTemplates = array
-        (
-                self::MSG_DOESNOTEXIST  => "'%value%' does not exist; file or directory expected",
-                self::MSG_ISNOTWRITEABLE => "'%value%' exists, but is not writeable",
-        );
-
-        public function isValid($value)
+        /**
+         *
+         * @return MustBeValidPath
+         */
+        protected function setupObj()
         {
-                $this->_setValue($value);
+                // setup the test
+                $obj = new MustBeValidPath();
+                $messages = $obj->getMessages();
+                $this->assertTrue(is_array($messages));
+                $this->assertEquals(0, count($messages));
 
-                $isValid = true;
+                return $obj;
+        }
 
-                if (!\file_exists($value))
+        public function testCorrectlyDetectsADirectory()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsValid($obj, __DIR__);
+        }
+
+        public function testCorrectlyDetectsAFile()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsNotValid($obj, __FILE__, array("'" . __FILE__ . "' is a file; expected a directory"));
+        }
+
+        public function testCorrectlyDetectsAMissingDirectory()
+        {
+                $obj = $this->setupObj();
+                $dir = __DIR__ . '.bogus';
+                $this->doTestIsNotValid($obj, $dir, array("'$dir' does not exist on disk at all"));
+        }
+
+        public function testCorrectlyDetectsADevice()
+        {
+                $obj = $this->setupObj();
+
+                // this only works on unix-like operating systems
+                if (file_exists('/dev/null'))
                 {
-                        $this->_error(self::MSG_DOESNOTEXIST);
-                        $isValid = false;
+                        $this->doTestIsNotValid($obj, '/dev/null', array("'/dev/null' exists, but is not a directory"));
                 }
-                else if (!\is_writable($value))
+                else
                 {
-                        $this->_error(self::MSG_ISNOTWRITEABLE);
-                        $isValid = false;
+                        // we fake this test for now
+                        $this->assertTrue(true);
                 }
-
-                return $isValid;
         }
 }

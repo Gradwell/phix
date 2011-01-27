@@ -50,21 +50,27 @@ class MustBeInteger extends ValidatorAbstract
 
         protected $_messageTemplates = array
         (
-                self::MSG_NOTVALIDINTEGER => "'%value%' is not a valid integer",
+                self::MSG_NOTVALIDINTEGER => "'%value%' (of type %type%) is not a valid integer",
         );
         
         public function isValid($value)
         {
                 $this->_setValue($value);
 
-                $isValid = true;
+                if (!is_int($value) && !is_string($value))
+                {
+                        $this->_error(self::MSG_NOTVALIDINTEGER);
+                        return false;
+                }
 
+                // does the (probably string) get through the filter too?
                 if ($value != \filter_var($value, \FILTER_SANITIZE_NUMBER_INT))
                 {
                         $this->_error(self::MSG_NOTVALIDINTEGER);
-                        $isValid = false;
+                        return false;
                 }
 
-                return $isValid;
+                // if we get here, then we like the value
+                return true;
         }
 }

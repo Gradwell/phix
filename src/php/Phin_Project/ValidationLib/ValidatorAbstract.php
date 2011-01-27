@@ -48,7 +48,7 @@ namespace Phin_Project\ValidationLib;
  * This is inspired by Zend_Validate_Abstract, but has been put on a
  * much-needed diet :)
  */
-abstract class ValidatorAbstract implements ValidatorInterface
+abstract class ValidatorAbstract implements Validator
 {
         /**
          * The value that the validator has been asked to check
@@ -98,6 +98,48 @@ abstract class ValidatorAbstract implements ValidatorInterface
                         throw new \Exception("Unknown error message '$msg'");
                 }
                 
-                $this->errorMsgs[] = str_replace('%value%', $this->value, $this->_messageTemplates[$msg]);
+                // work out how to format the error message
+                $type = gettype($this->value);
+
+                switch ($type)
+                {
+                        case 'object':
+                                $value = get_class($this->value);
+                                break;
+
+                        case 'boolean':
+                                if ($this->value)
+                                {
+                                        $value = 'TRUE';
+                                }
+                                else
+                                {
+                                        $value = 'FALSE';
+                                }
+                                break;
+
+                        case 'integer':
+                        case 'float':
+                        case 'double':
+                        case 'string':
+                                $value = $this->value;
+                                break;
+
+                        default:
+                                $value = '';
+                                break;
+                }
+
+                $searchList = array (
+                        '%value%',
+                        '%type%'
+                );
+
+                $replaceList = array (
+                        $value,
+                        $type
+                );
+
+                $this->errorMsgs[] = str_replace($searchList, $replaceList, $this->_messageTemplates[$msg]);
         }
 }

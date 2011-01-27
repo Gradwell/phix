@@ -63,28 +63,28 @@ class MustBeValidPath extends ValidatorAbstract
 
                 $isValid = false;
 
+                if (is_dir($value))
+                {
+                        return true;
+                }
+                
                 if (!\file_exists($value))
                 {
                         $this->_error(self::MSG_PATHNOTFOUND);
-                        $isValid = false;
+                        return false;
                 }
 
-                if (!\is_dir($value))
+                // it exists, but what is it?
+                if (is_file($value))
                 {
-                        // it exists, but what is it?
-
-                        if (is_file($value))
-                        {
-                                $this->_error(self::MSG_PATHISAFILE);
-                        }
-                        else
-                        {
-                                // we do not know what it is
-                                $this->_error(self::MSG_PATHISNOTADIR);
-                        }
-                        $isValid = false;
+                        $this->_error(self::MSG_PATHISAFILE);
+                }
+                else
+                {
+                        // we do not know what it is
+                        $this->_error(self::MSG_PATHISNOTADIR);
                 }
 
-                return $isValid;
+                return false;
         }
 }
