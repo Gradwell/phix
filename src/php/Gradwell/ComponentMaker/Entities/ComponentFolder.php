@@ -101,12 +101,12 @@ class ComponentFolder
                 return 'state not recognised';
         }
 
-        public function copyFilesFromDataFolder($files)
+        public function copyFilesFromDataFolder($files, $dest='/')
         {
                 foreach ($files as $filename)
                 {
                         $srcFile = $this->pathToDataFolder . '/' . $filename;
-                        $destFile = $this->folder . '/' . $filename;
+                        $destFile = $this->folder . $dest . $filename;
 
                         if (!copy($srcFile, $destFile))
                         {

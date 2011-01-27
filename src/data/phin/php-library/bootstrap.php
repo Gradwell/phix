@@ -18,7 +18,7 @@ define('APP_TOPDIR', realpath(__DIR__ . '/../../php'));
 define('APP_LIBDIR', realpath(__DIR__ . '/../../../vendor/lib'));
 
 // step 2: add the tests folder to the include path
-set_include_path(realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'php' . PATH_SEPARATOR . get_include_path());
+set_include_path(realpath(dirname(__FILE__)) . PATH_SEPARATOR . 'php' . PATH_SEPARATOR . get_include_path());
 
 // step 3: add the lib-vendor code to the include path
 set_include_path(APP_LIBDIR . PATH_SEPARATOR . get_include_path());

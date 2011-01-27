@@ -25,6 +25,10 @@ class LibraryComponentFolder extends ComponentFolder
                 // control systems
                 $this->createScmIgnoreFiles();
 
+                // step 6: don't forget the bootstrap file for
+                // the unit tests
+                $this->createBootstrapFile();
+
                 // if we get here, job done
         }
 
@@ -84,5 +88,10 @@ class LibraryComponentFolder extends ComponentFolder
         protected function createScmIgnoreFiles()
         {
                 $this->copyFilesFromDataFolder(array('.gitignore', '.hgignore'));
+        }
+
+        protected function createBootstrapFile()
+        {
+                $this->copyFilesFromDataFolder(array('bootstrap.php'), '/src/tests/unit-tests/');
         }
 }
