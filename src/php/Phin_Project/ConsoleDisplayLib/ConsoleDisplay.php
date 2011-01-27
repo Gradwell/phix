@@ -74,6 +74,8 @@ class ConsoleDisplay
         public $doubleUnderlined = 21;
         public $normal = 22;
 
+        public $target = null;
+        
         /**
          * Basic escape sequence string. Use sprintf() to insert escape codes.
          *
@@ -89,19 +91,19 @@ class ConsoleDisplay
 
         public function style($codes)
         {
-                if (is_array($codes))
+                if (\is_array($codes))
                 {
-                        return sprintf($this->escapeSequence, implode(';', $codes));
+                        return \sprintf($this->escapeSequence, \implode(';', $codes));
                 }
                 else
                 {
-                        return sprintf($this->escapeSequence, $codes);
+                        return \sprintf($this->escapeSequence, $codes);
                 }
         }
 
         public function resetStyle()
         {
-                return sprintf($this->escapeSequence, $this->default);
+                return \sprintf($this->escapeSequence, $this->default);
         }
 
         public function output($colors, $string)
@@ -128,66 +130,100 @@ class ConsoleDisplay
         {
                 $this->indent += $indent;
         }
+
+        public function getIndent()
+        {
+                return $this->indent;
+        }
+
+        public function getWrapAt()
+        {
+                return $this->wrapAt;
+        }
+
+        public function setWrapAt($wrapAt)
+        {
+                $this->wrapAt = $wrapAt;
+        }
         
+        /**
+         * Returns TRUE if $fp is a file handle that writes to a
+         * real terminal.
+         *
+         * Returns FALSE is $fp is a file handle that writes to a normal
+         * file, or a pipe (for example, the output of this program is
+         * being piped into 'less').
+         *
+         * This is a separate method to assist with the testability of
+         * this class.
+         * 
+         * @param resource $fp
+         * @return boolean
+         */
+        public function isPosixTty($fp)
+        {
+                return \posix_isatty($fp);
+        }
+
         protected function outputToTarget($target, $colors, $string)
         {
-                $fp = fopen($target, 'w+');
-                if (\posix_isatty($fp))
+                $fp = \fopen($target, 'a+');
+                if ($this->isPosixTty($fp))
                 {
-                        fwrite($fp, $colors);
+                        \fwrite($fp, $colors);
                 }
                 $this->writeWrappedStrings($fp, $string);
-                if (posix_isatty($fp))
+                if ($this->isPosixTty($fp))
                 {
-                        fwrite($fp, $this->resetStyle());
+                        \fwrite($fp, $this->resetStyle());
                 }
-                fclose($fp);
+                \fclose($fp);
         }
 
         protected function outputLineToTarget($target, $colors, $string)
         {
-                $fp = fopen($target, 'w+');
-                if (\posix_isatty($fp))
+                $fp = \fopen($target, 'a+');
+                if ($this->isPosixTty($fp))
                 {
-                        fwrite($fp, $colors);
+                        \fwrite($fp, $colors);
                 }
                 $this->writeWrappedStrings($fp, $string);
-                if (posix_isatty($fp))
+                if ($this->isPosixTty($fp))
                 {
-                        fwrite($fp, $this->resetStyle());
+                        \fwrite($fp, $this->resetStyle());
                 }
-                fwrite($fp, PHP_EOL);
+                \fwrite($fp, \PHP_EOL);
                 $this->currentLineLength = 0;
-                fclose($fp);
+                \fclose($fp);
         }
 
         protected function outputBlankLineToTarget($target)
         {
-                $fp = fopen($target, 'w+');
+                $fp = \fopen($target, 'a+');
                 $string = PHP_EOL;
                 if ($this->currentLineLength !== 0)
                 {
-                        $string .= PHP_EOL;
+                        $string .= \PHP_EOL;
                         $this->currentLineLength = 0;
                 }
-                fwrite($fp, $string);
-                fclose($fp);
+                \fwrite($fp, $string);
+                \fclose($fp);
         }
 
         protected function writeWrappedStrings($fp, $string)
         {
-                $strings = explode(PHP_EOL, $string);
+                $strings = \explode(PHP_EOL, $string);
                 $append = false;
 
                 foreach ($strings as $string)
                 {
                         if ($append)
                         {
-                                fwrite($fp, PHP_EOL);
+                                \fwrite($fp, \PHP_EOL);
                                 $this->currentLineLength = 0;
                         }
                         $append = true;
-                        if (strlen($string) > 0)
+                        if (\strlen($string) > 0)
                         {
                                 $this->writeWrappedString($fp, $string);
 
@@ -204,23 +240,23 @@ class ConsoleDisplay
                 // the line?
                 $whitespace = array(' ' => true);
 
-                while (strlen($string) > 0)
+                while (\strlen($string) > 0)
                 {
                         // step 1: are we at the beginning of the line?
                         if ($this->currentLineLength < $this->indent)
                         {
                                 $indent = $this->indent - $this->currentLineLength;
                                 // we need to write out the indent
-                                fwrite($fp, \str_repeat(' ', $indent));
+                                \fwrite($fp, \str_repeat(' ', $indent));
                                 $this->currentLineLength += $indent;
                         }
 
                         // step 2: do we need to split the line?
-                        if ($this->currentLineLength + strlen($string) <= $this->wrapAt)
+                        if ($this->currentLineLength + \strlen($string) <= $this->wrapAt)
                         {
                                 // no; just output and go
-                                fwrite($fp, $string);
-                                $this->currentLineLength += strlen($string);
+                                \fwrite($fp, $string);
+                                $this->currentLineLength += \strlen($string);
                                 return;
                         }
 
@@ -236,7 +272,7 @@ class ConsoleDisplay
                         {
                                 // we will have to wrap in the middle of this
                                 // silly length string
-                                if (strlen($string) > $this->wrapAt)
+                                if (\strlen($string) > $this->wrapAt)
                                 {
                                         $wrapPoint = $rawWrapPoint;
                                 }
@@ -244,18 +280,21 @@ class ConsoleDisplay
 
                         if ($wrapPoint > 0)
                         {
-                                fwrite($fp, substr($string, 0, $wrapPoint) . PHP_EOL);
+                                \fwrite($fp, \substr($string, 0, $wrapPoint) . \PHP_EOL);
                                 if (isset($whitespace[$string{$wrapPoint}]))
                                 {
                                         $wrapPoint++;
                                 }
-                                $string = substr($string, $wrapPoint);
+                                $string = \substr($string, $wrapPoint);
                         }
                         else
                         {
-                                fwrite($fp, PHP_EOL);
+                                \fwrite($fp, PHP_EOL);
                         }
                         $this->currentLineLength = 0;
                 }
+
+                // this line is always unreachable
+                return;
         }
 }

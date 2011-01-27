@@ -46,5 +46,5 @@ namespace Phin_Project\ConsoleDisplayLib;
 
 class StdOut extends ConsoleDisplay
 {
-        protected $target = 'php://stdout';
+        public $target = 'php://stdout';
 }

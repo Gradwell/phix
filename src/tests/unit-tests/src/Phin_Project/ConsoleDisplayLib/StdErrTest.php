@@ -44,7 +44,14 @@
 
 namespace Phin_Project\ConsoleDisplayLib;
 
-class StdErr extends ConsoleDisplay
+class StdErrTest extends \PHPUnit_Framework_TestCase
 {
-        public $target = 'php://stderr';
+        public function testIsTty()
+        {
+                $stdErr = new StdErr();
+                $fp = \fopen($stdErr->target, 'a+');
+                
+                // it fails because of something phpunit does
+                $this->assertFalse($stdErr->isPosixTty($fp));
+        }
 }
