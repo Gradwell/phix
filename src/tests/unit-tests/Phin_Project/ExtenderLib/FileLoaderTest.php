@@ -56,6 +56,42 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals('Phin_Project\\ExtenderLib\\DummyClass1', $newClasses[0]);
         }
 
+        public function testThrowsExceptionIfFileNotFound()
+        {
+                $fileLoader = new FileLoader();
+                $caughtException = false;
+                try
+                {
+                        $fileLoader->loadPhpFile(__DIR__ . '/BogusClass1.php');
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
+        }
+
+        public function testThrowsExceptionIfFileUnreadable()
+        {
+                // make sure the file is unreadable
+                \chmod(__DIR__ . '/DummyClass3.php', 000);
+
+                $fileLoader = new FileLoader();
+                $caughtException = false;
+                try
+                {
+                        $fileLoader->loadPhpFile(__DIR__ . '/DummyClass3.php');
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+                $this->assertTrue($caughtException);
+
+                // put the file back to its proper permissions
+                \chmod(__DIR__ . '/DummyClass3.php', 0755);
+        }
+
         public function testGlobalVariablesInLoadedFileAppearInGlobalScope()
         {
                 $this->assertTrue(!isset($GLOBALS['testVar']));
