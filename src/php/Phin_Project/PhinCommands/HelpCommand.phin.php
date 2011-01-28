@@ -108,7 +108,7 @@ class HelpCommand extends CommandBase
 
                 $so = $context->stdout;
 
-                $so->output($context->highlightStyle, "phin @@PACKAGE_VERSION@@;");
+                $so->output($context->highlightStyle, "phin " . $context->version);
                 $so->outputLine($context->urlStyle, ' http://www.phin-tool.org');
                 $so->outputLine(null, 'Copyright (c) 2010 Gradwell dot com Ltd. Released under the BSD license');
                 $so->outputBlankLine();
