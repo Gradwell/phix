@@ -87,8 +87,6 @@
     <echo message="install-system" />
     <echo message="  Install this component from source for all local users" />
     <echo message="  You must be root to run this target on Linux!!" />
-    <echo message="publish" />
-    <echo message="  Publish the pear package onto the channel server" />
     <echo message="clean" />
     <echo message="  Remove all temporary folders created by this build file" />
   </target>
@@ -158,9 +156,9 @@
   </target>
 
   <!-- Populate vendor with the dependencies for this component -->
-  <target name="build-vendor" depends="pear-package-for-lib-vendor,setup-vendor">
-    <echo>Populating lib/vendor with dependencies</echo>
-    <exec command="php tools/registerchannels.php build.properties package.xml ${project.tmpdir}/pear-config ${project.vendordir}" checkreturn="true" logoutput="true" />
+  <target name="build-vendor" depends="pear-package,setup-vendor">
+    <echo>Populating vendor/ with dependencies</echo>
+    <exec command="phin pear:register-channels" checkreturn="true" logoutput="true" />
     <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.builddir}/package.xml" logoutput="true" checkreturn="true"/>
   </target>
 
@@ -187,7 +185,7 @@
     <delete dir="${project.builddir}" />
     <mkdir dir="${project.pkgdir}" />
     <copy todir="${project.pkgdir}">
-      <fileset refid="srcfiles"/>
+      <fileset refid="phpfiles"/>
     </copy>
     <copy todir="${project.builddir}">
       <fileset dir=".">
@@ -195,7 +193,7 @@
       </fileset>
     </copy>
     <copy file="${project.basedir}/build.xml" tofile="${project.builddir}/build.xml" overwrite="true" />
-    <exec command="./phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
+    <exec command="phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
   </target>
 
   <!-- Create the PEAR package, ready for release -->
@@ -216,7 +214,7 @@
       </fileset>
     </copy>
 
-    <exec command="./phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
+    <exec command="phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
 
     <echo>Creating ${project.tarfile} PEAR package</echo>
 
@@ -236,13 +234,6 @@
   </target>
   <target name="install-system">
     <exec command="pear install -f -a ${project.tarfile}" checkreturn="true" logoutput="true" />
-  </target>
-
-
-  <!-- Publish the distribution files for download -->
-  <target name="publish" depends="pear-package">
-    <exec command="scp ${project.tarfile} ${remote.user}@vpn.dev.gradwell.com:incoming-packages/" checkreturn="true" logoutput="true"/>
-    <exec command="ssh ${remote.user}@vpn.dev.gradwell.com pirum add /home/ades/websites/pear incoming-packages/${project.tarfilename}" checkreturn="true" logoutput="true" />
   </target>
 
   <!-- Clean up the mess -->
