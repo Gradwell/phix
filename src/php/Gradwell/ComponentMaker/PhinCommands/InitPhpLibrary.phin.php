@@ -10,6 +10,8 @@ use Phin_Project\CommandLineLib\DefinedSwitch;
 
 use Gradwell\ComponentMaker\Entities\LibraryComponentFolder;
 
+if (!class_exists('Gradwell\ComponentMaker\PhinCommands\InitPhinLibrary'))
+{
 class InitPhinLibrary extends CommandBase
 {
         public function getCommandName()
@@ -118,4 +120,5 @@ class InitPhinLibrary extends CommandBase
 
                 return null;
         }
+}
 }

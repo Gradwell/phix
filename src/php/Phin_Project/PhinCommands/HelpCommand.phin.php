@@ -50,6 +50,8 @@ use Phin_Project\PhinExtensions\CommandBase;
 use Phin_Project\CommandLineLib\DefinedSwitches;
 use Phin_Project\CommandLineLib\DefinedSwitch;
 
+if (!\class_exists('Phin_Project\PhinCommands\HelpCommand'))
+{
 class HelpCommand extends CommandBase
 {
         public function getCommandName()
@@ -358,4 +360,5 @@ class HelpCommand extends CommandBase
                 $this->outputImplementationDetails($context);
                 $so->addIndent(-4);
         }
+}
 }
