@@ -61,7 +61,7 @@ class InitPhinLibrary extends CommandBase
                                 case LibraryComponentFolder::STATE_NEEDSUPGRADE:
                                         $se->outputLine(null, "folder has been initialised; needs upgrade");
                                         $se->output(null, 'use ');
-                                        $se->output($context->commandStyle, $context->argvZero . ' upgrade:library');
+                                        $se->output($context->commandStyle, $context->argvZero . ' php-library:upgrade');
                                         $se->output(null, ' to upgrade this folder');
                                         break;
 
