@@ -43,9 +43,9 @@ ${contents}
         <min>1.6.0</min>
       </pearinstaller>
       <package>
-        <name>MF_Autoloader</name>
-        <channel>pear.methodosity.com</channel>
-        <min>0.2.0</min>
+        <name>Autoloader</name>
+        <channel>pear.gradwell.com</channel>
+        <min>1.0.0</min>
 	      <max>1.999.9999</max>
       </package>
     </required>
