@@ -129,7 +129,6 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($ParsedSwitches->testHasSwitch('version'));
 
                 $switches = $ParsedSwitches->getSwitchesByOrder();
-                var_dump($switches);
                 $this->assertEquals(4, count($switches));
                 $this->assertEquals('version', $switches[0]->name);
                 $this->assertTrue($switches[0]->values[0]);
