@@ -1,9 +1,35 @@
 #!/usr/bin/env php
 <?php
 
-require_once("@VENDOR_LIB@/gwc.autoloader.php");
-gwc_autoloader_alsoSearch("@VENDOR_LIB@");
+// where is our autoloader? is it installed locally?
+if (file_exists(getcwd() . '../php/gwc_autoloader.php'))
+{
+        // yes it is
+        require_once(getcwd() . '../php/gwc_autoloader.php');
+}
+else
+{
+        // no it is not - look for a global install
+        require_once("@@PHP_DIR@@/gwc.autoloader.php");
+}
 
-$tool = new Phin();
-$tool->addCommandsFolder("@VENDOR_LIB@/Phin_Project/Phin_Ext");
+// a list of places to look for phin commands
+$searchFolders = array
+(
+        "@@PHP_DIR@@",
+        getcwd() . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'php',
+        getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'php'
+);
+
+foreach ($searchFolders as $searchFolder)
+{
+        if (is_dir($searchFolder))
+        {
+                __gwc_autoload_alsoSearch($searchFolder);
+        }
+}
+
+// okay, let's do some actual work!!
+
+$tool = new \Phin_Project\Phin\Phin();
 return $tool->main($argv);

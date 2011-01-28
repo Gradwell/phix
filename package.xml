@@ -4,7 +4,7 @@
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
   <name>phin</name>
-  <channel>pear.phin-tool.org</channel>
+  <channel>pear.gradwell.com</channel>
   <summary>Framework-agnostic command-line util for PHP development</summary>
   <description>
     A handy command-line tool to provide structure to any commands / tasks you need to run on the command line.
@@ -42,18 +42,12 @@ ${contents}
       <pearinstaller>
         <min>1.6.0</min>
       </pearinstaller>
-      <package>
-        <name>GWC_Autoloader</name>
-        <channel>pear.dev.gradwell.com</channel>
+      <!--package>
+        <name>Autoloader</name>
+        <channel>pear.gradwell.com</channel>
         <min>1.0.0</min>
 	      <max>1.999.9999</max>
-      </package>
-      <package>
-        <name>ConsoleTools</name>
-        <channel>components.ez.no</channel>
-        <min>1.0.0</min>
-        <max>1.999.9999</max>
-      </package>
+      </package-->
     </required>
   </dependencies>
   <phprelease />

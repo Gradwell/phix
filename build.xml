@@ -13,6 +13,7 @@
   <property name="project.src.bindir"      value="${project.srcdir}/bin" override="true" />
   <property name="project.src.datadir"     value="${project.srcdir}/data" override="true" />
   <property name="project.src.testdir"     value="${project.srcdir}/tests" override="true" />
+  <property name="project.src.wwwdir"      value="${project.srcdir}/www" override="true" />
   <property name="project.src.testunitdir" value="${project.src.testdir}/unit-tests" override="true" />
   <property name="project.src.testintdir"  value="${project.src.testdir}/integration-tests" override="true" />
   <property name="project.src.testfuncdir" value="${project.src.testdir}/functional-tests" override="true" />
@@ -42,9 +43,21 @@
   <!-- a user to use to publish on the pear server -->
   <property name="remote.user" value="" override="true" />
 
-  <!-- a list of the files that make up our package -->
-  <fileset dir="${project.srcdir}" id="srcfiles">
+  <!-- lists of the files that make up our package -->
+  <fileset dir="${project.src.bindir}" id="binfiles">
     <include name="**/**"/>
+  </fileset>
+  <fileset dir="${project.src.datadir}" id="datafiles">
+    <include name="**/**"/>
+  </fileset>
+  <fileset dir="${project.src.phpdir}" id="phpfiles">
+    <include name="**/**"/>
+  </fileset>
+  <fileset dir="${project.src.testunitdir}/php" id="testfiles">
+    <include name="**/**"/>
+  </fileset>
+  <fileset dir="${project.src.wwwdir}" id="wwwfiles">
+    <include name="**/**" />
   </fileset>
 
   <!-- Tell the user what this build file supports -->
@@ -69,8 +82,10 @@
     <echo message="  Populate vendor/ with this package's dependencies" />
     <echo message="pear-package" />
     <echo message="  Create a PEAR-compatible package" />
-    <echo message="install.local" />
-    <echo message="  Install this component from source" />
+    <echo message="install-local" />
+    <echo message="  Install this component from source into vendor/" />
+    <echo message="install-system" />
+    <echo message="  Install this component from source for all local users" />
     <echo message="  You must be root to run this target on Linux!!" />
     <echo message="publish" />
     <echo message="  Publish the pear package onto the channel server" />
@@ -143,8 +158,15 @@
   </target>
 
   <!-- Populate vendor with the dependencies for this component -->
-  <target name="build-vendor" depends="pear-package-for-lib-vendor">
+  <target name="build-vendor" depends="pear-package-for-lib-vendor,setup-vendor">
     <echo>Populating lib/vendor with dependencies</echo>
+    <exec command="php tools/registerchannels.php build.properties package.xml ${project.tmpdir}/pear-config ${project.vendordir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.builddir}/package.xml" logoutput="true" checkreturn="true"/>
+  </target>
+
+  <!-- Setup the vendor folder -->
+  <target name="setup-vendor">
+    <echo>Creating vendor/ as a sandboxed PEAR install folder</echo>
     <delete dir="${project.vendordir}" />
     <mkdir dir="${project.vendordir}" />
     <delete dir="${project.tmpdir}" />
@@ -157,8 +179,6 @@
     <exec command="pear -c ${project.tmpdir}/pear-config config-set doc_dir ${project.vendor.docdir}" checkreturn="true" logoutput="true" />
     <exec command="pear -c ${project.tmpdir}/pear-config config-set test_dir ${project.vendor.testdir}" checkreturn="true" logoutput="true" />
     <exec command="pear -c ${project.tmpdir}/pear-config config-set www_dir ${project.vendor.wwwdir}" checkreturn="true" logoutput="true" />
-    <exec command="php tools/registerchannels.php build.properties package.xml ${project.tmpdir}/pear-config ${project.vendordir}" checkreturn="true" logoutput="true" />
-    <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.builddir}/package.xml" logoutput="true" checkreturn="true"/>
   </target>
 
   <!-- Create a dummy PEAR package to satisfy lib-vendor -->
@@ -175,7 +195,7 @@
       </fileset>
     </copy>
     <copy file="${project.basedir}/build.xml" tofile="${project.builddir}/build.xml" overwrite="true" />
-    <exec command="php tools/populatepackage.php build.properties ${project.builddir}/package.xml" />
+    <exec command="./phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
   </target>
 
   <!-- Create the PEAR package, ready for release -->
@@ -184,7 +204,11 @@
     <delete dir="${project.builddir}" />
     <mkdir dir="${project.pkgdir}" />
     <copy todir="${project.pkgdir}">
-      <fileset refid="srcfiles"/>
+      <fileset refid="binfiles"/>
+      <fileset refid="datafiles"/>
+      <fileset refid="phpfiles"/>
+      <fileset refid="testfiles"/>
+      <fileset refid="wwwfiles"/>
     </copy>
     <copy todir="${project.builddir}">
       <fileset dir=".">
@@ -192,7 +216,7 @@
       </fileset>
     </copy>
 
-    <exec command="php tools/populatepackage.php build.properties ${project.builddir}/package.xml ${project.pkgdir}" />
+    <exec command="./phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
 
     <echo>Creating ${project.tarfile} PEAR package</echo>
 
@@ -207,9 +231,13 @@
   </target>
 
   <!-- Install the code -->
-  <target name="install.local" depends="pear-package">
+  <target name="install-vendor">
+    <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps -f ${project.tarfile}" logoutput="true" checkreturn="true"/>
+  </target>
+  <target name="install-system">
     <exec command="pear install -f -a ${project.tarfile}" checkreturn="true" logoutput="true" />
   </target>
+
 
   <!-- Publish the distribution files for download -->
   <target name="publish" depends="pear-package">

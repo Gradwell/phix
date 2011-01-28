@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-require_once("vendor/lib/gwc.autoloader.php");
-__gwc_autoload_alsoSearch(__DIR__ . "/vendor/lib");
+require_once("vendor/php/gwc.autoloader.php");
+__gwc_autoload_alsoSearch(__DIR__ . "/vendor/php");
 __gwc_autoload_alsoSearch(__DIR__ . "/src/php");
 
 $tool = new \Phin_Project\Phin\Phin();
