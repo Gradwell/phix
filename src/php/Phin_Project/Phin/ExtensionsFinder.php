@@ -44,6 +44,7 @@
 
 namespace Phin_Project\Phin;
 
+use Phin_Project\ExtenderLib\FileFinder;
 use Phin_Project\ExtenderLib\FileLoader;
 
 class ExtensionsFinder
@@ -72,10 +73,12 @@ class ExtensionsFinder
         {
                 $commandsList = new CommandsList();
 
-                $iterator = \File_Iterator_Factory::getFileIterator($this->foldersToSearch, array('.phin.php'));
-
+                $fileFinder = new FileFinder();
                 $fileLoader = new FileLoader();
-                foreach ($iterator as $filename)
+
+                $files = $fileFinder->findPhpFilesFromPartialNamespace('PhinCommands');
+
+                foreach ($files as $filename)
                 {
                         $newClasses = $fileLoader->loadPhpFile((string)$filename);
                         foreach ($newClasses as $newClass)
