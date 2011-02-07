@@ -97,7 +97,7 @@ class ExtensionsFinder
         protected function testIsPhinExtension($className)
         {
                 $refObj = new \ReflectionClass($className);
-                if ($refObj->isSubclassOf('Phin_Project\PhinExtensions\CommandBase'))
+                if ($refObj->implementsInterface('\Phin_Project\PhinExtensions\CommandInterface'))
                 {
                         return true;
                 }

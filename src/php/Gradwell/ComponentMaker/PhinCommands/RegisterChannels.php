@@ -5,6 +5,7 @@ namespace Gradwell\ComponentMaker\PhinCommands;
 use Phin_Project\Phin\CommandsList;
 use Phin_Project\Phin\Context;
 use Phin_Project\PhinExtensions\CommandBase;
+use Phin_Project\PhinExtensions\CommandInterface;
 use Phin_Project\CommandLineLib\DefinedSwitches;
 use Phin_Project\CommandLineLib\DefinedSwitch;
 use Phin_Project\CommandLineLib\CommandLineParser;
@@ -16,7 +17,7 @@ use Gradwell\ComponentMaker\Entities\LibraryComponentFolder;
 
 if (!class_exists('Gradwell\ComponentMaker\PhinCommands\RegisterChannels'))
 {
-class RegisterChannels extends CommandBase
+class RegisterChannels extends CommandBase implements CommandInterface
 {
         public function getCommandName()
         {

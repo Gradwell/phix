@@ -47,21 +47,21 @@ use Phin_Project\Phin\Context;
 use Phin_Project\CommandLineLib\DefinedSwitches;
 use Phin_Project\CommandLineLib\DefinedSwitch;
 
-class CommandBase implements CommandInterface
+class CommandBase
 {
         public function getCommandName()
         {
-                throw new \Exception(__METHOD__ . '() not implemented');
+                throw new \Exception(__METHOD__ . '() not implemented in ' . get_class($this));
         }
 
         public function getCommandDesc()
         {
-                throw new \Exception( __METHOD__ . '() not implemented');
+                throw new \Exception( __METHOD__ . '() not implemented in ' . get_class($this));
         }
 
         public function getValidOptions()
         {
-                throw new \Exception( __METHOD__ . '() not implemented');
+                throw new \Exception( __METHOD__ . '() not implemented in ' . get_class($this));
         }
 
         public function getCommandOptions()

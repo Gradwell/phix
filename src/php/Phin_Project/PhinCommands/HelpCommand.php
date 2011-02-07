@@ -47,12 +47,13 @@ namespace Phin_Project\PhinCommands;
 use Phin_Project\Phin\CommandsList;
 use Phin_Project\Phin\Context;
 use Phin_Project\PhinExtensions\CommandBase;
+use Phin_Project\PhinExtensions\CommandInterface;
 use Phin_Project\CommandLineLib\DefinedSwitches;
 use Phin_Project\CommandLineLib\DefinedSwitch;
 
 if (!\class_exists('Phin_Project\PhinCommands\HelpCommand'))
 {
-class HelpCommand extends CommandBase
+class HelpCommand extends CommandBase implements CommandInterface
 {
         public function getCommandName()
         {
