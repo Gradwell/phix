@@ -45,8 +45,8 @@ ${contents}
       <package>
         <name>Autoloader</name>
         <channel>pear.gradwell.com</channel>
-        <min>1.0.0</min>
-	      <max>1.999.9999</max>
+        <min>2.0.0</min>
+	      <max>2.999.9999</max>
       </package>
     </required>
   </dependencies>

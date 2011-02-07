@@ -16,9 +16,9 @@ else
 // a list of places to look for phin commands
 $searchFolders = array
 (
-        "@@PHP_DIR@@",
+        getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'php',
         getcwd() . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'php',
-        getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'php'
+        "@@PHP_DIR@@",
 );
 
 foreach ($searchFolders as $searchFolder)
