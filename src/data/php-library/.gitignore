@@ -1,6 +1,6 @@
 .build
-.dist
+dist
+.tmp
 nbproject
 review
-tmp
 vendor
