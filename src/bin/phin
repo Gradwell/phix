@@ -2,10 +2,10 @@
 <?php
 
 // where is our autoloader? is it installed locally?
-if (file_exists(getcwd() . '../php/gwc_autoloader.php'))
+if (file_exists(__DIR__ . '/../php/gwc.autoloader.php'))
 {
         // yes it is
-        require_once(getcwd() . '../php/gwc_autoloader.php');
+        require_once(__DIR__ . '/../php/gwc.autoloader.php');
 }
 else
 {
