@@ -93,16 +93,20 @@ class FileFinder
                 }
 
                 // let's look inside
-                $dirStack = array();
-                array_push($dirStack, $folder);
+                // $dirStack is a queue, not a stack, hence the unusual
+                // way of dealing with it here
+                $dirQueue = new \SplQueue();
+                $dirQueue->enqueue($folder);
+
                 $return   = array();
 
                 // this loop is designed to avoid recursion, just in case
                 // we ever find ourselves up against the filesystem
                 // from hell
-                while (count($dirStack))
+                while ($dirQueue->count())
                 {
-                        $dirName = array_pop($dirStack);
+                        $dirName = $dirQueue->dequeue();
+
                         $dh = \dir($dirName);
                         if (!$dh)
                         {
@@ -123,7 +127,7 @@ class FileFinder
 
                                 if (is_dir($potential))
                                 {
-                                        array_push($dirStack, $potential);
+                                        $dirQueue->enqueue($potential);
                                 }
                         }
 
