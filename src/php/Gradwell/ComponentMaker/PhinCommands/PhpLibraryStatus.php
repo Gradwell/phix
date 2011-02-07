@@ -24,7 +24,7 @@ class PhpLibraryStatus extends PhpLibraryBase implements CommandInterface
                 return 'check the status of a PEAR-compatible library component';
         }
 
-        public function  getCommandArgs()
+        public function getCommandArgs()
         {
                 return array
                 (
