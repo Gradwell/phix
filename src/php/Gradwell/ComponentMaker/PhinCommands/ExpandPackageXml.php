@@ -173,25 +173,33 @@ class ExpandPackageXml extends CommandBase implements CommandInterface
 				$return .= '      <file baseinstalldir="/" md5sum="' . $md5sum . '" name="' . $filename . '" role="' . $role . '"';
 
 				// do we need tasks for this file?
+                                //
+                                // IMPORTANT:
+                                //
+                                // We *deliberately* break up the @@ tokens below to
+                                // make sure that pear does not replace them when
+                                // this file is installed
 				switch($role)
 				{
 					case 'php':
                                         case 'test':
 						// do something here
 						$return .= ">\n"
-							. '        <tasks:replace from="@@PACKAGE_VERSION@@" to="version" type="package-info" />' . "\n"
-							. '        <tasks:replace from="@@PHP_DIR@@" to="php_dir" type="pear-config" />' . "\n"
+							. '        <tasks:replace from="@' . '@PACKAGE_VERSION@@" to="version" type="package-info" />' . "\n"
+							. '        <tasks:replace from="@' . '@PHP_DIR@@" to="php_dir" type="pear-config" />' . "\n"
+							. '        <tasks:replace from="@' . '@DATA_DIR@@" to="data_dir" type="pear-config" />' . "\n"
 							. "      </file>\n";
 						break;
 
 					case 'script':
 						// do something here
 						$return .= ">\n"
-							. '        <tasks:replace from="@@PACKAGE_VERSION@@" to="version" type="package-info" />' . "\n"
+							. '        <tasks:replace from="@' . '@PACKAGE_VERSION@@" to="version" type="package-info" />' . "\n"
 							. '        <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />' . "\n"
-							. '        <tasks:replace from="@@PHP_BIN@@" to="php_bin" type="pear-config" />' . "\n"
-							. '        <tasks:replace from="@@BIN_DIR@@" to="bin_dir" type="pear-config" />' . "\n"
-							. '        <tasks:replace from="@@PHP_DIR@@" to="php_dir" type="pear-config" />' . "\n"
+							. '        <tasks:replace from="@' . '@PHP_BIN@@" to="php_bin" type="pear-config" />' . "\n"
+							. '        <tasks:replace from="@' . '@BIN_DIR@@" to="bin_dir" type="pear-config" />' . "\n"
+							. '        <tasks:replace from="@' . '@PHP_DIR@@" to="php_dir" type="pear-config" />' . "\n"
+							. '        <tasks:replace from="@' . '@DATA_DIR@@" to="data_dir" type="pear-config" />' . "\n"
 							. "      </file>\n";
 						break;
 
