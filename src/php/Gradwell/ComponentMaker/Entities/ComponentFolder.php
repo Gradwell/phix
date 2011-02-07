@@ -41,7 +41,7 @@ class ComponentFolder
         {
                 $this->folder = $folder;
                 $this->buildPropertiesFile = $folder . '/' . self::BUILD_PROPERTIES;
-                $this->pathToDataFolder = realpath(__DIR__ . '/../../../../data/' . static::DATA_FOLDER);
+                $this->pathToDataFolder = static::DATA_FOLDER;
                 $this->loadFolderState();
         }
 
@@ -123,5 +123,17 @@ class ComponentFolder
                 }
 
                 return false;
+        }
+
+        public function editBuildPropertiesVersionNumber($newNumber)
+        {
+                if (!$this->testHasBuildProperties())
+                {
+                        return false;
+                }
+
+                $buildProperties = file_get_contents($this->buildPropertiesFile);
+                $buildProperties = \preg_replace('|^component.version.*=.*$|m', 'component.version=' . $newNumber, $buildProperties);
+                \file_put_contents($this->buildPropertiesFile, $buildProperties);
         }
 }

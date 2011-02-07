@@ -10,18 +10,18 @@ use Phin_Project\CommandLineLib\DefinedSwitch;
 
 use Gradwell\ComponentMaker\Entities\LibraryComponentFolder;
 
-if (!class_exists('Gradwell\ComponentMaker\PhinCommands\PhpLibraryInit'))
+if (!class_exists('Gradwell\ComponentMaker\PhinCommands\PhpLibraryUpgrade'))
 {
-class PhpLibraryInit extends PhpLibraryBase implements CommandInterface
+class PhpLibraryUpgrade extends PhpLibraryBase implements CommandInterface
 {
         public function getCommandName()
         {
-                return 'php-library:init';
+                return 'php-library:upgrade';
         }
 
         public function getCommandDesc()
         {
-                return 'initialise the directory structure of a php-library component';
+                return 'upgrade the structure of a php-library component to the latest version';
         }
 
         public function  getCommandArgs()
@@ -47,7 +47,7 @@ class PhpLibraryInit extends PhpLibraryBase implements CommandInterface
 
                 // has the folder already been initialised?
                 $lib = new LibraryComponentFolder($folder);
-                if ($lib->state != LibraryComponentFolder::STATE_EMPTY)
+                if ($lib->state != LibraryComponentFolder::STATE_NEEDSUPGRADE)
                 {
                         $se->output($context->errorStyle, $context->errorPrefix);
 
@@ -55,14 +55,14 @@ class PhpLibraryInit extends PhpLibraryBase implements CommandInterface
                         switch ($lib->state)
                         {
                                 case LibraryComponentFolder::STATE_UPTODATE:
-                                        $se->outputLine(null, "folder has already been initialised");
+                                        $se->outputLine(null, "folder is already at latest version");
                                         break;
 
-                                case LibraryComponentFolder::STATE_NEEDSUPGRADE:
-                                        $se->outputLine(null, "folder has been initialised; needs upgrade");
+                                case LibraryComponentFolder::STATE_EMPTY:
+                                        $se->outputLine(null, "folder is not a php-library");
                                         $se->output(null, 'use ');
-                                        $se->output($context->commandStyle, $context->argvZero . ' php-library:upgrade');
-                                        $se->outputLine(null, ' to upgrade this folder');
+                                        $se->output($context->commandStyle, $context->argvZero . ' php-library:init');
+                                        $se->outputLine(null, ' to initialise this folder');
                                         break;
 
                                 default:
@@ -74,10 +74,10 @@ class PhpLibraryInit extends PhpLibraryBase implements CommandInterface
                 }
 
                 // if we get here, we have a green light
-                $lib->createComponent();
+                $lib->upgradeComponent();
 
                 // if we get here, it worked (ie, no exception!!)
-                $so->outputLine(null, 'Initialised empty php-library component in ' . $folder);
+                $so->outputLine(null, 'Upgraded php-library component in ' . $folder . ' to the latest version');
         }
 }
 }

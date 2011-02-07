@@ -21,7 +21,7 @@ class PhpLibraryStatus extends PhpLibraryBase implements CommandInterface
 
         public function getCommandDesc()
         {
-                return 'check the status of a PEAR-compatible library component';
+                return 'check the status of a php-library component';
         }
 
         public function getCommandArgs()

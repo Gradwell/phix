@@ -14,6 +14,7 @@ class LibraryComponentFolder extends ComponentFolder
 
                 // step 2: create the build file
                 $this->createBuildFile();
+                $this->createBuildProperties();
 
                 // step 3: create the package.xml file
                 $this->createPackageXmlFile();
@@ -30,6 +31,28 @@ class LibraryComponentFolder extends ComponentFolder
                 $this->createBootstrapFile();
 
                 // if we get here, job done
+        }
+
+        public function upgradeComponent()
+        {
+                // just make sure we're not being asked to do something
+                // that is impossible
+                if ($this->componentVersion >= self::LATEST_VERSION)
+                {
+                        throw new \Exception('Folder ' . $this->folder . ' is on version ' . $this->componentVersion . ' which is newer than known latest version ' . self::LATEST_VERSION);
+                }
+
+                // ok, let's do the upgrades
+                $thisVersion = $this->componentVersion;
+                while ($thisVersion < self::LATEST_VERSION)
+                {
+                        $method = 'upgradeFrom' . $thisVersion . 'To' . ($thisVersion + 1);
+                        \call_user_method($method, $this);
+                        $thisVersion++;
+                        $this->editBuildPropertiesVersionNumber($thisVersion);
+                }
+
+                // all done
         }
 
         protected function createFolders()
@@ -72,7 +95,12 @@ class LibraryComponentFolder extends ComponentFolder
 
         protected function createBuildFile()
         {
-                $this->copyFilesFromDataFolder(array('build.xml', 'build.properties'));
+                $this->copyFilesFromDataFolder(array('build.xml'));
+        }
+
+        protected function createBuildProperties()
+        {
+                $this->copyFilesFromDataFolder(array('build.properties'));
         }
 
         protected function createPackageXmlFile()
@@ -93,5 +121,23 @@ class LibraryComponentFolder extends ComponentFolder
         protected function createBootstrapFile()
         {
                 $this->copyFilesFromDataFolder(array('bootstrap.php'), '/src/tests/unit-tests/');
+        }
+
+        /**
+         * Upgrade a php-library to v2
+         *
+         * The changes between v1 and v2 are:
+         *
+         * * improved build file
+         * * improved SCM ignore files
+         * * improved bootstrap file
+         *
+         * Nothing has moved location.
+         */
+        protected function upgradeFrom1To2()
+        {
+                $this->createBuildFile();
+                $this->createScmIgnoreFiles();
+                $this->createBootstrapFile();
         }
 }
