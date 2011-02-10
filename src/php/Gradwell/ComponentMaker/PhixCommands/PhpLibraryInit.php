@@ -12,7 +12,7 @@ use Gradwell\ComponentMaker\Entities\LibraryComponentFolder;
 
 if (!class_exists('Gradwell\ComponentMaker\PhixCommands\PhpLibraryInit'))
 {
-class PhpLibraryInit extends PhpLibraryBase implements CommandInterface
+class PhpLibraryInit extends ComponentCommandBase implements CommandInterface
 {
         public function getCommandName()
         {

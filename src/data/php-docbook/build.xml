@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- build file for Phixg -->
+<project default="help" basedir=".">
+  <!-- Human-readable info about our component -->
+  <property file="build.properties" />
+
+  <property name="project.version"         value="${project.majorVersion}.${project.minorVersion}.${project.patchLevel}" />
+  <property name="project.apiversion"      value="${project.majorVersion}.${project.minorVersion}" />
+
+  <!-- Paths to the directories that we work with -->
+  <property name="project.srcdir"          value="${project.basedir}/src" override="true" />
+  <property name="project.builddir"        value="${project.basedir}/.build"  override="true" />
+  <property name="project.pkgdir"          value="${project.builddir}/${project.name}-${project.version}" override="true" />
+  <property name="project.tmpdir"          value="${project.basedir}/.tmp" override="true" />
+
+  <property name="project.vendordir"       value="${project.basedir}/vendor" override="true" />
+  <property name="project.vendor.bindir"   value="${project.vendordir}/bin" override="true" />
+  <property name="project.vendor.datadir"  value="${project.vendordir}/data" override="true" />
+  <property name="project.vendor.phpdir"   value="${project.vendordir}/php" override="true" />
+  <property name="project.vendor.testdir"  value="${project.vendordir}/tests" override="true" />
+  <property name="project.vendor.docdir"   value="${project.vendordir}/docs" override="true" />
+  <property name="project.vendor.wwwdir"   value="${project.vendordir}/www" override="true" />
+
+  <property name="project.distdir"         value="${project.basedir}/dist" />
+  <property name="project.tarfilename"     value="${project.name}-${project.version}.tgz" />
+  <property name="project.tarfile"         value="${project.distdir}/${project.tarfilename}" />
+
+  <!-- lists of the files that make up our package -->
+
+  <!-- Tell the user what this build file supports -->
+  <target name="help">
+    <echo message="${project.name} ${project.version}: build.xml targets:" />
+    <echo message="" />
+    <echo message="lint" />
+    <echo message="  Check the PHP files for syntax errors" />
+    <echo message="compile" />
+    <echo message="  Turn the Docbook sources into the publishable website"/>
+    <echo message="build-vendor" />
+    <echo message="  Populate vendor/ with this package's dependencies" />
+    <echo message="clean" />
+    <echo message="  Remove all temporary folders created by this build file" />
+  </target>
+
+  <!-- Check the Docbook sources for validation errors -->
+  <target name="lint">
+    <foreach param="xmlfile" absparam="absxmlfile" target="lint-xml">
+      <fileset dir="${project.srcdir}">
+        <include name="**/*.xml"/>
+      </fileset>
+    </foreach>
+  </target>
+
+  <!-- Check for XML errors -->
+  <target name="lint-xml">
+    <exec command="xmllint --noout ${absxmlfile}" checkreturn="true" logoutput="true" />
+  </target>
+
+  <!-- Compile the Docbook into the published formats -->
+  <target name="compile">
+    <delete dir="${project.builddir}"/>
+    <mkdir dir="${project.builddir}"/>
+
+    <delete dir="${project.distdir}"/>
+    <mkdir dir="${project.distdir}"/>
+
+    <mkdir dir="figures" />
+    <copy todir="figures">
+      <fileset dir="${project.srcdir}/figures">
+        <include name="*.png"/>
+      </fileset>
+    </copy>
+
+    <copy file="${project.toolsdir}/docbook.css" todir="${project.distdir}"/>
+
+    <!-- Create the HTML version of the docs -->
+    <exec command="xsltproc --stringparam base.dir ${project.distdir}/ --stringparam l10n.gentext.language en ${project.toolsdir}/html-chunked.xsl ${project.srcdir}/book.xml" logoutput="true" />
+  </target>
+
+  <!-- Populate vendor with the dependencies for this component -->
+  <target name="build-vendor" depends="pear-package,setup-vendor">
+    <echo>Populating vendor/ with dependencies</echo>
+    <exec command="Phix pear:register-channels" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.builddir}/package.xml" logoutput="true" checkreturn="true"/>
+  </target>
+
+  <!-- Setup the vendor folder -->
+  <target name="setup-vendor">
+    <echo>Creating vendor/ as a sandboxed PEAR install folder</echo>
+    <delete dir="${project.vendordir}" />
+    <mkdir dir="${project.vendordir}" />
+    <delete dir="${project.tmpdir}" />
+    <mkdir dir="${project.tmpdir}" />
+    <exec command="pear config-create ${project.tmpdir} ${project.tmpdir}/pear-config" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set preferred_state alpha" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set php_dir ${project.vendor.phpdir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set bin_dir ${project.vendor.bindir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set data_dir ${project.vendor.datadir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set doc_dir ${project.vendor.docdir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set test_dir ${project.vendor.testdir}" checkreturn="true" logoutput="true" />
+    <exec command="pear -c ${project.tmpdir}/pear-config config-set www_dir ${project.vendor.wwwdir}" checkreturn="true" logoutput="true" />
+  </target>
+
+  <!-- Create a dummy PEAR package to satisfy lib-vendor -->
+  <target name="pear-package-for-lib-vendor">
+    <echo>Building release directory</echo>
+    <delete dir="${project.builddir}" />
+    <mkdir dir="${project.pkgdir}" />
+    <copy todir="${project.pkgdir}">
+      <fileset refid="phpfiles"/>
+    </copy>
+    <copy todir="${project.builddir}">
+      <fileset dir=".">
+        <include name="package.xml" />
+      </fileset>
+    </copy>
+    <copy file="${project.basedir}/build.xml" tofile="${project.builddir}/build.xml" overwrite="true" />
+    <exec command="Phix pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
+  </target>
+
+  <!-- Create the PEAR package, ready for release -->
+  <target name="pear-package">
+    <echo>Building release directory</echo>
+    <delete dir="${project.builddir}" />
+    <mkdir dir="${project.pkgdir}" />
+    <copy todir="${project.pkgdir}">
+      <fileset refid="binfiles"/>
+      <fileset refid="datafiles"/>
+      <fileset refid="phpfiles"/>
+      <fileset refid="testfiles"/>
+      <fileset refid="wwwfiles"/>
+    </copy>
+    <copy todir="${project.builddir}">
+      <fileset dir=".">
+        <include name="package.xml" />
+      </fileset>
+    </copy>
+
+    <exec command="Phix pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
+
+    <echo>Creating ${project.tarfile} PEAR package</echo>
+
+    <mkdir dir="${project.distdir}" />
+    <delete file="${project.tarfile}" />
+    <tar destfile="${project.tarfile}" compression="gzip">
+      <fileset dir="${project.builddir}">
+        <include name="*" />
+      </fileset>
+    </tar>
+    <echo>Your PEAR package is in ${project.tarfile}</echo>
+  </target>
+
+  <!-- Install the code -->
+  <target name="install-vendor">
+    <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps -f ${project.tarfile}" logoutput="true" checkreturn="true"/>
+  </target>
+  <target name="install-system">
+    <exec command="pear install -f -a ${project.tarfile}" checkreturn="true" logoutput="true" />
+  </target>
+
+  <!-- Clean up the mess -->
+  <target name="clean">
+    <delete dir="${project.builddir}" />
+    <delete dir="${project.distdir}" />
+    <delete dir="${project.reviewdir}" />
+    <delete dir="${project.pkgdir}" />
+    <delete dir="${project.distdir}" />
+    <delete dir="${project.tmpdir}" />
+  </target>
+</project>
+<!-- vim: set tabstop=2 shiftwidth=2 expandtab: -->
