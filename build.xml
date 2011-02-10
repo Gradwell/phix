@@ -158,7 +158,7 @@
   <!-- Populate vendor with the dependencies for this component -->
   <target name="build-vendor" depends="pear-package,setup-vendor">
     <echo>Populating vendor/ with dependencies</echo>
-    <exec command="phin pear:register-channels" checkreturn="true" logoutput="true" />
+    <exec command="phix pear:register-channels" checkreturn="true" logoutput="true" />
     <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.builddir}/package.xml" logoutput="true" checkreturn="true"/>
   </target>
 
@@ -193,7 +193,7 @@
       </fileset>
     </copy>
     <copy file="${project.basedir}/build.xml" tofile="${project.builddir}/build.xml" overwrite="true" />
-    <exec command="phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
+    <exec command="phix pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
   </target>
 
   <!-- Create the PEAR package, ready for release -->
@@ -214,7 +214,7 @@
       </fileset>
     </copy>
 
-    <exec command="phin pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
+    <exec command="phix pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
 
     <echo>Creating ${project.tarfile} PEAR package</echo>
 

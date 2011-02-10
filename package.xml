@@ -3,7 +3,7 @@
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
-  <name>Phix</name>
+  <name>phix</name>
   <channel>pear.gradwell.com</channel>
   <summary>Framework-agnostic command-line util for PHP development</summary>
   <description>
