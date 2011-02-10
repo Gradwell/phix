@@ -33,18 +33,18 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  PhinExtensions
+ * @package     Phix_Project
+ * @subpackage  PhixExtensions
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\PhinExtensions;
-use Phin_Project\Phin\CommandsList;
-use Phin_Project\CommandLineLib\DefinedSwitches;
+namespace Phix_Project\PhixExtensions;
+use Phix_Project\Phix\CommandsList;
+use Phix_Project\CommandLineLib\DefinedSwitches;
 
 interface CommandInterface
 {

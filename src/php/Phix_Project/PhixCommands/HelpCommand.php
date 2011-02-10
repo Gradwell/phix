@@ -33,25 +33,25 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  PhinCommands
+ * @package     Phix_Project
+ * @subpackage  PhixCommands
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\PhinCommands;
+namespace Phix_Project\PhixCommands;
 
-use Phin_Project\Phin\CommandsList;
-use Phin_Project\Phin\Context;
-use Phin_Project\PhinExtensions\CommandBase;
-use Phin_Project\PhinExtensions\CommandInterface;
-use Phin_Project\CommandLineLib\DefinedSwitches;
-use Phin_Project\CommandLineLib\DefinedSwitch;
+use Phix_Project\Phix\CommandsList;
+use Phix_Project\Phix\Context;
+use Phix_Project\PhixExtensions\CommandBase;
+use Phix_Project\PhixExtensions\CommandInterface;
+use Phix_Project\CommandLineLib\DefinedSwitches;
+use Phix_Project\CommandLineLib\DefinedSwitch;
 
-if (!\class_exists('Phin_Project\PhinCommands\HelpCommand'))
+if (!\class_exists('Phix_Project\PhixCommands\HelpCommand'))
 {
 class HelpCommand extends CommandBase implements CommandInterface
 {
@@ -62,7 +62,7 @@ class HelpCommand extends CommandBase implements CommandInterface
 
         public function getCommandDesc()
         {
-                return 'get detailed help about a specific phin command';
+                return 'get detailed help about a specific Phix command';
         }
 
         public function validateAndExecute($args, $argsIndex, Context $context)
@@ -87,7 +87,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                         $se->output($context->errorStyle, $context->errorPrefix);
                         $se->outputLine(null, ' unknown command ' . $commandForHelp);
                         $se->output(null, 'use ');
-                        $se->output($context->commandStyle, 'phin --help');
+                        $se->output($context->commandStyle, 'Phix --help');
                         $se->outputLine(null, ' for a list of all available commands');
                         return 1;
                 }
@@ -105,20 +105,20 @@ class HelpCommand extends CommandBase implements CommandInterface
         protected function showGeneralHelp(Context $context)
         {
                 // get the list of switches in display order
-                $sortedSwitches = $this->calculatePhinSwitchDisplayOrder($context);
+                $sortedSwitches = $this->calculatePhixSwitchDisplayOrder($context);
 
                 $so = $context->stdout;
 
-                $so->output($context->highlightStyle, "phin " . $context->version);
-                $so->outputLine($context->urlStyle, ' http://www.phin-tool.org');
+                $so->output($context->highlightStyle, "Phix " . $context->version);
+                $so->outputLine($context->urlStyle, ' http://www.Phix-tool.org');
                 $so->outputLine(null, 'Copyright (c) 2010 Gradwell dot com Ltd. Released under the BSD license');
                 $so->outputBlankLine();
-                $this->showPhinSwitchSummary($context, $sortedSwitches);
-                $this->showPhinSwitchDetails($context, $sortedSwitches);
+                $this->showPhixSwitchSummary($context, $sortedSwitches);
+                $this->showPhixSwitchDetails($context, $sortedSwitches);
                 $this->showCommandsList($context);
         }
 
-        protected function calculatePhinSwitchDisplayOrder(Context $context)
+        protected function calculatePhixSwitchDisplayOrder(Context $context)
         {
                 // turn the list into something that's suitably sorted
                 $shortSwitchesWithoutArgs = array();
@@ -129,7 +129,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $allShortSwitches = array();
                 $allLongSwitches = array();
 
-                $allSwitches = $context->phinDefinedSwitches->getSwitches();
+                $allSwitches = $context->PhixDefinedSwitches->getSwitches();
 
                 foreach ($allSwitches as $switch)
                 {
@@ -162,7 +162,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                         }
                 }
 
-                // we have all the switches that phin supports
+                // we have all the switches that Phix supports
                 // let's put them into sensible orders, and then display
                 // them
                 \ksort($shortSwitchesWithArgs);
@@ -183,7 +183,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 return $return;
         }
 
-        protected function showPhinSwitchSummary(Context $context, $sortedSwitches)
+        protected function showPhixSwitchSummary(Context $context, $sortedSwitches)
         {
                 $so = $context->stdout;
 
@@ -238,7 +238,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $so->outputBlankLine();
         }
 
-        protected function showPhinSwitchDetails(Context $context, $sortedSwitches)
+        protected function showPhixSwitchDetails(Context $context, $sortedSwitches)
         {
                 $so = $context->stdout;
                 

@@ -1,21 +1,21 @@
 <?php
 
-namespace Gradwell\ComponentMaker\PhinCommands;
+namespace Gradwell\ComponentMaker\PhixCommands;
 
-use Phin_Project\Phin\CommandsList;
-use Phin_Project\Phin\Context;
-use Phin_Project\PhinExtensions\CommandBase;
-use Phin_Project\PhinExtensions\CommandInterface;
-use Phin_Project\CommandLineLib\DefinedSwitches;
-use Phin_Project\CommandLineLib\DefinedSwitch;
-use Phin_Project\CommandLineLib\CommandLineParser;
-use Phin_Project\ValidationLib\MustBeValidFile;
-use Phin_Project\ValidationLib\MustBeValidPath;
-use Phin_Project\ValidationLib\MustBeWriteable;
+use Phix_Project\Phix\CommandsList;
+use Phix_Project\Phix\Context;
+use Phix_Project\PhixExtensions\CommandBase;
+use Phix_Project\PhixExtensions\CommandInterface;
+use Phix_Project\CommandLineLib\DefinedSwitches;
+use Phix_Project\CommandLineLib\DefinedSwitch;
+use Phix_Project\CommandLineLib\CommandLineParser;
+use Phix_Project\ValidationLib\MustBeValidFile;
+use Phix_Project\ValidationLib\MustBeValidPath;
+use Phix_Project\ValidationLib\MustBeWriteable;
 
 use Gradwell\ComponentMaker\Entities\LibraryComponentFolder;
 
-if (!class_exists('Gradwell\ComponentMaker\PhinCommands\RegisterChannels'))
+if (!class_exists('Gradwell\ComponentMaker\PhixCommands\RegisterChannels'))
 {
 class RegisterChannels extends CommandBase implements CommandInterface
 {

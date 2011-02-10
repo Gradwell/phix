@@ -115,6 +115,16 @@ class ComponentFolder
                 }
         }
 
+        public function replaceFolderContentsFromDataFolder($src, $dest='/')
+        {
+                $srcFolder  = $this->pathToDataFolder . '/' . $src;
+                $destFolder = $this->folder . $dest;
+
+                \rmdir($destFolder);
+                \mkdir($destFolder);
+
+        }
+
         public function testHasBuildProperties()
         {
                 if (file_exists($this->buildPropertiesFile))

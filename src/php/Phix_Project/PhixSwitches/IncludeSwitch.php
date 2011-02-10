@@ -33,18 +33,18 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  PhinSwitches
+ * @package     Phix_Project
+ * @subpackage  PhixSwitches
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\PhinSwitches;
-use Phin_Project\Phin\Context;
-use Phin_Project\PhinExtensions\SwitchBase;
+namespace Phix_Project\PhixSwitches;
+use Phix_Project\Phix\Context;
+use Phix_Project\PhixExtensions\SwitchBase;
 
 class IncludeSwitch extends SwitchBase
 {
@@ -66,7 +66,7 @@ class IncludeSwitch extends SwitchBase
                         \__gwc_autoload_alsoSearch(\realpath($path));
                 }
 
-                // we do not want phin to terminate yet
+                // we do not want Phix to terminate yet
                 return null;
         }
 }

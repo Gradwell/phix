@@ -33,27 +33,27 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
+ * @package     Phix_Project
  * @subpackage  ValidationLib
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\ValidationLib;
+namespace Phix_Project\ValidationLib;
 
-class MustBeValidFileTest extends ValidationLibTestBase
+class MustBeStringTest extends ValidationLibTestBase
 {
         /**
          *
-         * @return MustBeValidFile
+         * @return MustBeString
          */
         protected function setupObj()
         {
                 // setup the test
-                $obj = new MustBeValidFile();
+                $obj = new MustBeString();
                 $messages = $obj->getMessages();
                 $this->assertTrue(is_array($messages));
                 $this->assertEquals(0, count($messages));
@@ -61,22 +61,64 @@ class MustBeValidFileTest extends ValidationLibTestBase
                 return $obj;
         }
 
-        public function testCorrectlyDetectsAFile()
+        public function testCorrectlyDetectsStrings()
         {
                 $obj = $this->setupObj();
-                $this->doTestIsValid($obj, __FILE__);
+                $this->doTestIsValid($obj, '0');
+                $this->doTestIsValid($obj, 'fred');
         }
 
-        public function testCorrectlyDetectsAMissingFile()
+        public function testCorrectlyDetectsNulls()
         {
                 $obj = $this->setupObj();
-                $file = __FILE__ . '.bogus';
-                $this->doTestIsNotValid($obj, $file, array("'$file' is not a valid file"));
+                $this->doTestIsNotValid($obj, null, array("'' (of type NULL) is not a valid string"));
         }
-        
-        public function testCorrectlyDetectsADirectory()
+
+        public function testCorrectlyDetectsIntegers()
         {
                 $obj = $this->setupObj();
-                $this->doTestIsNotValid($obj, __DIR__, array("'" . __DIR__ . "' is not a valid file"));
+                $this->doTestIsValid($obj, 1);
+        }
+
+        public function testCorrectlyDetectsFloats()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsValid($obj, 3.145297);
+        }
+
+        public function testCorrectlyDetectsObjects()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsNotValid($obj, $obj, array("'Phix_Project\ValidationLib\MustBeString' (of type object) is not a valid string"));
+        }
+
+        public function testCorrectlyDetectsResources()
+        {
+                $obj = $this->setupObj();
+                $res = fopen('php://input', 'r');
+                $this->doTestIsNotValid($obj, $res, array("'' (of type resource) is not a valid string"));
+        }
+
+        public function testCorrectlyDetectsBooleans()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsNotValid($obj, true, array("'TRUE' (of type boolean) is not a valid string"));
+                $this->doTestIsNotValid($obj, false, array("'FALSE' (of type boolean) is not a valid string"));
+        }
+
+        public function testCorrectlyDetectsClosures()
+        {
+                $obj = $this->setupObj();
+                $func = function() { return true; };
+
+                $this->doTestIsNotValid($obj, $func, array("'Closure' (of type object) is not a valid string"));
+        }
+
+        public function testCorrectlyDetectsArrays()
+        {
+                $obj = $this->setupObj();
+                $arr = array (1,2,3,4,5,6,7,8,9,10);
+
+                $this->doTestIsNotValid($obj, $arr, array ("'' (of type array) is not a valid string"));
         }
 }

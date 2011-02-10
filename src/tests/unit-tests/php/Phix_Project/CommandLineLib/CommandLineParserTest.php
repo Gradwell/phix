@@ -33,20 +33,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
+ * @package     Phix_Project
  * @subpackage  CommandLineLib
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\CommandLineLib;
+namespace Phix_Project\CommandLineLib;
 
-use Phin_Project\ValidationLib\MustBeValidFile;
-use Phin_Project\ValidationLib\MustBeWriteable;
-use Phin_Project\ValidationLib\MustBeValidPath;
+use Phix_Project\ValidationLib\MustBeValidFile;
+use Phix_Project\ValidationLib\MustBeWriteable;
+use Phix_Project\ValidationLib\MustBeValidPath;
 
 class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -110,7 +110,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-vh',
                         'help'
                 );
@@ -149,7 +149,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-I',
                         '/tmp',
                         'help'
@@ -179,7 +179,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-I/tmp',
                         'help'
                 );
@@ -208,7 +208,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--version',
                         '--help',
                         'help'
@@ -235,7 +235,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--include',
                         '/tmp',
                         'help'
@@ -266,7 +266,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--include=/tmp',
                         'help'
                 );
@@ -296,7 +296,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-lfred',
                         '--include',
                         '/tmp',
@@ -335,7 +335,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-?',
                         '--?',
                         'help'
@@ -369,7 +369,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-vh',
                         '--',
                         'help'
@@ -409,7 +409,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-vhx',
                         'help'
                 );
@@ -436,7 +436,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--panic',
                         'help'
                 );
@@ -463,7 +463,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-I'
                 );
 
@@ -490,7 +490,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--include'
                 );
 
@@ -515,7 +515,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--include='
                 );
 
@@ -542,7 +542,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-vIh'
                 );
 
@@ -569,7 +569,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-vhI',
                         '/fred'
                 );
@@ -613,7 +613,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '-vhW',
                 );
 
@@ -653,7 +653,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--warnings',
                 );
 
@@ -682,7 +682,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest',
+                        'PhixTest',
                         '--warnings=all',
                 );
 
@@ -711,7 +711,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        'phinTest'
+                        'PhixTest'
                 );
 
                 $parser = new CommandLineParser();
@@ -737,7 +737,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
         public function testDefaultValuesAreAddedIfNoSwitchesPresent()
         {
-                // this is a bug I first discovered in phin, and here
+                // this is a bug I first discovered in Phix, and here
                 // is the code necessary to reproduce the faults
                 $options = new DefinedSwitches();
 
@@ -765,7 +765,7 @@ class CommandLineParserTest extends \PHPUnit_Framework_TestCase
 
                 $argv = array
                 (
-                        './phin',
+                        './Phix',
                         'pear:expand-package-xml'
                 );
 

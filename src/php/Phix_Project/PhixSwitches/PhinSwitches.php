@@ -33,58 +33,58 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  PhinSwitches
+ * @package     Phix_Project
+ * @subpackage  PhixSwitches
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\PhinSwitches;
-use Phin_Project\CommandLineLib\DefinedSwitches;
-use Phin_Project\ValidationLib\MustBeValidPath;
+namespace Phix_Project\PhixSwitches;
+use Phix_Project\CommandLineLib\DefinedSwitches;
+use Phix_Project\ValidationLib\MustBeValidPath;
 
-class PhinSwitches
+class PhixSwitches
 {
         static public function buildSwitches(DefinedSwitches $switches)
         {
-                // phin -h || phin -?
+                // Phix -h || Phix -?
                 $switches->addSwitch('shortHelp', 'display a summary of the command-line structure')
                          ->setWithShortSwitch('h')
                          ->setWithShortSwitch('?');
 
-                // phin --help || phin --?
+                // Phix --help || Phix --?
                 $switches->addSwitch('longHelp', 'display a full list of supported commands')
                          ->setWithLongSwitch('help')
                          ->setWithLongSwitch('?');
                 
-                // phin -v || phin --version
-                $switches->addSwitch('version', 'display phin version number')
+                // Phix -v || Phix --version
+                $switches->addSwitch('version', 'display Phix version number')
                          ->setWithShortSwitch('v')
                          ->setWithLongSwitch('version');
 
-                // phin -d || phin --debug
+                // Phix -d || Phix --debug
                 $switches->addSwitch('debug', 'enable debugging output')
                          ->setWithShortSwitch('d')
                          ->setWithLongSwitch('debug');
 
-                // phin -I<path> || phin --include=<path>
+                // Phix -I<path> || Phix --include=<path>
                 $switches->addSwitch('include', 'add a folder to load commands from')
-                         ->setLongDesc("phin finds all of its commands by searching PHP's include_path for PHP files in "
-                                        . "folders called 'PhinCommands'. If you want to phin to look in other folders "
-                                        . "without having to add them to PHP's include_path, use --include to tell phin "
+                         ->setLongDesc("Phix finds all of its commands by searching PHP's include_path for PHP files in "
+                                        . "folders called 'PhixCommands'. If you want to Phix to look in other folders "
+                                        . "without having to add them to PHP's include_path, use --include to tell Phix "
                                         . "to look in these folders."
                                         . \PHP_EOL . \PHP_EOL
-                                        . "phin expects '<path>' to point to a folder that conforms to the PSR0 standard "
+                                        . "Phix expects '<path>' to point to a folder that conforms to the PSR0 standard "
                                         . "for autoloaders."
                                         . \PHP_EOL . \PHP_EOL
-                                        . "For example, if your command is the class '\Me\Tools\PhinCommands\ScheduledTask', phin would "
-                                        . "expect to autoload this class from the 'Me/Tools/PhinCommands/ScheduledTask.php' file."
+                                        . "For example, if your command is the class '\Me\Tools\PhixCommands\ScheduledTask', Phix would "
+                                        . "expect to autoload this class from the 'Me/Tools/PhixCommands/ScheduledTask.php' file."
                                         . \PHP_EOL . \PHP_EOL
-                                        . "If your class lives in the './myApp/lib/Me/Tools/PhinCommands' folder, you would call phin "
-                                        . "with 'phin --include=./myApp/lib'")
+                                        . "If your class lives in the './myApp/lib/Me/Tools/PhixCommands' folder, you would call Phix "
+                                        . "with 'Phix --include=./myApp/lib'")
                          ->setWithShortSwitch('I')
                          ->setWithLongSwitch('include')
                          ->setWithRequiredArg('<path>', 'The path to the folder to include')

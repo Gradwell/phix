@@ -33,19 +33,19 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  Phin
+ * @package     Phix_Project
+ * @subpackage  Phix
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\Phin;
+namespace Phix_Project\Phix;
 
-use Phin_Project\ConsoleDisplayLib\StdOut;
-use Phin_Project\ConsoleDisplayLib\StdErr;
+use Phix_Project\ConsoleDisplayLib\StdOut;
+use Phix_Project\ConsoleDisplayLib\StdErr;
 
 class Context
 {
@@ -61,7 +61,7 @@ class Context
          */
         public $stderr = null;
 
-        public $phinDefinedSwitches = null;
+        public $PhixDefinedSwitches = null;
         public $searchPaths = array();
 
         public $version = '@@PACKAGE_VERSION@@';

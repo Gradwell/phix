@@ -33,16 +33,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
+ * @package     Phix_Project
  * @subpackage  ExtenderLib
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\ExtenderLib;
+namespace Phix_Project\ExtenderLib;
 
 class FileLoaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,7 +53,7 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
 
                 $this->assertTrue(is_array($newClasses));
                 $this->assertEquals(1, count($newClasses));
-                $this->assertEquals('Phin_Project\\ExtenderLib\\DummyClass1', $newClasses[0]);
+                $this->assertEquals('Phix_Project\\ExtenderLib\\DummyClass1', $newClasses[0]);
         }
 
         public function testThrowsExceptionIfFileNotFound()

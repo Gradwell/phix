@@ -13,7 +13,7 @@ else
         require_once("@@PHP_DIR@@/gwc.autoloader.php");
 }
 
-// a list of places to look for phin commands
+// a list of places to look for Phix commands
 $searchFolders = array
 (
         getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'php',
@@ -31,5 +31,5 @@ foreach ($searchFolders as $searchFolder)
 
 // okay, let's do some actual work!!
 
-$tool = new \Phin_Project\Phin\Phin();
+$tool = new \Phix_Project\Phix\Phix();
 return $tool->main($argv);

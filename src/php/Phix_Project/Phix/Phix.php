@@ -33,24 +33,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  Phin
+ * @package     Phix_Project
+ * @subpackage  Phix
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\Phin;
+namespace Phix_Project\Phix;
 
-use Phin_Project\CommandLineLib\CommandLineParser;
-use Phin_Project\CommandLineLib\DefinedSwitches;
-use Phin_Project\CommandLineLib\ParsedSwitches;
+use Phix_Project\CommandLineLib\CommandLineParser;
+use Phix_Project\CommandLineLib\DefinedSwitches;
+use Phix_Project\CommandLineLib\ParsedSwitches;
 
-use Phin_Project\PhinSwitches\PhinSwitches;
+use Phix_Project\PhixSwitches\PhixSwitches;
 
-class Phin
+class Phix
 {
         protected $libraryNamespaces = array();
         
@@ -68,23 +68,23 @@ class Phin
                 // step 1: parse the command-line args
                 // we do this first because it may change where we look
                 // for our commands
-                $context->phinDefinedSwitches = $this->buildPhinSwitches();
-                list($phinParsedSwitches, $argsIndex) = $this->parsePhinArgs($context, $argv);
+                $context->PhixDefinedSwitches = $this->buildPhixSwitches();
+                list($PhixParsedSwitches, $argsIndex) = $this->parsePhixArgs($context, $argv);
 
                 // step 2: process the switches we have just parsed
                 //
                 // we parse the switches twice; once to find out where to
                 // look for extensions, and then once more to decide what
                 // to do once the extensions are loaded
-                $errCode = $this->processPhinSwitchesBeforeExtensionLoad($context, $phinParsedSwitches);
+                $errCode = $this->processPhixSwitchesBeforeExtensionLoad($context, $PhixParsedSwitches);
                 if ($errCode !== null)
                 {
                         return $errCode;
                 }
 
-                $context->commandsList = $this->loadPhinExtensions($context, $phinParsedSwitches);
+                $context->commandsList = $this->loadPhixExtensions($context, $PhixParsedSwitches);
 
-                $errCode = $this->processPhinSwitchesAfterExtensionLoad($context, $phinParsedSwitches);
+                $errCode = $this->processPhixSwitchesAfterExtensionLoad($context, $PhixParsedSwitches);
                 if ($errCode !== null)
                 {
                         return $errCode;
@@ -109,28 +109,28 @@ class Phin
                 return $errCode;
         }
         
-        protected function buildPhinSwitches()
+        protected function buildPhixSwitches()
         {
                 $switches = new DefinedSwitches();
-                \Phin_Project\PhinSwitches\PhinSwitches::buildSwitches($switches);
+                \Phix_Project\PhixSwitches\PhixSwitches::buildSwitches($switches);
 
                 // all done
                 return $switches;
         }
 
-        protected function parsePhinArgs(Context $context, $argv)
+        protected function parsePhixArgs(Context $context, $argv)
         {
                 // switches before the first command are switches that
-                // affect phin.
+                // affect Phix.
                 //
                 // switches after the first command are switches for
                 // that command
 
                 $parser = new CommandLineParser();
-                return $parser->parseSwitches($argv, 1, $context->phinDefinedSwitches);
+                return $parser->parseSwitches($argv, 1, $context->PhixDefinedSwitches);
         }
 
-        protected function processPhinSwitchesBeforeExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
+        protected function processPhixSwitchesBeforeExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
         {
                 // what switches do we have?
                 $parsedSwitches = $ParsedSwitches->getSwitches();
@@ -139,7 +139,7 @@ class Phin
                 foreach ($parsedSwitches as $parsedSwitch)
                 {
                         $switchName = $parsedSwitch->name;
-                        $className = '\\Phin_Project\\PhinSwitches\\' . ucfirst($switchName) . 'Switch';
+                        $className = '\\Phix_Project\\PhixSwitches\\' . ucfirst($switchName) . 'Switch';
                         $errCode = $className::processBeforeExtensionLoad($context, $ParsedSwitches->getArgsForSwitch($switchName));
                         if ($errCode !== null)
                         {
@@ -148,11 +148,11 @@ class Phin
                 }
 
                 // all done - return NULL to signify that we're not yet
-                // ready to terminate phin
+                // ready to terminate Phix
                 return null;
         }
 
-        protected function loadPhinExtensions(Context $context, ParsedSwitches $ParsedSwitches)
+        protected function loadPhixExtensions(Context $context, ParsedSwitches $ParsedSwitches)
         {
                 // create something to find the commands
                 $extensionsFinder = new ExtensionsFinder();
@@ -178,7 +178,7 @@ class Phin
                 return $commandsList;
         }
 
-        protected function processPhinSwitchesAfterExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
+        protected function processPhixSwitchesAfterExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
         {
                 // what switches do we have?
                 $parsedSwitches = $ParsedSwitches->getSwitches();
@@ -187,7 +187,7 @@ class Phin
                 foreach ($parsedSwitches as $parsedSwitch)
                 {
                         $switchName = $parsedSwitch->name;
-                        $className = '\\Phin_Project\\PhinSwitches\\' . ucfirst($switchName) . 'Switch';
+                        $className = '\\Phix_Project\\PhixSwitches\\' . ucfirst($switchName) . 'Switch';
                         $errCode = $className::processAfterExtensionLoad($context, $ParsedSwitches->getArgsForSwitch($switchName));
                         if ($errCode !== null)
                         {
@@ -196,7 +196,7 @@ class Phin
                 }
 
                 // all done - return NULL to signify that we're not yet
-                // ready to terminate phin
+                // ready to terminate Phix
                 return null;
         }
 
@@ -236,7 +236,7 @@ class Phin
                 $se->output($context->errorStyle, 'error: ');
                 $se->outputLine(null, $errorMessage);
                 $se->output(null, "use ");
-                $se->output($context->exampleStyle, 'phin -h');
+                $se->output($context->exampleStyle, 'Phix -h');
                 $se->outputLine(null, " for help");
         }
 }

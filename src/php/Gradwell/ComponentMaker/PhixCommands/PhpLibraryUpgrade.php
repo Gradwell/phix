@@ -1,16 +1,16 @@
 <?php
 
-namespace Gradwell\ComponentMaker\PhinCommands;
+namespace Gradwell\ComponentMaker\PhixCommands;
 
-use Phin_Project\Phin\CommandsList;
-use Phin_Project\Phin\Context;
-use Phin_Project\PhinExtensions\CommandInterface;
-use Phin_Project\CommandLineLib\DefinedSwitches;
-use Phin_Project\CommandLineLib\DefinedSwitch;
+use Phix_Project\Phix\CommandsList;
+use Phix_Project\Phix\Context;
+use Phix_Project\PhixExtensions\CommandInterface;
+use Phix_Project\CommandLineLib\DefinedSwitches;
+use Phix_Project\CommandLineLib\DefinedSwitch;
 
 use Gradwell\ComponentMaker\Entities\LibraryComponentFolder;
 
-if (!class_exists('Gradwell\ComponentMaker\PhinCommands\PhpLibraryUpgrade'))
+if (!class_exists('Gradwell\ComponentMaker\PhixCommands\PhpLibraryUpgrade'))
 {
 class PhpLibraryUpgrade extends PhpLibraryBase implements CommandInterface
 {

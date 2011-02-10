@@ -33,25 +33,50 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  ConsoleDisplayLib
+ * @package     Phix_Project
+ * @subpackage  ValidationLib
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\ConsoleDisplayLib;
+namespace Phix_Project\ValidationLib;
 
-class StdErrTest extends \PHPUnit_Framework_TestCase
+class MustBeValidFileTest extends ValidationLibTestBase
 {
-        public function testIsTty()
+        /**
+         *
+         * @return MustBeValidFile
+         */
+        protected function setupObj()
         {
-                $stdErr = new StdErr();
-                $fp = \fopen($stdErr->target, 'a+');
-                
-                // it fails because of something phpunit does
-                $this->assertFalse($stdErr->isPosixTty($fp));
+                // setup the test
+                $obj = new MustBeValidFile();
+                $messages = $obj->getMessages();
+                $this->assertTrue(is_array($messages));
+                $this->assertEquals(0, count($messages));
+
+                return $obj;
+        }
+
+        public function testCorrectlyDetectsAFile()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsValid($obj, __FILE__);
+        }
+
+        public function testCorrectlyDetectsAMissingFile()
+        {
+                $obj = $this->setupObj();
+                $file = __FILE__ . '.bogus';
+                $this->doTestIsNotValid($obj, $file, array("'$file' is not a valid file"));
+        }
+        
+        public function testCorrectlyDetectsADirectory()
+        {
+                $obj = $this->setupObj();
+                $this->doTestIsNotValid($obj, __DIR__, array("'" . __DIR__ . "' is not a valid file"));
         }
 }

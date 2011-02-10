@@ -33,19 +33,19 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
+ * @package     Phix_Project
  * @subpackage  CommandLineLib
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\CommandLineLib;
+namespace Phix_Project\CommandLineLib;
 
-use Phin_Project\ValidationLib\MustBeWriteable;
-use Phin_Project\ValidationLib\MustBeValidPath;
+use Phix_Project\ValidationLib\MustBeWriteable;
+use Phix_Project\ValidationLib\MustBeValidPath;
 
 class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
 {
@@ -367,7 +367,7 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
                     ->setArgValidator(new MustBeWriteable());
 
                 // did it work?
-                $this->assertTrue($obj->arg->testMustValidateWith('Phin_Project\ValidationLib\MustBeWriteable'));
+                $this->assertTrue($obj->arg->testMustValidateWith('Phix_Project\ValidationLib\MustBeWriteable'));
         }
 
         public function testCanTestForOptionalArguments()
@@ -425,19 +425,19 @@ class DefinedSwitchTest extends \PHPUnit_Framework_TestCase
         public function testCanAutoGenerateAHumanReadableDesc()
         {
                 $obj = new DefinedSwitch('include', 'add a folder to load commands from');
-                $obj->setLongDesc("phin finds all of its commands by searching PHP's include_path for files with "
-                                  . "the file extension '.phin.php'. If you want to phin to look in other folders "
-                                  . "without having to add them to PHP's include_path, use --include to tell phin "
+                $obj->setLongDesc("Phix finds all of its commands by searching PHP's include_path for files with "
+                                  . "the file extension '.Phix.php'. If you want to Phix to look in other folders "
+                                  . "without having to add them to PHP's include_path, use --include to tell Phix "
                                   . "to look in these folders."
                                   . \PHP_EOL . \PHP_EOL
-                                  . "phin expects '<path>' to point to a folder that conforms to the PSR0 standard "
+                                  . "Phix expects '<path>' to point to a folder that conforms to the PSR0 standard "
                                   . "for autoloaders."
                                   . \PHP_EOL . \PHP_EOL
-                                  . "For example, if your command is the class '\Me\Tools\ScheduledTask', phin would "
-                                  . "expect to autoload this class from the 'Me/Tools/ScheduledTask.phin.php' file."
+                                  . "For example, if your command is the class '\Me\Tools\ScheduledTask', Phix would "
+                                  . "expect to autoload this class from the 'Me/Tools/ScheduledTask.Phix.php' file."
                                   . \PHP_EOL . \PHP_EOL
-                                  . "If your class lives in the './myApp/lib/Me/Tools' folder, you would call phin "
-                                  . "with 'phin --include=./myApp/lib'")
+                                  . "If your class lives in the './myApp/lib/Me/Tools' folder, you would call Phix "
+                                  . "with 'Phix --include=./myApp/lib'")
                     ->setWithShortSwitch('I')
                     ->setWithLongSwitch('include')
                     ->setWithRequiredArg('<path>', 'The path to the folder to include')

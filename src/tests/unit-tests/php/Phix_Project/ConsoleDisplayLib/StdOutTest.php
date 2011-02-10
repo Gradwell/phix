@@ -33,29 +33,25 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Phin_Project
- * @subpackage  ValidationLib
+ * @package     Phix_Project
+ * @subpackage  ConsoleDisplayLib
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.phin-tool.org
+ * @link        http://www.Phix-tool.org
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phin_Project\ValidationLib;
+namespace Phix_Project\ConsoleDisplayLib;
 
-class ValidationLibTestBase extends \PHPUnit_Framework_TestCase
+class StdOutTest extends \PHPUnit_Framework_TestCase
 {
-        protected function doTestIsValid(Validator $validator, $value)
+        public function testIsTty()
         {
-                $this->assertTrue($validator->isValid($value));
-                $this->assertEquals(0, count($validator->getMessages()));
-        }
+                $stdOut = new StdOut();
+                $fp = \fopen($stdOut->target, 'a+');
 
-        protected function doTestIsNotValid(Validator $validator, $value, $errorMessages)
-        {
-                $this->assertFalse($validator->isValid($value));
-                $this->assertNotEquals(0, count($validator->getMessages()));
-                $this->assertEquals($errorMessages, $validator->getMessages());
+                // it fails because of something phpunit does
+                $this->assertFalse($stdOut->isPosixTty($fp));
         }
 }

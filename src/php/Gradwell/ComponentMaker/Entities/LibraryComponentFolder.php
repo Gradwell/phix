@@ -5,7 +5,7 @@ namespace Gradwell\ComponentMaker\Entities;
 class LibraryComponentFolder extends ComponentFolder
 {
         const LATEST_VERSION = 2;
-        const DATA_FOLDER = '@@DATA_DIR@@/phin/php-library';
+        const DATA_FOLDER = '@@DATA_DIR@@/Phix/php-library';
 
         public function createComponent()
         {
