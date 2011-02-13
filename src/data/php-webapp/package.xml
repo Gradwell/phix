@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+  <name>Your Package Name</name>
+  <channel>Your PEAR server</channel>
+  <summary>Summary goes here</summary>
+  <description>
+    Description goes here
+  </description>
+  <lead>
+    <name>Your name</name>
+    <user>Anything goes here</user>
+    <email>Your email address</email>
+    <active>yes</active>
+  </lead>
+  <date>${build.date}</date>
+  <time>${build.time}</time>
+  <version>
+  <release>${project.majorVersion}.${project.minorVersion}.${project.patchLevel}</release>
+    <api>${project.majorVersion}.${project.minorVersion}</api>
+  </version>
+  <stability>
+    <release>stable</release>
+    <api>stable</api>
+  </stability>
+  <license>All rights reserved.</license>
+  <notes>
+    No notes.
+  </notes>
+  <contents>
+    <dir baseinstalldir="/" name="/">
+${contents}
+    </dir>
+  </contents>
+  <dependencies>
+    <required>
+      <php>
+        <min>5.2.0</min>
+      </php>
+      <pearinstaller>
+        <min>1.6.0</min>
+      </pearinstaller>
+      <package>
+        <name>Autoloader</name>
+        <channel>pear.gradwell.com</channel>
+        <min>1.0.0</min>
+	      <max>1.999.9999</max>
+      </package>
+    </required>
+  </dependencies>
+  <phprelease />
+  <changelog>
+    <release>
+      <version>
+        <release>X.Y.Z</release>
+        <api>X.Y</api>
+      </version>
+      <stability>
+        <release>stable</release>
+        <api>stable</api>
+      </stability>
+      <date>Your release date</date>
+      <license>All rights reserved</license>
+      <notes>
+      </notes>
+    </release>
+  </changelog>
+</package>
+<!-- vim: set tabstop=2 shiftwidth=2 expandtab: -->
