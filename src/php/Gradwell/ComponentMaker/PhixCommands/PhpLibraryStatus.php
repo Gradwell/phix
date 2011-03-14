@@ -94,7 +94,7 @@ class PhpLibraryStatus extends ComponentCommandBase implements CommandInterface
                 switch ($lib->state)
                 {
                         case LibraryComponentFolder::STATE_UPTODATE:
-                                $so->outputLine(null, "folder has already been initialised");
+                                $so->outputLine(null, "folder has already been initialised, and is up to date");
                                 break;
 
                         case LibraryComponentFolder::STATE_NEEDSUPGRADE:
