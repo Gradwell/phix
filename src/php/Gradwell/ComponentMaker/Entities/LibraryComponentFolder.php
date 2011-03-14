@@ -46,7 +46,7 @@ namespace Gradwell\ComponentMaker\Entities;
 
 class LibraryComponentFolder extends ComponentFolder
 {
-        const LATEST_VERSION = 2;
+        const LATEST_VERSION = 3;
         const DATA_FOLDER = '@@DATA_DIR@@/phix/php-library';
 
         public function createComponent()
@@ -181,5 +181,17 @@ class LibraryComponentFolder extends ComponentFolder
                 $this->createBuildFile();
                 $this->createScmIgnoreFiles();
                 $this->createBootstrapFile();
+        }
+
+        /**
+         * Upgrade a php-library to v3
+         *
+         * The changes between v2 and v3 are:
+         *
+         * * improved build file
+         */
+        protected function upgradeFrom2To3()
+        {
+                $this->createBuildFile();
         }
 }

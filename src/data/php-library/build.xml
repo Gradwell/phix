@@ -82,7 +82,7 @@
     <echo message="  Populate vendor/ with this package's dependencies" />
     <echo message="pear-package" />
     <echo message="  Create a PEAR-compatible package" />
-    <echo message="install-local" />
+    <echo message="install-vendor" />
     <echo message="  Install this component from source into vendor/" />
     <echo message="install-system" />
     <echo message="  Install this component from source for all local users" />
