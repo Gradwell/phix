@@ -38,7 +38,7 @@
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.Phix-tool.org
+ * @link        http://gradwell.github.com
  * @version     @@PACKAGE_VERSION@@
  */
 
@@ -48,8 +48,8 @@ use Phix_Project\Phix\CommandsList;
 use Phix_Project\Phix\Context;
 use Phix_Project\PhixExtensions\CommandBase;
 use Phix_Project\PhixExtensions\CommandInterface;
-use Phix_Project\CommandLineLib\DefinedSwitches;
-use Phix_Project\CommandLineLib\DefinedSwitch;
+use Gradwell\CommandLineLib\DefinedSwitches;
+use Gradwell\CommandLineLib\DefinedSwitch;
 
 if (!\class_exists('Phix_Project\PhixCommands\HelpCommand'))
 {
@@ -110,7 +110,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $so = $context->stdout;
 
                 $so->output($context->highlightStyle, "Phix " . $context->version);
-                $so->outputLine($context->urlStyle, ' http://www.Phix-tool.org');
+                $so->outputLine($context->urlStyle, ' http://gradwell.github.com');
                 $so->outputLine(null, 'Copyright (c) 2010 Gradwell dot com Ltd. Released under the BSD license');
                 $so->outputBlankLine();
                 $this->showPhixSwitchSummary($context, $sortedSwitches);

@@ -38,14 +38,14 @@
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link        http://www.Phix-tool.org
+ * @link        http://gradwell.github.com
  * @version     @@PACKAGE_VERSION@@
  */
 
 namespace Phix_Project\Phix;
 
-use Phix_Project\ConsoleDisplayLib\StdOut;
-use Phix_Project\ConsoleDisplayLib\StdErr;
+use Gradwell\ConsoleDisplayLib\StdOut;
+use Gradwell\ConsoleDisplayLib\StdErr;
 
 class Context
 {
