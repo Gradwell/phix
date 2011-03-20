@@ -114,10 +114,10 @@
 <l:gentext key="refsection" text=""/>
 <l:gentext key="RefSynopsisDiv" text="Isinopsisi"/>
 <l:gentext key="refsynopsisdiv" text="Isinopsisi"/>
-<l:gentext key="RevHistory" text="Imbali yoPhixdo"/>
-<l:gentext key="revhistory" text="Imbali yoPhixdo"/>
-<l:gentext key="revision" text="IPhixdo"/>
-<l:gentext key="Revision" text="IPhixdo"/>
+<l:gentext key="RevHistory" text="Imbali yophindo"/>
+<l:gentext key="revhistory" text="Imbali yophindo"/>
+<l:gentext key="revision" text="Iphindo"/>
+<l:gentext key="Revision" text="Iphindo"/>
 <l:gentext key="sect1" text="Icandelo"/>
 <l:gentext key="sect2" text="Icandelo"/>
 <l:gentext key="sect3" text="Icandelo"/>
@@ -162,8 +162,8 @@
 <l:gentext key="Notes" text="Iziqaphelo"/>
 <l:gentext key="Pgs" text="Amaphepha"/>
 <l:gentext key="pgs" text="Amaphepha"/>
-<l:gentext key="Revisedby" text="IPhixdwe ngu: "/>
-<l:gentext key="revisedby" text="IPhixdwe ngu:"/>
+<l:gentext key="Revisedby" text="Iphindwe ngu: "/>
+<l:gentext key="revisedby" text="Iphindwe ngu:"/>
 <l:gentext key="TableNotes" text="Iziqaphelo"/>
 <l:gentext key="tablenotes" text="Iziqaphelo"/>
 <l:gentext key="TableofContents" text="Imigca Yemixholo"/>
