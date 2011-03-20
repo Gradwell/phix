@@ -160,11 +160,104 @@ class ComponentFolder
         public function replaceFolderContentsFromDataFolder($src, $dest='/')
         {
                 $srcFolder  = $this->pathToDataFolder . '/' . $src;
-                $destFolder = $this->folder . $dest;
+                $destFolder = $this->folder . '/' . $dest;
 
-                \rmdir($destFolder);
+                if (\is_dir($destFolder))
+                {
+                        $this->recursiveRmdir($destFolder);
+                }
+                else if (@\lstat($destFolder))
+                {
+                        \unlink($destFolder);
+                }
                 \mkdir($destFolder);
 
+                $this->copyFolders($src, $dest);
+        }
+
+        private function recursiveRmdir($folder)
+        {
+                if (!is_dir($folder))
+                {
+                        // we're done
+                        return;
+                }
+
+                $dir = opendir($folder);
+                if (!$dir)
+                {
+                        throw new \Exception("unable to open folder " . $folder . ' for reading');
+                }
+
+                while (false !== ($entry = readdir($dir)))
+                {
+                        if ($entry == '.' || $entry == '..')
+                        {
+                                continue;
+                        }
+
+                        $fqFile = $folder . DIRECTORY_SEPARATOR . $entry;
+                        if (is_dir($fqFile))
+                        {
+                                $this->recursiveRmdir($fqFile);
+                        }
+                        else
+                        {
+                                \unlink($fqFile);
+                        }
+                }
+
+                closedir($dir);
+
+                \rmdir($folder);
+        }
+
+        public function copyFolders($src, $dest='/')
+        {
+                $srcFolder = $this->pathToDataFolder . '/' . $src;
+                $destFolder = $this->folder . '/' . $dest;
+
+                $this->recursiveCopyFolders($srcFolder, $destFolder);
+        }
+
+        private function recursiveCopyFolders($src, $dest)
+        {
+                if (@\lstat($dest) && !\is_dir($dest))
+                {
+                        \unlink($dest);
+                }
+                
+                if (!\is_dir($dest))
+                {
+                        \mkdir($dest);
+                }
+
+                $dir = opendir($src);
+                if (!$dir)
+                {
+                        throw new \Exception('unable to open folder ' . $src . ' for reading');
+                }
+                
+                while (false !== ($entry = readdir($dir)))
+                {
+                        if ($entry == '.' || $entry == '..')
+                        {
+                                continue;
+                        }
+
+                        $srcEntry = $src . DIRECTORY_SEPARATOR . $entry;
+                        $dstEntry = $dest . DIRECTORY_SEPARATOR . $entry;
+
+                        if (is_file($srcEntry))
+                        {
+                                \copy($srcEntry, $dstEntry);
+                        }
+                        else if (is_dir($srcEntry))
+                        {
+                                $this->recursiveCopyFolders($srcEntry, $dstEntry);
+                        }
+                }
+                closedir($dir);
         }
 
         public function testHasBuildProperties()

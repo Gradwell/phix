@@ -99,7 +99,7 @@ class DocbookComponentFolder extends ComponentFolder
                 (
                         'src',
                         'src/figures',
-                        'tools',
+                        '.tools',
                 );
 
                 foreach ($foldersToMake as $folderToMake)
@@ -149,6 +149,6 @@ class DocbookComponentFolder extends ComponentFolder
 
         protected function createTools()
         {
-                $this->replaceFolderContentsFromDataFolder('tools', 'tools');
+                $this->replaceFolderContentsFromDataFolder('tools', '.tools');
         }
 }
