@@ -50,7 +50,7 @@ use Phix_Project\PhixExtensions\CommandInterface;
 use Gradwell\CommandLineLib\DefinedSwitches;
 use Gradwell\CommandLineLib\DefinedSwitch;
 
-use Gradwell\ComponentMaker\Entities\LibraryComponentFolder;
+use Gradwell\ComponentMaker\Entities\DocbookComponentFolder;
 
 if (!class_exists('Gradwell\ComponentMaker\PhixCommands\PhpDocbookInit'))
 {
@@ -88,22 +88,22 @@ class PhpDocbookInit extends ComponentCommandBase implements CommandInterface
                 $folder = $args[$argsIndex];
 
                 // has the folder already been initialised?
-                $lib = new LibraryComponentFolder($folder);
-                if ($lib->state != LibraryComponentFolder::STATE_EMPTY)
+                $lib = new DocbookComponentFolder($folder);
+                if ($lib->state != DocbookComponentFolder::STATE_EMPTY)
                 {
                         $se->output($context->errorStyle, $context->errorPrefix);
 
                         // what do we need to tell the user to do?
                         switch ($lib->state)
                         {
-                                case LibraryComponentFolder::STATE_UPTODATE:
-                                        $se->outputLine(null, "folder has already been initialised");
+                                case DocbookComponentFolder::STATE_UPTODATE:
+                                        $se->outputLine(null, "folder has already been initialised, and is up to date");
                                         break;
 
-                                case LibraryComponentFolder::STATE_NEEDSUPGRADE:
+                                case DocbookComponentFolder::STATE_NEEDSUPGRADE:
                                         $se->outputLine(null, "folder has been initialised; needs upgrade");
                                         $se->output(null, 'use ');
-                                        $se->output($context->commandStyle, $context->argvZero . ' php-library:upgrade');
+                                        $se->output($context->commandStyle, $context->argvZero . ' php-docbook:upgrade');
                                         $se->outputLine(null, ' to upgrade this folder');
                                         break;
 
@@ -119,7 +119,7 @@ class PhpDocbookInit extends ComponentCommandBase implements CommandInterface
                 $lib->createComponent();
 
                 // if we get here, it worked (ie, no exception!!)
-                $so->outputLine(null, 'Initialised empty php-library component in ' . $folder);
+                $so->outputLine(null, 'Initialised empty php-docbook component in ' . $folder);
         }
 }
 }
