@@ -47,7 +47,7 @@ namespace Gradwell\ComponentMaker\Entities;
 class PearRepoComponentFolder extends ComponentFolder
 {
         const LATEST_VERSION = 1;
-        const DATA_FOLDER = 'Phix/pear-repo';
+        const DATA_FOLDER = 'phix/pear-repo';
 
         public function createComponent()
         {

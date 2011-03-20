@@ -68,23 +68,23 @@ class Phix
                 // step 1: parse the command-line args
                 // we do this first because it may change where we look
                 // for our commands
-                $context->PhixDefinedSwitches = $this->buildPhixSwitches();
-                list($PhixParsedSwitches, $argsIndex) = $this->parsePhixArgs($context, $argv);
+                $context->phixDefinedSwitches = $this->buildPhixSwitches();
+                list($phixParsedSwitches, $argsIndex) = $this->parsePhixArgs($context, $argv);
 
                 // step 2: process the switches we have just parsed
                 //
                 // we parse the switches twice; once to find out where to
                 // look for extensions, and then once more to decide what
                 // to do once the extensions are loaded
-                $errCode = $this->processPhixSwitchesBeforeExtensionLoad($context, $PhixParsedSwitches);
+                $errCode = $this->processPhixSwitchesBeforeExtensionLoad($context, $phixParsedSwitches);
                 if ($errCode !== null)
                 {
                         return $errCode;
                 }
 
-                $context->commandsList = $this->loadPhixExtensions($context, $PhixParsedSwitches);
+                $context->commandsList = $this->loadPhixExtensions($context, $phixParsedSwitches);
 
-                $errCode = $this->processPhixSwitchesAfterExtensionLoad($context, $PhixParsedSwitches);
+                $errCode = $this->processPhixSwitchesAfterExtensionLoad($context, $phixParsedSwitches);
                 if ($errCode !== null)
                 {
                         return $errCode;
@@ -121,13 +121,13 @@ class Phix
         protected function parsePhixArgs(Context $context, $argv)
         {
                 // switches before the first command are switches that
-                // affect Phix.
+                // affect phix.
                 //
                 // switches after the first command are switches for
                 // that command
 
                 $parser = new CommandLineParser();
-                return $parser->parseSwitches($argv, 1, $context->PhixDefinedSwitches);
+                return $parser->parseSwitches($argv, 1, $context->phixDefinedSwitches);
         }
 
         protected function processPhixSwitchesBeforeExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
@@ -148,7 +148,7 @@ class Phix
                 }
 
                 // all done - return NULL to signify that we're not yet
-                // ready to terminate Phix
+                // ready to terminate phix
                 return null;
         }
 
@@ -196,7 +196,7 @@ class Phix
                 }
 
                 // all done - return NULL to signify that we're not yet
-                // ready to terminate Phix
+                // ready to terminate phix
                 return null;
         }
 
@@ -236,7 +236,7 @@ class Phix
                 $se->output($context->errorStyle, 'error: ');
                 $se->outputLine(null, $errorMessage);
                 $se->output(null, "use ");
-                $se->output($context->exampleStyle, 'Phix -h');
+                $se->output($context->exampleStyle, 'phix -h');
                 $se->outputLine(null, " for help");
         }
 }

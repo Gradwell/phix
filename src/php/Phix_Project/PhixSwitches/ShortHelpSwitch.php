@@ -55,8 +55,8 @@ class ShortHelpSwitch extends SwitchBase
                 $se = $context->stderr;
 
                 $so->output($so->style(array($so->bold, $so->fgGreen)), "usage:");
-                $so->outputLine(null, ' Phix [-?dhv] | [-I<path> [-I<path> ...]] <command>');
-                $so->outputLine(null, 'use Phix --help for full list of <command>s');
+                $so->outputLine(null, ' phix [-?dhv] | [-I<path> [-I<path> ...]] <command>');
+                $so->outputLine(null, 'use phix --help for full list of <command>s');
 
                 return 0;
         }

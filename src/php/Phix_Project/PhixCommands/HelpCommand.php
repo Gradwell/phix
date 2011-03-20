@@ -62,7 +62,7 @@ class HelpCommand extends CommandBase implements CommandInterface
 
         public function getCommandDesc()
         {
-                return 'get detailed help about a specific Phix command';
+                return 'get detailed help about a specific phix command';
         }
 
         public function validateAndExecute($args, $argsIndex, Context $context)
@@ -87,7 +87,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                         $se->output($context->errorStyle, $context->errorPrefix);
                         $se->outputLine(null, ' unknown command ' . $commandForHelp);
                         $se->output(null, 'use ');
-                        $se->output($context->commandStyle, 'Phix --help');
+                        $se->output($context->commandStyle, 'phix --help');
                         $se->outputLine(null, ' for a list of all available commands');
                         return 1;
                 }
@@ -109,7 +109,7 @@ class HelpCommand extends CommandBase implements CommandInterface
 
                 $so = $context->stdout;
 
-                $so->output($context->highlightStyle, "Phix " . $context->version);
+                $so->output($context->highlightStyle, "phix " . $context->version);
                 $so->outputLine($context->urlStyle, ' http://gradwell.github.com');
                 $so->outputLine(null, 'Copyright (c) 2010 Gradwell dot com Ltd. Released under the BSD license');
                 $so->outputBlankLine();
@@ -129,7 +129,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $allShortSwitches = array();
                 $allLongSwitches = array();
 
-                $allSwitches = $context->PhixDefinedSwitches->getSwitches();
+                $allSwitches = $context->phixDefinedSwitches->getSwitches();
 
                 foreach ($allSwitches as $switch)
                 {
@@ -162,7 +162,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                         }
                 }
 
-                // we have all the switches that Phix supports
+                // we have all the switches that phix supports
                 // let's put them into sensible orders, and then display
                 // them
                 \ksort($shortSwitchesWithArgs);

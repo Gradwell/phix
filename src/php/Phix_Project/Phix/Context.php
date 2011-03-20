@@ -61,7 +61,7 @@ class Context
          */
         public $stderr = null;
 
-        public $PhixDefinedSwitches = null;
+        public $phixDefinedSwitches = null;
         public $searchPaths = array();
 
         public $version = '@@PACKAGE_VERSION@@';

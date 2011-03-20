@@ -54,7 +54,7 @@ class LongHelpSwitch extends SwitchBase
                 // this should do the trick
                 $args[] = 'help';
 
-                // we don't want Phix to terminate yet
+                // we don't want phix to terminate yet
                 return null;
         }
 }

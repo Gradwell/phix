@@ -13,7 +13,7 @@ else
         require_once("@@PHP_DIR@@/gwc.autoloader.php");
 }
 
-// a list of places to look for Phix commands
+// a list of places to look for phix commands
 $searchFolders = array
 (
         getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'php',

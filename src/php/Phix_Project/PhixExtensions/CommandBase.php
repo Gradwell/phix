@@ -149,7 +149,7 @@ class CommandBase
                         }
                 }
 
-                // we have all the switches that Phix supports
+                // we have all the switches that phix supports
                 // let's put them into sensible orders, and then display
                 // them
                 \ksort($shortSwitchesWithArgs);

@@ -66,7 +66,7 @@ class IncludeSwitch extends SwitchBase
                         \__gwc_autoload_alsoSearch(\realpath($path));
                 }
 
-                // we do not want Phix to terminate yet
+                // we do not want phix to terminate yet
                 return null;
         }
 }

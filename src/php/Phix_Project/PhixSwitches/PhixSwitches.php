@@ -50,41 +50,41 @@ class PhixSwitches
 {
         static public function buildSwitches(DefinedSwitches $switches)
         {
-                // Phix -h || Phix -?
+                // phix -h || phix -?
                 $switches->addSwitch('shortHelp', 'display a summary of the command-line structure')
                          ->setWithShortSwitch('h')
                          ->setWithShortSwitch('?');
 
-                // Phix --help || Phix --?
+                // phix --help || phix --?
                 $switches->addSwitch('longHelp', 'display a full list of supported commands')
                          ->setWithLongSwitch('help')
                          ->setWithLongSwitch('?');
                 
-                // Phix -v || Phix --version
-                $switches->addSwitch('version', 'display Phix version number')
+                // phix -v || phix --version
+                $switches->addSwitch('version', 'display phix version number')
                          ->setWithShortSwitch('v')
                          ->setWithLongSwitch('version');
 
-                // Phix -d || Phix --debug
+                // phix -d || phix --debug
                 $switches->addSwitch('debug', 'enable debugging output')
                          ->setWithShortSwitch('d')
                          ->setWithLongSwitch('debug');
 
-                // Phix -I<path> || Phix --include=<path>
+                // phix -I<path> || phix --include=<path>
                 $switches->addSwitch('include', 'add a folder to load commands from')
-                         ->setLongDesc("Phix finds all of its commands by searching PHP's include_path for PHP files in "
-                                        . "folders called 'PhixCommands'. If you want to Phix to look in other folders "
-                                        . "without having to add them to PHP's include_path, use --include to tell Phix "
+                         ->setLongDesc("phix finds all of its commands by searching PHP's include_path for PHP files in "
+                                        . "folders called 'PhixCommands'. If you want to phix to look in other folders "
+                                        . "without having to add them to PHP's include_path, use --include to tell phix "
                                         . "to look in these folders."
                                         . \PHP_EOL . \PHP_EOL
-                                        . "Phix expects '<path>' to point to a folder that conforms to the PSR0 standard "
+                                        . "phix expects '<path>' to point to a folder that conforms to the PSR0 standard "
                                         . "for autoloaders."
                                         . \PHP_EOL . \PHP_EOL
-                                        . "For example, if your command is the class '\Me\Tools\PhixCommands\ScheduledTask', Phix would "
+                                        . "For example, if your command is the class '\Me\Tools\PhixCommands\ScheduledTask', phix would "
                                         . "expect to autoload this class from the 'Me/Tools/PhixCommands/ScheduledTask.php' file."
                                         . \PHP_EOL . \PHP_EOL
-                                        . "If your class lives in the './myApp/lib/Me/Tools/PhixCommands' folder, you would call Phix "
-                                        . "with 'Phix --include=./myApp/lib'")
+                                        . "If your class lives in the './myApp/lib/Me/Tools/PhixCommands' folder, you would call phix "
+                                        . "with 'phix --include=./myApp/lib'")
                          ->setWithShortSwitch('I')
                          ->setWithLongSwitch('include')
                          ->setWithRequiredArg('<path>', 'The path to the folder to include')
