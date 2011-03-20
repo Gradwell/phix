@@ -2,7 +2,7 @@
 <?php
 require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'HTMLFilterIterator.php';
 
-function webifyDirectory($directory, $edition)
+function webifyDirectory($properties, $directory, $edition)
 {
     $toc = getSubstring(
       file_get_contents($directory . DIRECTORY_SEPARATOR . 'index.html'),
@@ -14,10 +14,7 @@ function webifyDirectory($directory, $edition)
     );
 
     $_editions = '';
-    $editions  = array(
-      'en' => array('1.0'),
-      /*'de' => array('2.3')*/
-    );
+    $editions  = $properties['editions'];
 
     foreach ($editions as $language => $versions) {
         foreach ($versions as $version) {
@@ -45,10 +42,11 @@ function webifyDirectory($directory, $edition)
             }
 
             $_editions .= sprintf(
-              '<li><a href="../%s-%s/index.html"%s>Methodosity Framework %s <span><small>%s</small></span></a></li>',
+              '<li><a href="../%s-%s/index.html"%s>%s %s <span><small>%s</small></span></a></li>',
               $version,
-              $language,
+	      $language,
               $active,
+	      $properties['longName'],
               $version,
               $_language
             );
@@ -182,4 +180,25 @@ function getSubstring($buffer, $start, $end, $includeStart = TRUE, $includeEnd =
     }
 }
 
-webifyDirectory($argv[1], $argv[2]);
+function loadProperties($buildPropertiesFilename)
+{
+	$return = array();
+
+	$buildProperties = parse_ini_file($buildPropertiesFilename);
+	$return['longName'] = $buildProperties['docbook.longName'];
+
+	$editions = explode(',', $buildProperties['docbook.editions']);
+	foreach ($editions as $edition)
+	{
+		$parts = explode('-', $edition);
+		$version = $parts[0];
+		$lang    = $parts[1];
+
+		$return['editions'][$lang][] = $version;
+	}
+
+	return $return;
+}
+
+$properties = loadProperties($argv[1]);
+webifyDirectory($properties, $argv[2], $argv[3]);

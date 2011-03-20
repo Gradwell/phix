@@ -98,8 +98,9 @@ class DocbookComponentFolder extends ComponentFolder
                 $foldersToMake = array
                 (
                         'src',
-                        'src/figures',
-                        '.tools',
+                        'src/1.0-en',
+                        'src/1.0-en/figures',
+                        'tools',
                 );
 
                 foreach ($foldersToMake as $folderToMake)
@@ -149,6 +150,11 @@ class DocbookComponentFolder extends ComponentFolder
 
         protected function createTools()
         {
-                $this->replaceFolderContentsFromDataFolder('tools', '.tools');
+                $this->replaceFolderContentsFromDataFolder('tools', 'tools');
+                $this->enableExecutionOf('tools/scripts/webify.php');
+                $this->enableExecutionOf('tools/scripts/highlight.php');
+                $this->enableExecutionOf('tools/scripts/HighlightPDF.php');
+                $this->enableExecutionOf('tools/fop/fop');
+                $this->enableExecutionOf('tools/docbook-xsl/epub/bin/dbtoepub');
         }
 }

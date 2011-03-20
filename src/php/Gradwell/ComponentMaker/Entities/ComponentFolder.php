@@ -143,12 +143,12 @@ class ComponentFolder
                 return 'state not recognised';
         }
 
-        public function copyFilesFromDataFolder($files, $dest='/')
+        public function copyFilesFromDataFolder($files, $dest='')
         {
                 foreach ($files as $filename)
                 {
                         $srcFile = $this->pathToDataFolder . '/' . $filename;
-                        $destFile = $this->folder . $dest . $filename;
+                        $destFile = $this->folder . '/' . $dest . $filename;
 
                         if (!copy($srcFile, $destFile))
                         {
@@ -157,7 +157,7 @@ class ComponentFolder
                 }
         }
 
-        public function replaceFolderContentsFromDataFolder($src, $dest='/')
+        public function replaceFolderContentsFromDataFolder($src, $dest='')
         {
                 $srcFolder  = $this->pathToDataFolder . '/' . $src;
                 $destFolder = $this->folder . '/' . $dest;
@@ -212,7 +212,7 @@ class ComponentFolder
                 \rmdir($folder);
         }
 
-        public function copyFolders($src, $dest='/')
+        public function copyFolders($src, $dest='')
         {
                 $srcFolder = $this->pathToDataFolder . '/' . $src;
                 $destFolder = $this->folder . '/' . $dest;
@@ -258,6 +258,14 @@ class ComponentFolder
                         }
                 }
                 closedir($dir);
+        }
+
+        public function enableExecutionOf($file, $dest='')
+        {
+                $destFolder = $this->folder . DIRECTORY_SEPARATOR . $dest;
+                $fqFile = $destFolder . $file;
+
+                chmod($fqFile, 0755);
         }
 
         public function testHasBuildProperties()
