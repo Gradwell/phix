@@ -143,7 +143,7 @@ class RegisterChannels extends CommandBase implements CommandInterface
                 $rawXml = $this->loadPackageXmlFile($context, $packageXmlFile);
 
                 $channels = $this->extractChannels($context, $rawXml);
-                $this->registerChannels($context, $pearConfig, $channels);
+                $this->doRegisterChannels($context, $pearConfig, $channels);
                 
                 // all done
                 return 0;
@@ -188,7 +188,7 @@ class RegisterChannels extends CommandBase implements CommandInterface
                 return $channels;
         }
 
-        protected function registerChannels(Context $context, $pearConfig, $channels)
+        protected function doRegisterChannels(Context $context, $pearConfig, $channels)
         {
                 $so = $context->stdout;
                 $se = $context->stderr;
