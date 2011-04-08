@@ -44,9 +44,6 @@
 
 namespace Phix_Project\Phix;
 
-use Gradwell\ExtenderLib\FileFinder;
-use Gradwell\ExtenderLib\FileLoader;
-
 class ExtensionsFinder
 {
         protected $foldersToSearch = array();
@@ -73,21 +70,17 @@ class ExtensionsFinder
         {
                 $commandsList = new CommandsList();
 
-                $fileFinder = new FileFinder();
-                $fileLoader = new FileLoader();
+                // Find all classes in php files whose paths contain "PhixCommands":
+                $classFinder = new ClassFinder(explode(\PATH_SEPARATOR, \get_include_path()), '/PhixCommands.*\.php$/');
 
-                $files = $fileFinder->findPhpFilesFromPartialNamespace('PhixCommands');
-
-                foreach ($files as $filename)
+                foreach ($classFinder->getClassFiles() as $newClass => $filename)
                 {
-                        $newClasses = $fileLoader->loadPhpFile((string)$filename);
-                        foreach ($newClasses as $newClass)
+                        include_once $filename;
+
+                        if ($this->testIsPhixExtension($newClass))
                         {
-                                if ($this->testIsPhixExtension($newClass))
-                                {
-                                        // we have a winner!
-                                        $commandsList->importCommandsFromExtension($newClass);
-                                }
+                                // we have a winner!
+                                $commandsList->importCommandsFromExtension($newClass);
                         }
                 }
 
