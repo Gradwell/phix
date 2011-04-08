@@ -52,6 +52,8 @@ use Phix_Project\PhixSwitches\PhixSwitches;
 
 class Phix
 {
+        protected $lastContext;
+
         protected $libraryNamespaces = array();
         
         /**
@@ -62,8 +64,11 @@ class Phix
         public function main($argv)
         {
                 // step 0: create some plumbing
-                $context = new Context();
+                $this->lastContext = $context = new Context();
                 $context->argvZero = $argv[0];
+
+                // Register error handler
+                \set_error_handler(array($this, 'errorHandler'));
 
                 // step 1: parse the command-line args
                 // we do this first because it may change where we look
@@ -238,5 +243,34 @@ class Phix
                 $se->output(null, "use ");
                 $se->output($context->exampleStyle, 'phix -h');
                 $se->outputLine(null, " for help");
+        }
+        
+        public function errorHandler($error_code, $message = '', $file = '', $line = 0)
+        {
+                $se = $this->lastContext->stderr;
+                
+                $se->output($this->lastContext->errorStyle, $this->lastContext->errorPrefix);
+                $se->outputLine(null, $this->getErrorName($error_code).': '.$message);
+                $se->outputLine(null, 'Occurred in: '.$file.':'.$line);
+        }
+
+        protected static function getErrorName($error_code, $message = '', $file = '', $line = 0)
+        {
+                $errors = array(
+                        E_ERROR             => 'Error',
+                        E_WARNING           => 'Warning',
+                        E_PARSE             => 'Parse Error',
+                        E_NOTICE            => 'Notice',
+                        E_COMPILE_ERROR     => 'Compile Error',
+                        E_COMPILE_WARNING   => 'Compile Warning',
+                        E_USER_ERROR        => 'Error',
+                        E_USER_WARNING      => 'Warning',
+                        E_USER_NOTICE       => 'Notice',
+                        E_STRICT            => 'Strict',
+                        E_RECOVERABLE_ERROR => 'Recoverable Error',
+                        E_DEPRECATED        => 'Deprecated'
+                );
+                
+                return $errors[$error_code];
         }
 }
