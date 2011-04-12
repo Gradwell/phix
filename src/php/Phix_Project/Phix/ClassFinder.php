@@ -44,7 +44,7 @@
 namespace Phix_Project\Phix;
 
 /**
- * Searches trough a set of paths for classes, returns a list of classes
+ * Searches through a set of paths for classes, returns a list of classes
  * and in which file they are located, does NOT include the files.
  * 
  * Raises a PHP NOTICE if duplicate class identifiers are found.
@@ -52,24 +52,24 @@ namespace Phix_Project\Phix;
 class ClassFinder
 {
 	/**
-	 * Tells the ClassFinder to raise a PHP NOTICE error when a duplicate class
-	 * is found.
+	 * Tells the ClassFinder to raise a PHP NOTICE error when a
+	 * duplicate class is found.
 	 * 
 	 * @var int
 	 */
 	const TRIGGER_NOTICE_ON_DUPLICATE = 1;
 	
 	/**
-	 * Tells the ClassFinder to raise a PHP WARNING error when a duplicate class
-	 * is found.
+	 * Tells the ClassFinder to raise a PHP WARNING error when a
+	 * duplicate class is found.
 	 * 
 	 * @var int
 	 */
 	const TRIGGER_WARNING_ON_DUPLICATE = 2;
 	
 	/**
-	 * Tells the ClassFinder to raise a PHP ERROR error when a duplicate class
-	 * is found.
+	 * Tells the ClassFinder to raise a PHP ERROR error when a
+	 * duplicate class is found.
 	 * 
 	 * @var int
 	 */
@@ -97,14 +97,14 @@ class ClassFinder
 	protected $paths = array();
 	
 	/**
-	 * The operation flags for this ClassFinder, consists of binary flags
-	 * from class constants.
+	 * The operation flags for this ClassFinder, consists of binary
+	 * flags from class constants.
 	 * 
 	 * @var int
 	 */
 	protected $flags = self::TRIGGER_NOTICE_ON_DUPLICATE;
 	
-	// ------------------------------------------------------------------------
+	// -----------------------------------------------------------------
 	
 	/**
 	 * @param  string|array
@@ -124,11 +124,11 @@ class ClassFinder
 		$this->flags      = $flags;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -----------------------------------------------------------------
 
 	/**
-	 * Searches the supplied paths for the files and returns a list of classes
-	 * and in which file they're located.
+	 * Searches the supplied paths for the files and returns a list 
+	 * of classes and in which file they're located.
 	 * 
 	 * @return array(class => file)
 	 */
@@ -178,7 +178,7 @@ class ClassFinder
 		return $this->list;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -----------------------------------------------------------------
 
 	/**
 	 * Tokenizes the file and iterates all tokens in search of classes.
