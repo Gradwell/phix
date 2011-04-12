@@ -12,6 +12,7 @@
   <property name="project.src.phpdir"      value="${project.srcdir}/php" override="true" />
   <property name="project.src.bindir"      value="${project.srcdir}/bin" override="true" />
   <property name="project.src.datadir"     value="${project.srcdir}/data" override="true" />
+  <property name="project.src.docdir"      value="${project.srcdir}/docs" override="true" />
   <property name="project.src.testdir"     value="${project.srcdir}/tests" override="true" />
   <property name="project.src.wwwdir"      value="${project.srcdir}/www" override="true" />
   <property name="project.src.testunitdir" value="${project.src.testdir}/unit-tests" override="true" />
@@ -46,18 +47,39 @@
   <!-- lists of the files that make up our package -->
   <fileset dir="${project.src.bindir}" id="binfiles">
     <include name="**/**"/>
+    <exclude name="**/.DS_Store"/>
+    <exclude name="**/.empty"/>
+    <exclude name="**/.svn"/>
   </fileset>
   <fileset dir="${project.src.datadir}" id="datafiles">
     <include name="**/**"/>
+    <exclude name="**/.DS_Store"/>
+    <exclude name="**/.empty"/>
+    <exclude name="**/.svn"/>
   </fileset>
   <fileset dir="${project.src.phpdir}" id="phpfiles">
     <include name="**/**"/>
+    <exclude name="**/.DS_Store"/>
+    <exclude name="**/.empty"/>
+    <exclude name="**/.svn"/>
   </fileset>
   <fileset dir="${project.src.testunitdir}/php" id="testfiles">
     <include name="**/**"/>
+    <exclude name="**/.DS_Store"/>
+    <exclude name="**/.empty"/>
+    <exclude name="**/.svn"/>
   </fileset>
   <fileset dir="${project.src.wwwdir}" id="wwwfiles">
     <include name="**/**" />
+    <exclude name="**/.DS_Store"/>
+    <exclude name="**/.empty"/>
+    <exclude name="**/.svn"/>
+  </fileset>
+  <fileset dir="${project.src.docdir}" id="docfiles">
+    <include name="**/**" />
+    <exclude name="**/.DS_Store"/>
+    <exclude name="**/.empty"/>
+    <exclude name="**/.svn"/>
   </fileset>
 
   <!-- Tell the user what this build file supports -->
@@ -87,6 +109,9 @@
     <echo message="install-system" />
     <echo message="  Install this component from source for all local users" />
     <echo message="  You must be root to run this target on Linux!!" />
+    <echo message="publish-local" />
+    <echo message="  Publish your PEAR-compatible package into a local copy" />
+    <echo message="  of your PEAR channel" />
     <echo message="clean" />
     <echo message="  Remove all temporary folders created by this build file" />
   </target>
@@ -159,7 +184,7 @@
   <target name="build-vendor" depends="pear-package,setup-vendor">
     <echo>Populating vendor/ with dependencies</echo>
     <exec command="phix pear:register-channels" checkreturn="true" logoutput="true" />
-    <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.builddir}/package.xml" logoutput="true" checkreturn="true"/>
+    <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.tarfile}" logoutput="true" checkreturn="true"/>
   </target>
 
   <!-- Setup the vendor folder -->
@@ -179,23 +204,6 @@
     <exec command="pear -c ${project.tmpdir}/pear-config config-set www_dir ${project.vendor.wwwdir}" checkreturn="true" logoutput="true" />
   </target>
 
-  <!-- Create a dummy PEAR package to satisfy lib-vendor -->
-  <target name="pear-package-for-lib-vendor">
-    <echo>Building release directory</echo>
-    <delete dir="${project.builddir}" />
-    <mkdir dir="${project.pkgdir}" />
-    <copy todir="${project.pkgdir}">
-      <fileset refid="phpfiles"/>
-    </copy>
-    <copy todir="${project.builddir}">
-      <fileset dir=".">
-        <include name="package.xml" />
-      </fileset>
-    </copy>
-    <copy file="${project.basedir}/build.xml" tofile="${project.builddir}/build.xml" overwrite="true" />
-    <exec command="phix pear:expand-package-xml" checkreturn="yes" logoutput="yes"/>
-  </target>
-
   <!-- Create the PEAR package, ready for release -->
   <target name="pear-package">
     <echo>Building release directory</echo>
@@ -207,6 +215,7 @@
       <fileset refid="phpfiles"/>
       <fileset refid="testfiles"/>
       <fileset refid="wwwfiles"/>
+      <fileset refid="docfiles"/>
     </copy>
     <copy todir="${project.builddir}">
       <fileset dir=".">
@@ -222,7 +231,7 @@
     <delete file="${project.tarfile}" />
     <tar destfile="${project.tarfile}" compression="gzip">
       <fileset dir="${project.builddir}">
-        <include name="*" />
+        <include name="**/**" />
       </fileset>
     </tar>
     <echo>Your PEAR package is in ${project.tarfile}</echo>
@@ -234,6 +243,11 @@
   </target>
   <target name="install-system">
     <exec command="pear install -f -a ${project.tarfile}" checkreturn="true" logoutput="true" />
+  </target>
+
+  <!-- Publish to local copy of PEAR channel -->
+  <target name="publish-local" depends="pear-package">
+    <exec command="pirum add ${pear.local} ${project.tarfile}" checkreturn="true" logoutput="true" />
   </target>
 
   <!-- Clean up the mess -->
