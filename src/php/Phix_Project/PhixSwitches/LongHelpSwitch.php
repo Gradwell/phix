@@ -48,12 +48,28 @@ use Phix_Project\PhixExtensions\SwitchBase;
 
 class LongHelpSwitch extends SwitchBase
 {
-        public static function processBeforeExtensionLoad(Context $context, $args)
+        public static function processBeforeExtensionLoad(Context $context, $args, &$rawArgv, $argsIndex)
         {
                 // we want --help to be a synonym for the 'help' command
-                // this should do the trick
-                $args[] = 'help';
+                // we need to insert 'help' into $rawArgv at the index
+                // pointed to by $argsIndex
 
+                // are we pointing beyond the end of the array?
+                if (!isset($rawArgv[$argsIndex]))
+                {
+                        // yes we are
+                        $rawArgv[] = 'help';
+                        return null;
+                }
+
+                // no, we are not
+                // we need to insert inside the array
+                $arrayToPreserve = \array_slice($rawArgv, $argsIndex);
+                array_unshift($arrayToPreserve, 'help');
+
+                $amountToRemove = count($arrayToPreserve) - 1;
+                array_splice($rawArgv, $argsIndex, $amountToRemove, $arrayToPreserve);
+                
                 // we don't want phix to terminate yet
                 return null;
         }

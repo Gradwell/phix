@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2010 Gradwell dot com Ltd.
+ * Copyright (c) 2011 Gradwell dot com Ltd.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,26 +36,54 @@
  * @package     Phix_Project
  * @subpackage  PhixSwitches
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
- * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
+ * @copyright   2011 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://gradwell.github.com
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phix_Project\PhixExtensions;
+namespace Phix_Project\PhixSwitches;
+
 use Phix_Project\Phix\Context;
 
-class SwitchBase
+class LongHelpSwitchTest extends \PHPUnit_Framework_TestCase
 {
-        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgv, $argsIndex)
+        public function testCanCreate()
         {
-                // by default, do nothing
-                return null;
+                $obj = new LongHelpSwitch();
+                $this->assertTrue($obj instanceOf LongHelpSwitch);
         }
 
-        static public function processAfterExtensionLoad(Context $context, $args)
+        public function testSwapsSwitchForHelpCommand()
         {
-                // by default, do nothing
-                return null;
+                // setup the test
+                $context = new Context();
+                $args = array ('phix', 'help', 'fred');
+                $argsIndex = 2;
+
+                // perform the test
+                $return = LongHelpSwitch::processBeforeExtensionLoad($context, $args, $args, $argsIndex);
+
+                // check the results
+                $this->assertEquals(null, $return);
+                $this->assertEquals(4, count($args));
+                $this->assertEquals('help', $args[2]);
+                $this->assertEquals('fred', $args[3]);
+        }
+
+        public function testCopesWithNoCommandLineOptionsAfterSwitches()
+        {
+                // setup the test
+                $context = new Context();
+                $args = array ('phix', 'help');
+                $argsIndex = 2;
+
+                // perform the test
+                $return = LongHelpSwitch::processBeforeExtensionLoad($context, $args, $args, $argsIndex);
+
+                // check the results
+                $this->assertEquals(null, $return);
+                $this->assertEquals(3, count($args));
+                $this->assertEquals('help', $args[2]);
         }
 }
