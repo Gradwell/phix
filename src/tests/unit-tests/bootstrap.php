@@ -18,14 +18,15 @@ define('APP_TOPDIR', realpath(__DIR__ . '/../../php'));
 define('APP_LIBDIR', realpath(__DIR__ . '/../../../vendor/php'));
 define('APP_TESTDIR', realpath(__DIR__ . '/php'));
 
-// step 2: add the lib-vendor code to the include path
+// step 2: find the autoloader, and install it
+require_once(APP_LIBDIR . '/gwc.autoloader.php');
+
+// step 3: add the lib-vendor code to the include path
 set_include_path(APP_LIBDIR . PATH_SEPARATOR . get_include_path());
 
-// step 3: add the tests folder to the include path
+// step 4: add the tests folder to the include path
 set_include_path(APP_TESTDIR . PATH_SEPARATOR . get_include_path());
 
-// step 4: add our code to the include path
+// step 5: add our code to the include path
 set_include_path(APP_TOPDIR . PATH_SEPARATOR . get_include_path());
 
-// step 5: find the autoloader, and install it
-require_once(APP_LIBDIR . '/gwc.autoloader.php');

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2010 Gradwell dot com Ltd.
+ * Copyright (c) 2011 Gradwell dot com Ltd.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,22 +36,42 @@
  * @package     Phix_Project
  * @subpackage  PhixSwitches
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
- * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
+ * @copyright   2011 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://gradwell.github.com
  * @version     @@PACKAGE_VERSION@@
  */
 
 namespace Phix_Project\PhixSwitches;
-use Phix_Project\Phix\Context;
-use Phix_Project\PhixExtensions\SwitchBase;
 
-class VersionSwitch extends SwitchBase
+use Phix_Project\Phix\Context;
+use Gradwell\ConsoleDisplayLib\DevString;
+
+class ShortHelpSwitchTest extends \PHPUnit_Framework_TestCase
 {
-        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        public function testCanCreate()
         {
-                $s = $context->stdout;
-                $s->outputLine($context->highlightStyle, $context->version);
-                return 0;
+                $obj = new ShortHelpSwitch();
+                $this->assertTrue($obj instanceof ShortHelpSwitch);
+        }
+
+        public function testOutputsHelpMessage()
+        {
+                // setup the test
+                $context = new Context();
+                $context->stdout = new DevString();
+                $context->stderr = new DevString();
+                $args = array ('phix', 'h');
+                $argsIndex = 2;
+
+                // pre-conditions?
+                $this->assertEquals(0, strlen($context->stdout->_getOutput()));
+
+                // do the test
+                $returnCode    = ShortHelpSwitch::processBeforeExtensionLoad($context, $args, $args, $argsIndex);
+                $writtenString = $context->stdout->_getOutput();
+
+                // did it work?
+                $this->assertTrue(strlen($writtenString) > 0);
         }
 }

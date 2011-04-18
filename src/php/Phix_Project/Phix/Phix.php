@@ -81,7 +81,7 @@ class Phix
                 // we parse the switches twice; once to find out where to
                 // look for extensions, and then once more to decide what
                 // to do once the extensions are loaded
-                $errCode = $this->processPhixSwitchesBeforeExtensionLoad($context, $phixParsedSwitches);
+                $errCode = $this->processPhixSwitchesBeforeExtensionLoad($context, $phixParsedSwitches, $argv, $argsIndex);
                 if ($errCode !== null)
                 {
                         return $errCode;
@@ -135,7 +135,7 @@ class Phix
                 return $parser->parseSwitches($argv, 1, $context->phixDefinedSwitches);
         }
 
-        protected function processPhixSwitchesBeforeExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches)
+        protected function processPhixSwitchesBeforeExtensionLoad(Context $context, ParsedSwitches $ParsedSwitches, $argv, $argsIndex)
         {
                 // what switches do we have?
                 $parsedSwitches = $ParsedSwitches->getSwitches();
@@ -145,7 +145,7 @@ class Phix
                 {
                         $switchName = $parsedSwitch->name;
                         $className = '\\Phix_Project\\PhixSwitches\\' . ucfirst($switchName) . 'Switch';
-                        $errCode = $className::processBeforeExtensionLoad($context, $ParsedSwitches->getArgsForSwitch($switchName));
+                        $errCode = $className::processBeforeExtensionLoad($context, $ParsedSwitches->getArgsForSwitch($switchName), $argv, $argsIndex);
                         if ($errCode !== null)
                         {
                                 return $errCode;

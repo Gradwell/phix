@@ -48,7 +48,7 @@ use Phix_Project\PhixExtensions\SwitchBase;
 
 class ShortHelpSwitch extends SwitchBase
 {
-        public static function processBeforeExtensionLoad(Context $context, $args)
+        public static function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // shortcuts to save typing
                 $so = $context->stdout;

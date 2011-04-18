@@ -46,35 +46,13 @@ namespace Phix_Project\Phix;
 /**
  * Searches through a set of paths for classes, returns a list of classes
  * and in which file they are located, does NOT include the files.
- * 
- * Raises a PHP NOTICE if duplicate class identifiers are found.
+ *
+ * If duplicate classes are found, returns only the first file that
+ * contains the class
  */
+
 class ClassFinder
 {
-	/**
-	 * Tells the ClassFinder to raise a PHP NOTICE error when a
-	 * duplicate class is found.
-	 * 
-	 * @var int
-	 */
-	const TRIGGER_NOTICE_ON_DUPLICATE = 1;
-	
-	/**
-	 * Tells the ClassFinder to raise a PHP WARNING error when a
-	 * duplicate class is found.
-	 * 
-	 * @var int
-	 */
-	const TRIGGER_WARNING_ON_DUPLICATE = 2;
-	
-	/**
-	 * Tells the ClassFinder to raise a PHP ERROR error when a
-	 * duplicate class is found.
-	 * 
-	 * @var int
-	 */
-	const TRIGGER_ERROR_ON_DUPLICATE = 4;
-	
 	/**
 	 * The list containing classes and their filenames.
 	 * 
@@ -96,14 +74,6 @@ class ClassFinder
 	 */
 	protected $paths = array();
 	
-	/**
-	 * The operation flags for this ClassFinder, consists of binary
-	 * flags from class constants.
-	 * 
-	 * @var int
-	 */
-	protected $flags = self::TRIGGER_NOTICE_ON_DUPLICATE;
-	
 	// -----------------------------------------------------------------
 	
 	/**
@@ -111,7 +81,7 @@ class ClassFinder
 	 * @param  string
 	 * @param  int
 	 */
-	function __construct($paths = '.', $file_regex = '/\.php$/', $flags = self::TRIGGER_NOTICE_ON_DUPLICATE)
+	function __construct($paths = '.', $file_regex = '/\.php$/')
 	{
 		foreach((Array) $paths as $p)
 		{
@@ -121,7 +91,6 @@ class ClassFinder
 		// array_unique() will fix problems with eg. PHP's include path
 		$this->paths      = array_unique($this->paths);
 		$this->file_regex = $file_regex;
-		$this->flags      = $flags;
 	}
 	
 	// -----------------------------------------------------------------
@@ -141,8 +110,6 @@ class ClassFinder
 		
 		foreach($this->paths as $path)
 		{
-			$path = realpath($path);
-			
 			// Search the folder
 			$diriter  = new \RecursiveDirectoryIterator($path);
 			$iteriter = new \RecursiveIteratorIterator($diriter, \RecursiveIteratorIterator::LEAVES_ONLY);
@@ -152,25 +119,11 @@ class ClassFinder
 			{
 				foreach($this->getClasses($name) as $class)
 				{
-					if(isset($this->list[$class]))
+					if(!isset($this->list[$class]))
 					{
-						$msg = sprintf('ClassFinder: Conflicting class name found: %s in file %s, first found in %s', $class, $name, $this->list[$class]);
-						
-						if($this->flags & self::TRIGGER_ERROR_ON_DUPLICATE)
-						{
-							\trigger_error($msg, \E_ERROR_NOTICE);
-						}
-						elseif($this->flags & self::TRIGGER_WARNING_ON_DUPLICATE)
-						{
-							\trigger_error($msg, \E_USER_WARNING);
-						}
-						elseif($this->flags & self::TRIGGER_NOTICE_ON_DUPLICATE)
-						{
-							\trigger_error($msg, \E_USER_NOTICE);
-						}
+                                                // class is new!
+        					$this->list[$class] = $name;
 					}
-					
-					$this->list[$class] = $name;
 				}
 			}
 		}

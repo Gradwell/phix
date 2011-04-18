@@ -47,7 +47,7 @@ use Phix_Project\Phix\Context;
 
 class SwitchBase
 {
-        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgv, $argsIndex)
+        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // by default, do nothing
                 return null;

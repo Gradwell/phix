@@ -44,6 +44,7 @@
 
 namespace Phix_Project\PhixSwitches;
 use Phix_Project\Phix\Context;
+use Gradwell\ConsoleDisplayLib\DevNull;
 
 class IncludeSwitchTest extends \PHPUnit_Framework_TestCase
 {
@@ -57,13 +58,15 @@ class IncludeSwitchTest extends \PHPUnit_Framework_TestCase
         {
                 // setup the test
                 $context = new Context();
+                $context->stdout = new DevNull();
+                $context->stderr = new DevNull;
                 $args = array('/usr/lib', '/usr/share');
 
                 // pre-conditions
                 $this->assertEquals(0, count($context->searchPaths));
 
                 // perform the test
-                $return = IncludeSwitch::processBeforeExtensionLoad($context, $args);
+                $return = IncludeSwitch::processBeforeExtensionLoad($context, $args, $args, 0);
 
                 // test the results
                 $this->assertEquals(null, $return);
@@ -77,13 +80,15 @@ class IncludeSwitchTest extends \PHPUnit_Framework_TestCase
         {
                 // setup the test
                 $context = new Context();
+                $context->stdout = new DevNull();
+                $context->stderr = new DevNull;
                 $args = array('/usr/bin/php');
 
                 // pre-conditions
                 $this->assertEquals(0, count($context->searchPaths));
 
                 // perform the test
-                $return = IncludeSwitch::processBeforeExtensionLoad($context, $args);
+                $return = IncludeSwitch::processBeforeExtensionLoad($context, $args, $args, 0);
 
                 // test the results
                 $this->assertEquals(1, $return);

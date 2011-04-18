@@ -48,7 +48,7 @@ use Phix_Project\PhixExtensions\SwitchBase;
 
 class IncludeSwitch extends SwitchBase
 {
-        static public function processBeforeExtensionLoad(Context $context, $args)
+        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // just in case!
                 $se = $context->stderr;
