@@ -43,7 +43,7 @@
  */
 
 namespace Phix_Project\Phix;
-use Phix_Project\PhixExtensions\DefinedCommand;
+use Phix_Project\PhixExtensions\CommandInterface;
 
 /**
  * Provides a convenient proxy to aggregate operations over the list of
@@ -58,6 +58,12 @@ class CommandsList
         {
                 // what is this command all about?
                 $newCommand = new $phixCommandClassName;
+                if (!$newCommand instanceof CommandInterface)
+                {
+                        // this isn't actually a command
+                        throw new \Exception($phixCommandClassName . ' does not implement CommandInterface; cannot use');
+                }
+                
                 $commandName = $newCommand->getCommandName();
                 $commandDesc = $newCommand->getCommandDesc();
 

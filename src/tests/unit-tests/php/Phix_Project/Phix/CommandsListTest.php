@@ -44,6 +44,27 @@
 
 namespace Phix_Project\Phix;
 
+use Phix_Project\PhixExtensions\CommandBase;
+use Phix_Project\PhixExtensions\CommandInterface;
+
+class DummyCommand extends CommandBase implements CommandInterface
+{
+        public function getCommandName()
+        {
+                return 'dummy';
+        }
+
+        public function getCommandDesc()
+        {
+                return 'dummy desc';
+        }
+}
+
+class DummyNotACommand
+{
+
+}
+
 class CommandsListTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanCreate()
@@ -63,5 +84,86 @@ class CommandsListTest extends \PHPUnit_Framework_TestCase
                 // did it work?
                 $this->assertTrue(is_array($commands));
                 $this->assertEquals(0, count($commands));
+        }
+
+        public function testCanAddCommandToList()
+        {
+                // setup
+                $obj = new CommandsList();
+
+                // do the test
+                $obj->addClass('\Phix_Project\Phix\DummyCommand');
+
+                // did it work?
+                $this->assertTrue($obj->testHasCommand('dummy'));
+                $commands = $obj->getListOfCommands();
+                $this->assertTrue(isset($commands['dummy']));
+                $this->assertTrue($commands['dummy'] instanceof DummyCommand);
+        }
+
+        public function testCannotAddANonCommandToList()
+        {
+                // setup
+                $obj = new CommandsList();
+
+                // do the test
+                $caughtException = false;
+                try
+                {
+                        $obj->addClass('\Phix_Project\Phix\DummyNotACommand');
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;                
+                }
+
+                $this->assertTrue($caughtException);
+
+                $commands = $obj->getListOfCommands();
+                $this->assertTrue(is_array($commands));
+                $this->assertEquals(0, count($commands));
+        }
+
+        public function testCanCheckToSeeIfCommandInList()
+        {
+                // setup
+                $obj = new CommandsList();
+                $obj->addClass('\Phix_Project\Phix\DummyCommand');
+
+                // do the test
+                $this->assertTrue($obj->testHasCommand('dummy'));
+        }
+
+        public function testCanGetACommandOnceAddedToList()
+        {
+                // setup
+                $obj = new CommandsList();
+                $obj->addClass('\Phix_Project\Phix\DummyCommand');
+                $this->assertTrue($obj->testHasCommand('dummy'));
+
+                // do the test
+                $command = $obj->getCommand('dummy');
+                $this->assertTrue($command instanceof DummyCommand);
+        }
+
+        public function testThrowsExceptionIfGettingCommandNotInList()
+        {
+                // setup
+                $obj = new CommandsList();
+                $caughtException = false;
+                $this->assertFalse($obj->testHasCommand('foobar'));
+
+                // test
+                try
+                {
+                        $obj->getCommand('foobar');
+                }
+                catch (\Exception $e)
+                {
+                        $caughtException = true;
+                }
+
+                // did it work?
+                $this->assertTrue($caughtException);
         }
 }
