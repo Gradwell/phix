@@ -248,15 +248,8 @@ class CommandBase
                         foreach ($sortedSwitches['longSwitchesWithArgs'] as $longSwitch => $switch)
                         {
                                 $so->output(null, ' [ ');
-                                if ($switch->testHasArgument())
-                                {
-                                        $so->output($context->switchStyle, '--' . $longSwitch . '=');
-                                        $so->output($context->argStyle, $switch->arg->name);
-                                }
-                                else
-                                {
-                                        $so->output($context->switchStyle, '--' . $longSwitch);
-                                }
+                                $so->output($context->switchStyle, '--' . $longSwitch . '=');
+                                $so->output($context->argStyle, $switch->arg->name);
                                 $so->output(null, ' ]');
                         }
                 }

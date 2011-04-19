@@ -100,19 +100,41 @@ class DummyCommandWithSwitches extends CommandBase
                         ->setWithShortSwitch('?')
                         ->setWithLongSwitch('help');
 
+                $options->addSwitch('include', 'adds additional folders to PHP include_path')
+                        ->setWithShortSwitch('I')
+                        ->setWithLongSwitch('include')
+                        ->setWithRequiredArg('<path>', 'path to add to include_path')
+                        ->setLongDesc("phix finds all of its commands by searching PHP's include_path for PHP files in "
+                                       . "folders called 'PhixCommands'. If you want to phix to look in other folders "
+                                       . "without having to add them to PHP's include_path, use --include to tell phix "
+                                       . "to look in these folders."
+                                       . \PHP_EOL . \PHP_EOL
+                                       . "phix expects '<path>' to point to a folder that conforms to the PSR0 standard "
+                                       . "for autoloaders."
+                                       . \PHP_EOL . \PHP_EOL
+                                       . "For example, if your command is the class '\Me\Tools\PhixCommands\ScheduledTask', phix would "
+                                       . "expect to autoload this class from the 'Me/Tools/PhixCommands/ScheduledTask.php' file."
+                                       . \PHP_EOL . \PHP_EOL
+                                       . "If your class lives in the './myApp/lib/Me/Tools/PhixCommands' folder, you would call phix "
+                                       . "with 'phix --include=./myApp/lib'");
+
                 return $options;
         }
+
+        public function getCommandArgs()
+        {
+                return array
+                (
+                        '<folder>'      => '<folder> is a path to an existing folder, which you must have permission to write to.',
+                );
+        }
+
 
         public function _calculateSwitchDisplayOrder()
         {
                 $definedSwitches = $this->getCommandOptions();
                 return $this->calculateSwitchDisplayOrder($definedSwitches);
-        }
-        
-        public function _showName(Context $context)
-        {
-                return $this->showName($context);
-        }
+        }        
 }
 
 class CommandBaseTest extends \PHPUnit_Framework_TestCase
@@ -231,14 +253,32 @@ NAME
     CommandBase does the right thing with its switches
 
 SYNOPSIS
-    phix DummyCommand:withSwitches [ ? -h -v ] [ help --version ] [ -b
-    <build.properties> ] [ -p <package.xml> ] [ -s <folder> ] [
-    --build.properties=<build.properties> ] [ --packageXml=<package.xml> ] [
-    --src=<folder> ]
+    phix DummyCommand:withSwitches [ ? -h -v ] [ help --version ] [ -I <path>
+     ] [ -b <build.properties> ] [ -p <package.xml> ] [ -s <folder> ] [
+    --build.properties=<build.properties> ] [ --include=<path> ] [
+    --packageXml=<package.xml> ] [ --src=<folder> ] <folder>
 
 OPTIONS
     -? | -h | --help
         displays a summary of how to use this command
+
+    -I <path> | --include=<path>
+        adds additional folders to PHP include_path
+
+        phix finds all of its commands by searching PHP's include_path for PHP
+        files in folders called 'PhixCommands'. If you want to phix to look in
+        other folders without having to add them to PHP's include_path, use
+        --include to tell phix to look in these folders.
+
+        phix expects '<path>' to point to a folder that conforms to the PSR0
+        standard for autoloaders.
+
+        For example, if your command is the class '\Me\Tools\PhixCommands
+        \ScheduledTask', phix would expect to autoload this class from the 'Me
+        /Tools/PhixCommands/ScheduledTask.php' file.
+
+        If your class lives in the './myApp/lib/Me/Tools/PhixCommands' folder,
+        you would call phix with 'phix --include=./myApp/lib'
 
     -b <build.properties> | --build.properties=<build.properties>
         specify the build.properties file to use
@@ -257,6 +297,10 @@ OPTIONS
 
     -v | --version
         show the version number
+
+    <folder>
+        <folder> is a path to an existing folder, which you must have
+        permission to write to.
 
 IMPLEMENTATION
     This command is implemented in the PHP class:
@@ -286,7 +330,7 @@ EOS;
                 $this->assertTrue(isset($switches['shortSwitchesWithoutArgs']));
 
                 // has it worked?
-                $expectedOrder = array('b', 'p', 's');
+                $expectedOrder = array('I', 'b', 'p', 's');
                 $actualOrder   = array_keys($switches['shortSwitchesWithArgs']);
                 $this->assertEquals($expectedOrder, $actualOrder);
 
@@ -308,7 +352,7 @@ EOS;
                 $this->assertTrue(isset($switches['longSwitchesWithoutArgs']));
 
                 // has it worked?
-                $expectedOrder = array('build.properties', 'packageXml', 'src');
+                $expectedOrder = array('build.properties', 'include', 'packageXml', 'src');
                 $actualOrder   = array_keys($switches['longSwitchesWithArgs']);
                 $this->assertEquals($expectedOrder, $actualOrder);
 
@@ -329,7 +373,7 @@ EOS;
                 $this->assertTrue(isset($switches['allSwitches']));
 
                 // has it worked?
-                $expectedOrder = array('-?', '-b', '-h', '-p', '-s', '-v', '--build.properties', '--help', '--packageXml', '--src', '--version');
+                $expectedOrder = array('-?', '-I', '-b', '-h', '-p', '-s', '-v', '--build.properties', '--help', '--include', '--packageXml', '--src', '--version');
                 $actualOrder   = array_keys($switches['allSwitches']);
                 $this->assertEquals($expectedOrder, $actualOrder);
         }
