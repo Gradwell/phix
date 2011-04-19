@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package     Phix_Project
- * @subpackage  PhixSwitches
+ * @subpackage  Phix
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
@@ -42,20 +42,59 @@
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phix_Project\PhixExtensions;
-use Phix_Project\Phix\Context;
+namespace Phix_Project\Phix;
 
-class SwitchBase
+class CommandsFinder
 {
-        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        protected $foldersToSearch = array();
+
+        public function __construct()
         {
-                // by default, do nothing
-                return null;
+                $this->addPhpSearchPathToSearchList();
         }
 
-        static public function processAfterExtensionLoad(Context $context, $args)
+        public function addPhpSearchPathToSearchList()
         {
-                // by default, do nothing
-                return null;
+                foreach (explode(\PATH_SEPARATOR, \get_include_path()) as $path)
+                {
+                        $this->addFolderToSearch($path);
+                }
+        }
+
+        public function addFolderToSearch($path)
+        {
+                $this->foldersToSearch[$path] = $path;
+        }
+
+        public function findCommands()
+        {
+                $commandsList = new CommandsList();
+
+                // Find all classes in php files whose paths contain "PhixCommands":
+                $classFinder = new ClassFinder(explode(\PATH_SEPARATOR, \get_include_path()), '/PhixCommands.*\.php$/');
+
+                foreach ($classFinder->getClassFiles() as $newClass => $filename)
+                {
+                        include_once $filename;
+
+                        if ($this->testIsPhixCommand($newClass))
+                        {
+                                // we have a winner!
+                                $commandsList->addClass($newClass);
+                        }
+                }
+
+                return $commandsList;
+        }
+
+        protected function testIsPhixCommand($className)
+        {
+                $refObj = new \ReflectionClass($className);
+                if ($refObj->implementsInterface('\Phix_Project\PhixExtensions\CommandInterface'))
+                {
+                        return true;
+                }
+
+                return false;
         }
 }

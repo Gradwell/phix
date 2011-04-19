@@ -44,11 +44,10 @@
 
 namespace Phix_Project\PhixSwitches;
 use Phix_Project\Phix\Context;
-use Phix_Project\PhixExtensions\SwitchBase;
 
 class VersionSwitch extends SwitchBase
 {
-        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        static public function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 $s = $context->stdout;
                 $s->outputLine($context->highlightStyle, $context->version);

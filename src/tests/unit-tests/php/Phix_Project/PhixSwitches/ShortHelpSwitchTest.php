@@ -68,7 +68,7 @@ class ShortHelpSwitchTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals(0, strlen($context->stdout->_getOutput()));
 
                 // do the test
-                $returnCode    = ShortHelpSwitch::processBeforeExtensionLoad($context, $args, $args, $argsIndex);
+                $returnCode    = ShortHelpSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
                 $writtenString = $context->stdout->_getOutput();
 
                 // did it work?

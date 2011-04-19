@@ -54,10 +54,10 @@ class CommandsList
 {
         public $commands = array();
 
-        public function importCommandsFromExtension($PhixExtensionClassName)
+        public function addClass($phixCommandClassName)
         {
                 // what is this command all about?
-                $newCommand = new $PhixExtensionClassName;
+                $newCommand = new $phixCommandClassName;
                 $commandName = $newCommand->getCommandName();
                 $commandDesc = $newCommand->getCommandDesc();
 

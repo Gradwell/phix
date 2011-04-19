@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2010 Gradwell dot com Ltd.
+ * Copyright (c) 2011 Gradwell dot com Ltd.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,16 +36,52 @@
  * @package     Phix_Project
  * @subpackage  PhixExtensions
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
- * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
+ * @copyright   2011 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://gradwell.github.com
  * @version     @@PACKAGE_VERSION@@
  */
 
-namespace Phix_Project\PhixExtensions;
-use Phix_Project\Phix\CommandsList;
+namespace Phix_Project\PhixSwitches;
 
-interface ExtensionInterface
+use Phix_Project\Phix\Context;
+
+class SwitchBaseTest extends \PHPUnit_Framework_TestCase
 {
-        static public function buildCommandsList(CommandsList $commandsList);
+        public function testSupportsBeforeCommandLoad()
+        {
+                // setup
+                $context = new Context();
+                $args    = array ('phix', 'test', 'anotherSwitch');
+                $argsIndex = 2;
+
+                // do the test
+                $cloneContext = clone $context;
+                $cloneArgs    = $args;
+                $cloneIndex   = $argsIndex;
+                $return = SwitchBase::processBeforeCommandLoad($cloneContext, $cloneArgs, $cloneArgs, $cloneIndex);
+
+                // make sure nothing happened
+                $this->assertTrue(is_null($return));
+                $this->assertEquals($context, $cloneContext);
+                $this->assertEquals($args, $cloneArgs);
+                $this->assertEquals($argsIndex, $cloneIndex);
+        }
+
+        public function testSupportsAfterCommandLoad()
+        {
+                // setup
+                $context = new Context();
+                $args    = array ('phix', 'test', 'anotherSwitch');
+
+                // do the test
+                $cloneContext = clone $context;
+                $cloneArgs    = $args;
+                $return = SwitchBase::processAfterCommandLoad($cloneContext, $cloneArgs);
+
+                // make sure nothing happened
+                $this->assertTrue(is_null($return));
+                $this->assertEquals($context, $cloneContext);
+                $this->assertEquals($args, $cloneArgs);
+        }
 }

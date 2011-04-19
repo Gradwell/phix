@@ -71,8 +71,6 @@ class PhixSwitchesTest extends \PHPUnit_Framework_TestCase
                         $shortSwitches = $switch->getShortSwitches();
                         $longSwitches = $switch->getLongSwitches();
                         $this->assertTrue(count($shortSwitches) + count($longSwitches) > 0);
-
-                        
                 }
         }
 }

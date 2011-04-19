@@ -44,11 +44,10 @@
 
 namespace Phix_Project\PhixSwitches;
 use Phix_Project\Phix\Context;
-use Phix_Project\PhixExtensions\SwitchBase;
 
 class ShortHelpSwitch extends SwitchBase
 {
-        public static function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        public static function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // shortcuts to save typing
                 $so = $context->stdout;

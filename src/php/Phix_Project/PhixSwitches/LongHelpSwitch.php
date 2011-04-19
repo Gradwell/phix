@@ -44,11 +44,10 @@
 
 namespace Phix_Project\PhixSwitches;
 use Phix_Project\Phix\Context;
-use Phix_Project\PhixExtensions\SwitchBase;
 
 class LongHelpSwitch extends SwitchBase
 {
-        public static function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        public static function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // we want --help to be a synonym for the 'help' command
                 // we need to insert 'help' into $rawArgv at the index

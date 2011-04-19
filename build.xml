@@ -130,7 +130,7 @@
     <delete dir="${project.review.codecoveragedir}" />
     <mkdir dir="${project.review.codecoveragedir}" />
     <mkdir dir="${project.review.logsdir}" />
-    <exec command="phpunit --bootstrap=${project.src.testunitdir}/bootstrap.php --coverage-html ${project.review.codecoveragedir} --coverage-clover ${project.review.logsdir}/phpunit.xml ${project.src.testunitdir}" checkreturn="true" logoutput="true"/>
+    <exec command="phpunit --bootstrap=${project.src.testunitdir}/bootstrap.php --coverage-html ${project.review.codecoveragedir} --coverage-clover ${project.review.logsdir}/phpunit.xml --testdox ${project.src.testunitdir}" checkreturn="true" logoutput="true"/>
     <echo/>
     <echo>The code coverage report is in ${project.review.codecoveragedir}</echo>
   </target>

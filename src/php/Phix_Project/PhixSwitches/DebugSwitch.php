@@ -44,11 +44,10 @@
 
 namespace Phix_Project\PhixSwitches;
 use Phix_Project\Phix\Context;
-use Phix_Project\PhixExtensions\SwitchBase;
 
 class DebugSwitch extends SwitchBase
 {
-        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        static public function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // do we have a debugging level set?
                 if (count($args) > 0)

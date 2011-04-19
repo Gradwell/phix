@@ -44,11 +44,10 @@
 
 namespace Phix_Project\PhixSwitches;
 use Phix_Project\Phix\Context;
-use Phix_Project\PhixExtensions\SwitchBase;
 
 class IncludeSwitch extends SwitchBase
 {
-        static public function processBeforeExtensionLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        static public function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // just in case!
                 $se = $context->stderr;

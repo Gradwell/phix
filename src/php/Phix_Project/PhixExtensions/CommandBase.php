@@ -96,78 +96,13 @@ class CommandBase
                 $sortedSwitches = null;
                 if ($options !== null)
                 {
-                        $sortedSwitches = $this->calculateSwitchDisplayOrder($options);
+                        $sortedSwitches = $options->getSwitchesInDisplayOrder();
                 }
 
                 $this->showName($context);
                 $this->showSynopsis($context, $sortedSwitches, $args);
                 $this->showOptions($context, $sortedSwitches, $args);
                 $this->showImplementationDetails($context);
-        }
-
-        protected function calculateSwitchDisplayOrder(DefinedSwitches $options)
-        {
-                // turn the list into something that's suitably sorted
-                $shortSwitchesWithoutArgs = array();
-                $shortSwitchesWithArgs = array();
-                $longSwitchesWithoutArgs = array();
-                $longSwitchesWithArgs = array();
-
-                $allShortSwitches = array();
-                $allLongSwitches = array();
-
-                $allSwitches = $options->getSwitches();
-
-                foreach ($allSwitches as $switch)
-                {
-                        foreach ($switch->shortSwitches as $shortSwitch)
-                        {
-                                $allShortSwitches['-' . $shortSwitch] = $switch;
-
-                                if ($switch->testHasArgument())
-                                {
-                                        $shortSwitchesWithArgs[$shortSwitch] = $switch;
-                                }
-                                else
-                                {
-                                        $shortSwitchesWithoutArgs[$shortSwitch] = $shortSwitch;
-                                }
-                        }
-
-                        foreach ($switch->longSwitches as $longSwitch)
-                        {
-                                $allLongSwitches['--' . $longSwitch] = $switch;
-
-                                if ($switch->testHasArgument())
-                                {
-                                        $longSwitchesWithArgs[$longSwitch] = $switch;
-                                }
-                                else
-                                {
-                                        $longSwitchesWithoutArgs[$longSwitch] = $longSwitch;
-                                }
-                        }
-                }
-
-                // we have all the switches that phix supports
-                // let's put them into sensible orders, and then display
-                // them
-                \ksort($shortSwitchesWithArgs);
-                \ksort($shortSwitchesWithoutArgs);
-                \ksort($longSwitchesWithArgs);
-                \ksort($longSwitchesWithoutArgs);
-                \ksort($allShortSwitches);
-                \ksort($allLongSwitches);
-
-                $return = array (
-                        'shortSwitchesWithArgs' => $shortSwitchesWithArgs,
-                        'shortSwitchesWithoutArgs' => $shortSwitchesWithoutArgs,
-                        'longSwitchesWithArgs' => $longSwitchesWithArgs,
-                        'longSwitchesWithoutArgs' => $longSwitchesWithoutArgs,
-                        'allSwitches' => array_merge($allShortSwitches, $allLongSwitches),
-                );
-
-                return $return;
         }
 
         protected function showName(Context $context)

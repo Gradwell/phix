@@ -61,7 +61,7 @@ class DebugSwitchTest extends \PHPUnit_Framework_TestCase
                 $args    = array();
 
                 // change state
-                DebugSwitch::processBeforeExtensionLoad($context, $args, $args, 0);
+                DebugSwitch::processBeforeCommandLoad($context, $args, $args, 0);
 
                 // test the results
                 $this->assertEquals(5, $context->debugLevel);
@@ -74,7 +74,7 @@ class DebugSwitchTest extends \PHPUnit_Framework_TestCase
                 $args    = array('6');
 
                 // change state
-                DebugSwitch::processBeforeExtensionLoad($context, $args, $args, 0);
+                DebugSwitch::processBeforeCommandLoad($context, $args, $args, 0);
 
                 // test the results
                 $this->assertEquals($args[0], $context->debugLevel);

@@ -66,7 +66,7 @@ class VersionSwitchTest extends \PHPUnit_Framework_TestCase
                 $expectedString = '@@PACKAGE_VERSION@@' . \PHP_EOL;
 
                 // do the test
-                VersionSwitch::processBeforeExtensionLoad($context, $args, $args, $argsIndex);
+                VersionSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
 
                 // do we have our version string?
                 $writtenString = $context->stdout->_getOutput();

@@ -62,7 +62,7 @@ class LongHelpSwitchTest extends \PHPUnit_Framework_TestCase
                 $argsIndex = 2;
 
                 // perform the test
-                $return = LongHelpSwitch::processBeforeExtensionLoad($context, $args, $args, $argsIndex);
+                $return = LongHelpSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
 
                 // check the results
                 $this->assertEquals(null, $return);
@@ -79,7 +79,7 @@ class LongHelpSwitchTest extends \PHPUnit_Framework_TestCase
                 $argsIndex = 2;
 
                 // perform the test
-                $return = LongHelpSwitch::processBeforeExtensionLoad($context, $args, $args, $argsIndex);
+                $return = LongHelpSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
 
                 // check the results
                 $this->assertEquals(null, $return);

@@ -98,14 +98,13 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $command = $context->commandsList->getCommand($commandForHelp);
                 $command->outputHelp($context);
 
-
                 return 0;
         }
 
         protected function showGeneralHelp(Context $context)
         {
                 // get the list of switches in display order
-                $sortedSwitches = $this->calculatePhixSwitchDisplayOrder($context);
+                $sortedSwitches = $context->phixDefinedSwitches->getSwitchesInDisplayOrder();
 
                 $so = $context->stdout;
 
@@ -116,71 +115,6 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $this->showPhixSwitchSummary($context, $sortedSwitches);
                 $this->showPhixSwitchDetails($context, $sortedSwitches);
                 $this->showCommandsList($context);
-        }
-
-        protected function calculatePhixSwitchDisplayOrder(Context $context)
-        {
-                // turn the list into something that's suitably sorted
-                $shortSwitchesWithoutArgs = array();
-                $shortSwitchesWithArgs = array();
-                $longSwitchesWithoutArgs = array();
-                $longSwitchesWithArgs = array();
-
-                $allShortSwitches = array();
-                $allLongSwitches = array();
-
-                $allSwitches = $context->phixDefinedSwitches->getSwitches();
-
-                foreach ($allSwitches as $switch)
-                {
-                        foreach ($switch->shortSwitches as $shortSwitch)
-                        {
-                                $allShortSwitches['-' . $shortSwitch] = $switch;
-
-                                if ($switch->testHasArgument())
-                                {
-                                        $shortSwitchesWithArgs[$shortSwitch] = $switch;
-                                }
-                                else
-                                {
-                                        $shortSwitchesWithoutArgs[$shortSwitch] = $shortSwitch;
-                                }
-                        }
-
-                        foreach ($switch->longSwitches as $longSwitch)
-                        {
-                                $allLongSwitches['--' . $longSwitch] = $switch;
-
-                                if ($switch->testHasArgument())
-                                {
-                                        $longSwitchesWithArgs[$longSwitch] = $switch;
-                                }
-                                else
-                                {
-                                        $longSwitchesWithoutArgs[$longSwitch] = $longSwitch;
-                                }
-                        }
-                }
-
-                // we have all the switches that phix supports
-                // let's put them into sensible orders, and then display
-                // them
-                \ksort($shortSwitchesWithArgs);
-                \ksort($shortSwitchesWithoutArgs);
-                \ksort($longSwitchesWithArgs);
-                \ksort($longSwitchesWithoutArgs);
-                \ksort($allShortSwitches);
-                \ksort($allLongSwitches);
-
-                $return = array (
-                        'shortSwitchesWithArgs' => $shortSwitchesWithArgs,
-                        'shortSwitchesWithoutArgs' => $shortSwitchesWithoutArgs,
-                        'longSwitchesWithArgs' => $longSwitchesWithArgs,
-                        'longSwitchesWithoutArgs' => $longSwitchesWithoutArgs,
-                        'allSwitches' => array_merge($allShortSwitches, $allLongSwitches),
-                );
-
-                return $return;
         }
 
         protected function showPhixSwitchSummary(Context $context, $sortedSwitches)
@@ -343,7 +277,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $so->outputLine(null, ' for detailed help on <command>');
         }
 
-        protected function outputHelp(Context $context)
+        public function outputHelp(Context $context)
         {
                 $so = $context->stdout;
 
