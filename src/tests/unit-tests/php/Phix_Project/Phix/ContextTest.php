@@ -44,7 +44,7 @@
 
 namespace Phix_Project\Phix;
 
-class ContextListTest extends \PHPUnit_Framework_TestCase
+class ContextTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanCreate()
         {
