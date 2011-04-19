@@ -44,6 +44,7 @@
 
 namespace Phix_Project\Phix;
 
+use Gradwell\CommandLineLib\DefinedSwitches;
 use Gradwell\ConsoleDisplayLib\StdOut;
 use Gradwell\ConsoleDisplayLib\StdErr;
 
@@ -93,6 +94,9 @@ class Context
         {
                 $this->stdout = new Stdout;
                 $this->stderr = new Stderr;
+
+                $this->phixDefinedSwitches = new DefinedSwitches();
+                $this->commandsList        = new CommandsList();
 
                 $this->setupStyles();
         }
