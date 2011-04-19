@@ -52,46 +52,56 @@ namespace Phix_Project\Phix;
  */
 
 class ClassFinder
-{
-	/**
-	 * The list containing classes and their filenames.
-	 * 
-	 * @var array(string => string)  Class => filename
-	 */
-	protected $list = array();
-	
+{	
 	/**
 	 * The regex determining which files to search.
 	 * 
 	 * @var string
 	 */
-	protected $file_regex;
+	protected $fileRegex = '/\.php$/';
 	
 	/**
 	 * A list of paths to search.
 	 * 
 	 * @var array(string)
 	 */
-	protected $paths = array();
-	
-	// -----------------------------------------------------------------
-	
-	/**
-	 * @param  string|array
-	 * @param  string
-	 * @param  int
-	 */
-	function __construct($paths = '.', $file_regex = '/\.php$/')
-	{
-		foreach((Array) $paths as $p)
-		{
-			$this->paths[] = realpath($p);
-		}
+	protected $foldersToSearch = array();
 		
-		// array_unique() will fix problems with eg. PHP's include path
-		$this->paths      = array_unique($this->paths);
-		$this->file_regex = $file_regex;
-	}
+        public function addFolderToSearch($folder)
+        {
+                // this is one way to see if the folder actually exists
+                // or not!
+                if ($folder == '.')
+                {
+                        $folder = \getcwd();
+                }
+                $realPathToFolder = realpath($folder);
+
+                if (!$realPathToFolder)
+                {
+                        throw new \Exception('folder ' . $folder . ' does not exist');
+                }
+                
+                $this->foldersToSearch[$realPathToFolder] = $realPathToFolder;
+        }
+
+        public function addFoldersToSearch($folders)
+        {
+                foreach ($folders as $folder)
+                {
+                        $this->addFolderToSearch($folder);
+                }
+        }
+
+        public function getFoldersToSearch()
+        {
+                return $this->foldersToSearch;
+        }
+
+        public function setFileRegex($fileRegex)
+        {
+                $this->fileRegex = $fileRegex;
+        }
 	
 	// -----------------------------------------------------------------
 
@@ -101,34 +111,31 @@ class ClassFinder
 	 * 
 	 * @return array(class => file)
 	 */
-	public function getClassFiles()
+	public function findClassFiles()
 	{
-		if( ! empty($this->list))
-		{
-			return $this->list;
-		}
-		
-		foreach($this->paths as $path)
+                $return = array();
+
+		foreach($this->foldersToSearch as $folderToSearch)
 		{
 			// Search the folder
-			$diriter  = new \RecursiveDirectoryIterator($path);
+			$diriter  = new \RecursiveDirectoryIterator($folderToSearch);
 			$iteriter = new \RecursiveIteratorIterator($diriter, \RecursiveIteratorIterator::LEAVES_ONLY);
-			$files    = new \RegexIterator($iteriter, $this->file_regex);
+			$files    = new \RegexIterator($iteriter, $this->fileRegex);
 			
-			foreach($files as $name => $file)
+			foreach($files as $filename => $fileinfo)
 			{
-				foreach($this->getClasses($name) as $class)
+				foreach($this->getClasses($filename) as $class)
 				{
-					if(!isset($this->list[$class]))
+					if(!isset($return[$class]))
 					{
                                                 // class is new!
-        					$this->list[$class] = $name;
+        					$return[$class] = $filename;
 					}
 				}
 			}
 		}
 		
-		return $this->list;
+		return $return;
 	}
 	
 	// -----------------------------------------------------------------
