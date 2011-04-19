@@ -61,9 +61,9 @@ class CommandsFinder
                 }
         }
 
-        public function addFolderToSearch($path)
+        public function addFolderToSearch($folder)
         {
-                $this->foldersToSearch[$path] = $path;
+                $this->foldersToSearch[$folder] = $folder;
         }
 
         public function getFoldersToSearch()
@@ -76,9 +76,14 @@ class CommandsFinder
                 $commandsList = new CommandsList();
 
                 // Find all classes in php files whose paths contain "PhixCommands":
-                $classFinder = new ClassFinder(explode(\PATH_SEPARATOR, \get_include_path()), '/PhixCommands.*\.php$/');
+                $classFinder = new ClassFinder();
+                $classFinder->addFoldersToSearch($this->foldersToSearch);
+                $classFinder->setFileRegex('/PhixCommands.*\.php$/');
 
-                foreach ($classFinder->getClassFiles() as $newClass => $filename)
+                $classes = $classFinder->findClassFiles();
+                var_dump($classes);
+
+                foreach ($classes as $newClass => $filename)
                 {
                         include_once $filename;
 
