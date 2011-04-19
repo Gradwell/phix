@@ -343,7 +343,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $so->outputLine(null, ' for detailed help on <command>');
         }
 
-        public function outputHelp(Context $context)
+        protected function outputHelp(Context $context)
         {
                 $so = $context->stdout;
 
