@@ -47,8 +47,27 @@ namespace Phix_Project\Phix;
  * Searches through a set of paths for classes, returns a list of classes
  * and in which file they are located, does NOT include the files.
  *
- * If duplicate classes are found, returns only the first file that
- * contains the class
+ * Throws a PHP exception if duplicate files are found, but the classes
+ * can still be found by calling getClassFiles() again but won't contain
+ * the duplicates (only the first occurrence of the class).
+ * 
+ * Example usage:
+ * <code>
+ * $finder = new \Phix_Project\Phix\ClassFinder(array('.', '../src'));
+ * 
+ * try
+ * {
+ *     $classes = $finder->getClassFiles();
+ * }
+ * catch(\Phix_Project\Phix\ClassConflictException $e)
+ * {
+ *     // Take note of the error:
+ *     echo "Conflicting classes!";
+ *     
+ *     // Let the operation continue, but might contain the wrong class-file:
+ *     $classes = $finder->getClassFiles();
+ * }
+ * </code>
  */
 
 class ClassFinder
@@ -108,6 +127,8 @@ class ClassFinder
 			return $this->list;
 		}
 		
+		$conflicts = array();
+		
 		foreach($this->paths as $path)
 		{
 			// Search the folder
@@ -119,13 +140,21 @@ class ClassFinder
 			{
 				foreach($this->getClasses($name) as $class)
 				{
-					if(!isset($this->list[$class]))
+					if(isset($this->list[$class]))
 					{
-                                                // class is new!
-        					$this->list[$class] = $name;
+						$conflicts[] = array('class' => $class, 'file' => $name);
+					}
+					else
+					{
+						$this->list[$class] = $name;
 					}
 				}
 			}
+		}
+		
+		if( ! empty($conflicts))
+		{
+			throw new ClassConflictException($conflicts);
 		}
 		
 		return $this->list;

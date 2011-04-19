@@ -160,7 +160,7 @@ class Phix
         protected function loadPhixExtensions(Context $context, ParsedSwitches $ParsedSwitches)
         {
                 // create something to find the commands
-                $extensionsFinder = new ExtensionsFinder();
+                $extensionsFinder = new ExtensionsFinder($context);
 
                 // seed the commandsFinder with a list of where to look
                 // if the user has given us any hints

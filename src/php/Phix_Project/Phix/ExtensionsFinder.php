@@ -46,10 +46,13 @@ namespace Phix_Project\Phix;
 
 class ExtensionsFinder
 {
+        protected $context;
+        
         protected $foldersToSearch = array();
 
-        public function __construct()
+        public function __construct(Context $context)
         {
+                $this->context = $context;
                 $this->addPhpSearchPathToSearchList();
         }
 
@@ -72,8 +75,20 @@ class ExtensionsFinder
 
                 // Find all classes in php files whose paths contain "PhixCommands":
                 $classFinder = new ClassFinder(explode(\PATH_SEPARATOR, \get_include_path()), '/PhixCommands.*\.php$/');
+                
+                try
+                {
+                        $files = $classFinder->getClassFiles();
+                }
+                catch(ClassConflictException $e)
+                {
+                        $this->context->stderr->output($this->context->errorStyle, $this->context->errorPrefix);
+                        $this->context->stderr->outputLine(null, $e->getMessage());
+                        
+                        $files = $classFinder->getClassFiles();
+                }
 
-                foreach ($classFinder->getClassFiles() as $newClass => $filename)
+                foreach ($files as $newClass => $filename)
                 {
                         include_once $filename;
 
