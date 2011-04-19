@@ -48,8 +48,10 @@ use Gradwell\ValidationLib\MustBeValidPath;
 
 class PhixSwitches
 {
-        static public function buildSwitches(DefinedSwitches $switches)
+        static public function buildSwitches()
         {
+                $switches = new DefinedSwitches();
+
                 // phix -h || phix -?
                 $switches->addSwitch('shortHelp', 'display a summary of the command-line structure')
                          ->setWithShortSwitch('h')
@@ -90,5 +92,8 @@ class PhixSwitches
                          ->setWithRequiredArg('<path>', 'The path to the folder to include')
                          ->setArgValidator(new MustBeValidPath())
                          ->setSwitchIsRepeatable();
+
+                // all done!
+                return $switches;
         }
 }

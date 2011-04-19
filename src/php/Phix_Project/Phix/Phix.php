@@ -116,8 +116,7 @@ class Phix
         
         protected function buildPhixSwitches()
         {
-                $switches = new DefinedSwitches();
-                \Phix_Project\PhixSwitches\PhixSwitches::buildSwitches($switches);
+                $switches = PhixSwitches::buildSwitches();
 
                 // all done
                 return $switches;

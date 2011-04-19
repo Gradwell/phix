@@ -51,11 +51,8 @@ class PhixSwitchesTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanBuildListOfSwitches()
         {
-                // setup
-                $switches = new DefinedSwitches();
-
                 // make the call
-                PhixSwitches::buildSwitches($switches);
+                $switches = PhixSwitches::buildSwitches();
 
                 // test the results
                 $builtSwitches = $switches->getSwitches();
