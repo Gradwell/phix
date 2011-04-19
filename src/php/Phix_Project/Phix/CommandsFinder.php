@@ -81,7 +81,6 @@ class CommandsFinder
                 $classFinder->setFileRegex('/PhixCommands.*\.php$/');
 
                 $classes = $classFinder->findClassFiles();
-                var_dump($classes);
 
                 foreach ($classes as $newClass => $filename)
                 {

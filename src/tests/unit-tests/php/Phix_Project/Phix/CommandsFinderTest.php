@@ -95,6 +95,6 @@ class CommandsFinderTest extends \PHPUnit_Framework_TestCase
                 $commandsList = $obj->findCommands();
 
                 // did it work?
-                $this->assertTrue($commandsList->testHasCommand('commandsFinderDummy'));
+                $this->assertTrue($commandsList->testHasCommand('help'));
         }
 }
