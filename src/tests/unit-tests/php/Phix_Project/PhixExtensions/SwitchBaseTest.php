@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package     Phix_Project
- * @subpackage  PhixSwitches
+ * @subpackage  PhixExtensions
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
  * @copyright   2011 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
