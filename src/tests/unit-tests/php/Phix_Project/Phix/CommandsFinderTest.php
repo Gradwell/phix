@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2010 Gradwell dot com Ltd.
+ * Copyright (c) 2011 Gradwell dot com Ltd.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * @package     Phix_Project
  * @subpackage  Phix
  * @author      Stuart Herbert <stuart.herbert@gradwell.com>
- * @copyright   2010 Gradwell dot com Ltd. www.gradwell.com
+ * @copyright   2011 Gradwell dot com Ltd. www.gradwell.com
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://gradwell.github.com
  * @version     @@PACKAGE_VERSION@@
@@ -44,62 +44,57 @@
 
 namespace Phix_Project\Phix;
 
-class CommandsFinder
+class CommandsFinderTest extends \PHPUnit_Framework_TestCase
 {
-        protected $foldersToSearch = array();
-
-        public function __construct()
+        public function testCanCreate()
         {
-                $this->addPhpSearchPathToSearchList();
+                $obj = new CommandsFinder();
+                $this->assertTrue($obj instanceof CommandsFinder);
         }
 
-        public function addPhpSearchPathToSearchList()
+        public function testByDefaultSearchesPhpIncludePath()
         {
-                foreach (explode(\PATH_SEPARATOR, \get_include_path()) as $path)
+                // test
+                $obj = new CommandsFinder();
+                $folders = $obj->getFoldersToSearch();
+
+                // check the results
+                $phpSearchPath = explode(\PATH_SEPARATOR, \get_include_path());
+                $finalSearchPath = array();
+                foreach ($phpSearchPath as $folder)
                 {
-                        $this->addFolderToSearch($path);
+                        $finalSearchPath[$folder] = $folder;
                 }
+                $this->assertEquals($finalSearchPath, $folders);
         }
 
-        public function addFolderToSearch($path)
+        public function testCanAddAdditionalFoldersToSearch()
         {
-                $this->foldersToSearch[$path] = $path;
-        }
+                // test
+                $obj = new CommandsFinder();
+                $obj->addFolderToSearch('/usr/bin');
+                $folders = $obj->getFoldersToSearch();
 
-        public function getFoldersToSearch()
-        {
-                return $this->foldersToSearch;
-        }
-
-        public function findCommands()
-        {
-                $commandsList = new CommandsList();
-
-                // Find all classes in php files whose paths contain "PhixCommands":
-                $classFinder = new ClassFinder(explode(\PATH_SEPARATOR, \get_include_path()), '/PhixCommands.*\.php$/');
-
-                foreach ($classFinder->getClassFiles() as $newClass => $filename)
+                // check the results
+                $phpSearchPath = explode(\PATH_SEPARATOR, \get_include_path());
+                $finalSearchPath = array();
+                foreach ($phpSearchPath as $folder)
                 {
-                        include_once $filename;
-
-                        if ($this->testIsPhixCommand($newClass))
-                        {
-                                // we have a winner!
-                                $commandsList->addClass($newClass);
-                        }
+                        $finalSearchPath[$folder] = $folder;
                 }
-
-                return $commandsList;
+                $finalSearchPath['/usr/bin'] = '/usr/bin';
+                $this->assertEquals($finalSearchPath, $folders);
         }
 
-        protected function testIsPhixCommand($className)
+        public function testWillSearchPathsForCommands()
         {
-                $refObj = new \ReflectionClass($className);
-                if ($refObj->implementsInterface('\Phix_Project\PhixExtensions\CommandInterface'))
-                {
-                        return true;
-                }
+                // test
+                $obj = new CommandsFinder();
+                $obj->addFolderToSearch(__DIR__);
 
-                return false;
+                $commandsList = $obj->findCommands();
+
+                // did it work?
+                $this->assertTrue($commandsList->testHasCommand('commandsFinderDummy'));
         }
 }
