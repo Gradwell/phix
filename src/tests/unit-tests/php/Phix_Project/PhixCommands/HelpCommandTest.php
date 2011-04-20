@@ -89,8 +89,9 @@ class HelpCommandTest extends \PHPUnit_Framework_TestCase
                 // setup
                 $obj = new HelpCommand();
                 $context = new Context();
-                $context->phixDefinedSwitches = PhixSwitches::buildSwitches();
                 $context->argvZero = 'phix';
+                $context->phixDefinedSwitches = PhixSwitches::buildSwitches();
+                $context->commandsList->addClass('Phix_Project\PhixCommands\HelpCommand');
                 $context->stdout = new DevString();
                 $context->stderr = new DevString();
 
@@ -150,6 +151,7 @@ OPTIONS
         display a full list of supported commands
 
 COMMANDS
+    help # get detailed help about a specific phix command
 
     See phix help <command> for detailed help on <command>
 
@@ -191,5 +193,50 @@ EOS;
 
                 // did the right return value get returned?
                 $this->assertEquals(1, $retVal);
+        }
+
+        public function testShowsHelpOnACommand()
+        {
+                // setup
+                $obj = new HelpCommand();
+                $context = new Context();
+                $context->argvZero = 'phix';
+                $context->phixDefinedSwitches = PhixSwitches::buildSwitches();
+                $context->commandsList->addClass('Phix_Project\PhixCommands\HelpCommand');
+                $context->stdout = new DevString();
+                $context->stderr = new DevString();
+
+                $args = array ('phix', 'help', 'help');
+                $argsIndex = 2;
+
+                // do the test
+                $retVal = $obj->validateAndExecute($args, $argsIndex, $context);
+
+                // did the general help get shown?
+                $stdoutOutput = $context->stdout->_getOutput();
+                $stderrOutput = $context->stderr->_getOutput();
+
+                $this->assertEquals(0, strlen($stderrOutput));
+                $this->assertNotEquals(0, strlen($stdoutOutput));
+
+                $expectedString = <<<EOS
+NAME
+    phix help - get detailed help about a specific phix command
+
+SYNOPSIS
+    phix help
+
+IMPLEMENTATION
+    This command is implemented in the PHP class:
+
+    * Phix_Project\PhixCommands\HelpCommand
+
+    which is defined in the file:
+
+    * /home/stuarth/Devel/GWC/phix/src/php/Phix_Project/PhixCommands
+      /HelpCommand.php
+
+EOS;
+                $this->assertEquals($expectedString, $stdoutOutput);
         }
 }

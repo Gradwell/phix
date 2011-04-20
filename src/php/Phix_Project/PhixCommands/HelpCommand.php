@@ -237,24 +237,5 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $so->output($context->commandStyle, $context->argvZero . ' help <command>');
                 $so->outputLine(null, ' for detailed help on <command>');
         }
-
-        public function outputHelp(Context $context)
-        {
-                $so = $context->stdout;
-
-                $so->outputLine($context->commandStyle, $context->argvZero . ' ' . $this->getCommandName());
-                $so->addIndent(4);
-                $so->outputLine(null, "Show this help message");
-                $this->outputImplementationDetails($context);
-                $so->addIndent(-4);
-                $so->outputBlankLine();
-
-                $so->output($context->commandStyle, $context->argvZero . ' ' . $this->getCommandName());
-                $so->outputLine($context->argStyle, ' <command>');
-                $so->addIndent(4);
-                $so->outputLine(null, "Show detailed help for <command>");
-                $this->outputImplementationDetails($context);
-                $so->addIndent(-4);
-        }
 }
 }
