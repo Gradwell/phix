@@ -253,8 +253,8 @@ NAME
     CommandBase does the right thing with its switches
 
 SYNOPSIS
-    phix DummyCommand:withSwitches [ ? -h -v ] [ help --version ] [ -I <path>
-     ] [ -b <build.properties> ] [ -p <package.xml> ] [ -s <folder> ] [
+    phix DummyCommand:withSwitches [ -? -h -v ] [ --help --version ] [ -I
+    <path> ] [ -b <build.properties> ] [ -p <package.xml> ] [ -s <folder> ] [
     --build.properties=<build.properties> ] [ --include=<path> ] [
     --packageXml=<package.xml> ] [ --src=<folder> ] <folder>
 

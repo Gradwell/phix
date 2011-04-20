@@ -48,6 +48,8 @@ use Phix_Project\Phix\CommandsList;
 use Phix_Project\Phix\Context;
 use Phix_Project\PhixExtensions\CommandBase;
 use Phix_Project\PhixExtensions\CommandInterface;
+use Phix_Project\PhixHelpers\SwitchesHelper;
+
 use Gradwell\CommandLineLib\DefinedSwitches;
 use Gradwell\CommandLineLib\DefinedSwitch;
 
@@ -125,48 +127,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 $so->setIndent(4);
                 $so->output($context->commandStyle, $context->argvZero);
 
-                if (count($sortedSwitches['shortSwitchesWithoutArgs']) > 0)
-                {
-                        $so->output(null, ' [ ');
-                        $so->output($context->switchStyle, '-' . implode('', $sortedSwitches['shortSwitchesWithoutArgs']));
-                        $so->output(null, ' ]');
-                }
-
-                if (count($sortedSwitches['longSwitchesWithoutArgs']) > 0)
-                {
-                        $so->output(null, ' [ ');
-                        $so->output($context->switchStyle, '--' . implode(' --', $sortedSwitches['longSwitchesWithoutArgs']));
-                        $so->output(null, ' ]');
-                }
-                
-                if (count($sortedSwitches['shortSwitchesWithArgs']) > 0)
-                {
-                        foreach ($sortedSwitches['shortSwitchesWithArgs'] as $shortSwitch => $switch)
-                        {
-                                $so->output(null, ' [ ');
-                                $so->output($context->switchStyle, '-' . $shortSwitch);
-                                $so->output($context->argStyle, $switch->arg->name);
-                                $so->output(null, ' ]');
-                        }
-                }
-
-                if (count($sortedSwitches['longSwitchesWithArgs']) > 0)
-                {
-                        foreach ($sortedSwitches['longSwitchesWithArgs'] as $longSwitch => $switch)
-                        {
-                                $so->output(null, ' [ ');
-                                if ($switch->testHasArgument())
-                                {
-                                        $so->output($context->switchStyle, '--' . $longSwitch . '=');
-                                        $so->output($context->argStyle, $switch->arg->name);
-                                }
-                                else
-                                {
-                                        $so->output($context->switchStyle, '--' . $longSwitch);
-                                }
-                                $so->output(null, ' ]');
-                        }
-                }
+                SwitchesHelper::showSwitchSummary($context, $sortedSwitches);
                 
                 $so->outputLine(null, ' [ command ] [ command-options ]');
                 $so->outputBlankLine();
