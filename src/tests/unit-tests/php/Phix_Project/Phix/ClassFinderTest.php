@@ -99,7 +99,6 @@ class ClassFinderTest extends \PHPUnit_Framework_TestCase
                 $classes = $obj->findClassFiles();
                 $expectedClasses = array(
                         'Phix_Project\Phix\ClassFinderTest'     => __DIR__ . DIRECTORY_SEPARATOR . 'ClassFinderTest.php',
-                        'Phix_Project\Phix\CommandsFinderDummy' => __DIR__ . DIRECTORY_SEPARATOR . 'CommandsFinderDummy.php',
                         'Phix_Project\Phix\CommandsFinderTest'  => __DIR__ . DIRECTORY_SEPARATOR . 'CommandsFinderTest.php',
                         'Phix_Project\Phix\CommandsListTest'    => __DIR__ . DIRECTORY_SEPARATOR . 'CommandsListTest.php',
                         'Phix_Project\Phix\ContextTest'         => __DIR__ . DIRECTORY_SEPARATOR . 'ContextTest.php',
