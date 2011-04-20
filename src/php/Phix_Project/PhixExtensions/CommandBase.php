@@ -160,7 +160,7 @@ class CommandBase
         protected function showOptions(Context $context, $sortedSwitches, $args)
         {
                 // do we have any options to show?
-                if (count($sortedSwitches['allSwitches']) == 0)
+                if (count($sortedSwitches['allSwitches']) == 0 && count($args) == 0)
                 {
                         // no we do not
                         return;
@@ -171,7 +171,11 @@ class CommandBase
                 $so->setIndent(0);
                 $so->outputLine(null, 'OPTIONS');
                 $so->addIndent(4);
-                $this->showSwitchDetails($context, $sortedSwitches);
+
+                if (count($sortedSwitches['allSwitches']) > 0)
+                {
+                        $this->showSwitchDetails($context, $sortedSwitches);
+                }
 
                 if (count($args) > 0)
                 {

@@ -69,6 +69,27 @@ class DummyCommandWithNoSwitches extends CommandBase
         }
 }
 
+class DummyCommandWithNoSwitchesAndOneArg extends CommandBase
+{
+        public function getCommandName()
+        {
+                return 'DummyCommand:withNoSwitchesAndOneArg';
+        }
+
+        public function getCommandDesc()
+        {
+                return 'A dummy command with only arguments to prove that CommandBase still does the right thing';
+        }
+
+        public function getCommandArgs()
+        {
+                return array
+                (
+                        '<folder>'      => '<folder> is a path to an existing folder, which you must have permission to write to.',
+                );
+        }
+}
+
 class DummyCommandWithSwitches extends CommandBase
 {
         public function getCommandName()
@@ -366,6 +387,59 @@ IMPLEMENTATION
     This command is implemented in the PHP class:
 
     * Phix_Project\PhixExtensions\DummyCommandWithNoSwitches
+
+    which is defined in the file:
+
+    * /home/stuarth/Devel/GWC/phix/src/tests/unit-tests/php/Phix_Project
+      /PhixExtensions/CommandBaseTest.php
+
+EOS;
+
+                $this->assertEquals($expectedString, $stdOutOutput);
+        }
+
+        public function testDoesOutputOptionsSectionWhenNoSwitchesOnlyArgs()
+        {
+                // setup
+                $obj = new DummyCommandWithNoSwitchesAndOneArg();
+                $context = new Context();
+                $context->argvZero = 'phix';
+                $context->stdout = new DevString();
+                $context->stderr = new DevString();
+
+                // do the test
+                $obj->outputHelp($context);
+
+                // test the results
+                $stdOutOutput = $context->stdout->_getOutput();
+                $stdErrOutput = $context->stderr->_getOutput();
+
+                $this->assertEquals(0, strlen($stdErrOutput));
+                $this->assertNotEquals(0, strlen($stdOutOutput));
+
+                // var_dump($stdOutOutput);
+
+                // that just tells us we have some sort of output in
+                // the expected places
+                //
+                // do we have the _right_ output?
+                $expectedString = <<<EOS
+NAME
+    phix DummyCommand:withNoSwitchesAndOneArg - A dummy command with only
+    arguments to prove that CommandBase still does the right thing
+
+SYNOPSIS
+    phix DummyCommand:withNoSwitchesAndOneArg <folder>
+
+OPTIONS
+    <folder>
+        <folder> is a path to an existing folder, which you must have
+        permission to write to.
+
+IMPLEMENTATION
+    This command is implemented in the PHP class:
+
+    * Phix_Project\PhixExtensions\DummyCommandWithNoSwitchesAndOneArg
 
     which is defined in the file:
 
