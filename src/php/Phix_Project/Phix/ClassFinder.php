@@ -138,7 +138,6 @@ class ClassFinder
                                 );
 
                                 $requiredClassish = '~' . str_replace($searchArray, $replaceArray, $filename) . '~';
-                                var_dump($requiredClassish);
 
                                 $foundClasses = $this->getClasses($filename);
 
