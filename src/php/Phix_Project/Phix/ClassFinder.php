@@ -124,14 +124,51 @@ class ClassFinder
 			
 			foreach($files as $filename => $fileinfo)
 			{
-				foreach($this->getClasses($filename) as $class)
-				{
-					if(!isset($return[$class]))
-					{
-                                                // class is new!
-        					$return[$class] = $filename;
-					}
-				}
+                                $searchArray = array
+                                (
+                                        $folderToSearch . DIRECTORY_SEPARATOR,
+                                        '.php',
+                                        DIRECTORY_SEPARATOR,
+                                );
+                                $replaceArray = array
+                                (
+                                        '',
+                                        '',
+                                        '[_\\\\]',
+                                );
+
+                                $requiredClassish = '~' . str_replace($searchArray, $replaceArray, $filename) . '~';
+                                var_dump($requiredClassish);
+
+                                $foundClasses = $this->getClasses($filename);
+
+                                // do we have a PSR0-compliantly-named class
+                                // in the file?
+                                //
+                                // this is needed because Linux distros install
+                                // any tests that we ship *inside* the php_dir
+                                // folder <-- braindead :( :(
+
+                                $hasPSR0Class = false;
+                                foreach ($foundClasses as $class)
+                                {
+                                        if (preg_match($requiredClassish, $class))
+                                        {
+                                                $hasPSR0Class = true;
+                                        }
+                                }
+
+                                if ($hasPSR0Class)
+                                {
+                                        foreach($foundClasses as $class)
+                                        {
+                                                if(!isset($return[$class]))
+                                                {
+                                                        // class is new!
+                                                        $return[$class] = $filename;
+                                                }
+                                        }
+                                }
 			}
 		}
 		

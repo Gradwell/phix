@@ -64,14 +64,15 @@ class ClassFinderTest extends \PHPUnit_Framework_TestCase
         public function testCanAddFolderToSearchList()
         {
                 $obj = new ClassFinder();
-                $obj->addFolderToSearch(__DIR__);
+                $folderToSearch = realpath(__DIR__ . '/../..');
+                $obj->addFolderToSearch($folderToSearch);
 
                 // has it been added?
                 $searchFolders = $obj->getFoldersToSearch();
                 $this->assertTrue(is_array($searchFolders));
                 $this->assertEquals(1, count($searchFolders));
-                $this->assertTrue(isset($searchFolders[__DIR__]));
-                $this->assertEquals(__DIR__, $searchFolders[__DIR__]);
+                $this->assertTrue(isset($searchFolders[$folderToSearch]));
+                $this->assertEquals($folderToSearch, $searchFolders[$folderToSearch]);
         }
 
         public function testThrowsExceptionIfTryingToSearchFolderThatDoesNotExist()
@@ -94,10 +95,24 @@ class ClassFinderTest extends \PHPUnit_Framework_TestCase
         public function testSearchesForClasses()
         {
                 $obj = new ClassFinder();
-                $obj->addFolderToSearch(__DIR__);
+                $folderToSearch = realpath(__DIR__ . '/../..');
+                $obj->addFolderToSearch($folderToSearch);
 
                 $classes = $obj->findClassFiles();
                 $expectedClasses = array(
+                        'Phix_Project\PhixCommands\HelpCommandTest'     => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixCommands' . DIRECTORY_SEPARATOR . 'HelpCommandTest.php',
+                        'Phix_Project\PhixExtensions\CommandBaseTest'   => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixExtensions' . DIRECTORY_SEPARATOR . 'CommandBaseTest.php',
+                        'Phix_Project\PhixExtensions\DummyCommand'      => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixExtensions' . DIRECTORY_SEPARATOR . 'CommandBaseTest.php',
+                        'Phix_Project\PhixExtensions\DummyCommandWithNoSwitches' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixExtensions' . DIRECTORY_SEPARATOR . 'CommandBaseTest.php',
+                        'Phix_Project\PhixExtensions\DummyCommandWithNoSwitchesAndOneArg' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixExtensions' . DIRECTORY_SEPARATOR . 'CommandBaseTest.php',
+                        'Phix_Project\PhixExtensions\DummyCommandWithSwitches' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixExtensions' . DIRECTORY_SEPARATOR . 'CommandBaseTest.php',
+                        'Phix_Project\PhixSwitches\DebugSwitchTest' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixSwitches' . DIRECTORY_SEPARATOR . 'DebugSwitchTest.php',
+                        'Phix_Project\PhixSwitches\IncludeSwitchTest' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixSwitches' . DIRECTORY_SEPARATOR . 'IncludeSwitchTest.php',
+                        'Phix_Project\PhixSwitches\LongHelpSwitchTest' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixSwitches' . DIRECTORY_SEPARATOR . 'LongHelpSwitchTest.php',
+                        'Phix_Project\PhixSwitches\PhixSwitchesTest' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixSwitches' . DIRECTORY_SEPARATOR . 'PhixSwitchesTest.php',
+                        'Phix_Project\PhixSwitches\ShortHelpSwitchTest' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixSwitches' . DIRECTORY_SEPARATOR . 'ShortHelpSwitchTest.php',
+                        'Phix_Project\PhixSwitches\SwitchBaseTest' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixSwitches' . DIRECTORY_SEPARATOR . 'SwitchBaseTest.php',
+                        'Phix_Project\PhixSwitches\VersionSwitchTest' => $folderToSearch . DIRECTORY_SEPARATOR . 'Phix_Project' . DIRECTORY_SEPARATOR . 'PhixSwitches' . DIRECTORY_SEPARATOR . 'VersionSwitchTest.php',
                         'Phix_Project\Phix\ClassFinderTest'     => __DIR__ . DIRECTORY_SEPARATOR . 'ClassFinderTest.php',
                         'Phix_Project\Phix\CommandsFinderTest'  => __DIR__ . DIRECTORY_SEPARATOR . 'CommandsFinderTest.php',
                         'Phix_Project\Phix\CommandsListTest'    => __DIR__ . DIRECTORY_SEPARATOR . 'CommandsListTest.php',
