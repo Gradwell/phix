@@ -159,16 +159,19 @@ class CommandBase
 
         protected function showOptions(Context $context, $sortedSwitches, $args)
         {
+                // do we have any options to show?
+                if (count($sortedSwitches['allSwitches']) == 0)
+                {
+                        // no we do not
+                        return;
+                }
+                
                 $so = $context->stdout;
 
                 $so->setIndent(0);
                 $so->outputLine(null, 'OPTIONS');
                 $so->addIndent(4);
-
-                if ($sortedSwitches !== null)
-                {
-                        $this->showSwitchDetails($context, $sortedSwitches);
-                }
+                $this->showSwitchDetails($context, $sortedSwitches);
 
                 if (count($args) > 0)
                 {
@@ -281,6 +284,7 @@ class CommandBase
         {
                 $so = $context->stdout;
 
+                $so->setIndent(0);
                 $so->outputLine(null, 'IMPLEMENTATION');
                 $so->addIndent(4);
                 $so->outputLine(null, 'This command is implemented in the PHP class:');
