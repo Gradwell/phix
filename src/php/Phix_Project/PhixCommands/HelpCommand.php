@@ -48,6 +48,7 @@ use Phix_Project\Phix\CommandsList;
 use Phix_Project\Phix\Context;
 use Phix_Project\PhixExtensions\CommandBase;
 use Phix_Project\PhixExtensions\CommandInterface;
+use Phix_Project\PhixHelpers\ErrorsHelper;
 use Phix_Project\PhixHelpers\SwitchesHelper;
 
 use Gradwell\CommandLineLib\DefinedSwitches;
@@ -86,11 +87,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 // is this a valid command?
                 if (!$context->commandsList->testHasCommand($commandForHelp))
                 {
-                        $se->output($context->errorStyle, $context->errorPrefix);
-                        $se->outputLine(null, ' unknown command ' . $commandForHelp);
-                        $se->output(null, 'use ');
-                        $se->output($context->commandStyle, 'phix --help');
-                        $se->outputLine(null, ' for a list of all available commands');
+                        ErrorsHelper::unknownCommand($context, $commandForHelp);
                         return 1;
                 }
 

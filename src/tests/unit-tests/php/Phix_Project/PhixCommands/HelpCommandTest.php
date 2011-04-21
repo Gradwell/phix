@@ -185,8 +185,8 @@ EOS;
                 $this->assertEquals(0, strlen($stdoutOutput));
 
                 $expectedString = <<<EOS
-*** error:  unknown command fred
-use phix --help for a list of all available commands
+*** error: unknown command 'fred'
+use phix --help for help
 
 EOS;
                 $this->assertEquals($expectedString, $stderrOutput);

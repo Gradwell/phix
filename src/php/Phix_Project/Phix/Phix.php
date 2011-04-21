@@ -48,6 +48,7 @@ use Gradwell\CommandLineLib\CommandLineParser;
 use Gradwell\CommandLineLib\DefinedSwitches;
 use Gradwell\CommandLineLib\ParsedSwitches;
 
+use Phix_Project\PhixHelpers\ErrorsHelper;
 use Phix_Project\PhixSwitches\PhixSwitches;
 
 class Phix
@@ -214,7 +215,7 @@ class Phix
                 if (!$context->commandsList->testHasCommand($commandName))
                 {
                         // no, we do not
-                        $this->outputUsageHint($context, "unknown command '$commandName'");
+                        ErrorsHelper::unknownCommand($context, $commandName);
                         return 1;
                 }
 
@@ -231,16 +232,6 @@ class Phix
 
                 $errCode = $command->validateAndExecute($argv, $argsIndex, $context);
                 return $errCode;
-        }
-
-        protected function outputUsageHint(Context $context, $errorMessage)
-        {
-                $se = $context->stderr;
-                $se->output($context->errorStyle, 'error: ');
-                $se->outputLine(null, $errorMessage);
-                $se->output(null, "use ");
-                $se->output($context->exampleStyle, 'phix -h');
-                $se->outputLine(null, " for help");
         }
         
         public function errorHandler($error_code, $message = '', $file = '', $line = 0)
