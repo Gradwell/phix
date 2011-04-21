@@ -103,7 +103,7 @@ class HelpCommand extends CommandBase implements CommandInterface
                 return 0;
         }
 
-        protected function showGeneralHelp(Context $context)
+        public function showGeneralHelp(Context $context)
         {
                 // get the list of switches in display order
                 $sortedSwitches = $context->phixDefinedSwitches->getSwitchesInDisplayOrder();

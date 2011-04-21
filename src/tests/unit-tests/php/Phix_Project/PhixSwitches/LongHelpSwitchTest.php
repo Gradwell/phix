@@ -46,6 +46,8 @@ namespace Phix_Project\PhixSwitches;
 
 use Phix_Project\Phix\Context;
 
+use Gradwell\ConsoleDisplayLib\DevString;
+
 class LongHelpSwitchTest extends \PHPUnit_Framework_TestCase
 {
         public function testCanCreate()
@@ -54,27 +56,14 @@ class LongHelpSwitchTest extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($obj instanceOf LongHelpSwitch);
         }
 
-        public function testSwapsSwitchForHelpCommand()
+        public function testOutputsGeneralHelp()
         {
                 // setup the test
                 $context = new Context();
-                $args = array ('phix', 'help', 'fred');
-                $argsIndex = 2;
-
-                // perform the test
-                $return = LongHelpSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
-
-                // check the results
-                $this->assertEquals(null, $return);
-                $this->assertEquals(4, count($args));
-                $this->assertEquals('help', $args[2]);
-                $this->assertEquals('fred', $args[3]);
-        }
-
-        public function testCopesWithNoCommandLineOptionsAfterSwitches()
-        {
-                // setup the test
-                $context = new Context();
+                $context->argvZero = 'phix';
+                $context->phixDefinedSwitches = PhixSwitches::buildSwitches();
+                $context->stdout = new DevString();
+                $context->stderr = new DevString();
                 $args = array ('phix', 'help');
                 $argsIndex = 2;
 
@@ -82,8 +71,61 @@ class LongHelpSwitchTest extends \PHPUnit_Framework_TestCase
                 $return = LongHelpSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
 
                 // check the results
-                $this->assertEquals(null, $return);
-                $this->assertEquals(3, count($args));
-                $this->assertEquals('help', $args[2]);
+                $this->assertEquals(0, $return);
+
+                $stdoutOutput = $context->stdout->_getOutput();
+                $stderrOutput = $context->stderr->_getOutput();
+
+                $this->assertNotEquals(0, strlen($stdoutOutput));
+                $this->assertEquals(0, strlen($stderrOutput));
+
+                $expectedString = <<<EOS
+phix @@PACKAGE_VERSION@@ http://gradwell.github.com
+Copyright (c) 2010 Gradwell dot com Ltd. Released under the BSD license
+
+SYNOPSIS
+    phix [ -? -d -h -v ] [ --? --debug --help --version ] [ -I <path> ] [
+    --include=<path> ] [ command ] [ command-options ]
+
+OPTIONS
+    Use the following switches in front of any <command> to have the following
+    effects.
+
+    -? | -h
+        display a summary of the command-line structure
+
+    -I<path> | --include=<path>
+        add a folder to load commands from
+
+        phix finds all of its commands by searching PHP's include_path for PHP
+        files in folders called 'PhixCommands'. If you want to phix to look in
+        other folders without having to add them to PHP's include_path, use
+        --include to tell phix to look in these folders.
+
+        phix expects '<path>' to point to a folder that conforms to the PSR0
+        standard for autoloaders.
+
+        For example, if your command is the class '\Me\Tools\PhixCommands
+        \ScheduledTask', phix would expect to autoload this class from the 'Me
+        /Tools/PhixCommands/ScheduledTask.php' file.
+
+        If your class lives in the './myApp/lib/Me/Tools/PhixCommands' folder,
+        you would call phix with 'phix --include=./myApp/lib'
+
+    -d | --debug
+        enable debugging output
+
+    -v | --version
+        display phix version number
+
+    --? | --help
+        display a full list of supported commands
+
+COMMANDS
+
+    See phix help <command> for detailed help on <command>
+
+EOS;
+                $this->assertEquals($expectedString, $stdoutOutput);
         }
 }

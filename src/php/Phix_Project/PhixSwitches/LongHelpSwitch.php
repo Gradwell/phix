@@ -44,32 +44,17 @@
 
 namespace Phix_Project\PhixSwitches;
 use Phix_Project\Phix\Context;
+use Phix_Project\PhixCommands\HelpCommand;
 
 class LongHelpSwitch extends SwitchBase
 {
         public static function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
         {
                 // we want --help to be a synonym for the 'help' command
-                // we need to insert 'help' into $rawArgv at the index
-                // pointed to by $argsIndex
+                $cmd = new HelpCommand();
+                $cmd->showGeneralHelp($context);
 
-                // are we pointing beyond the end of the array?
-                if (!isset($rawArgs[$argsIndex]))
-                {
-                        // yes we are
-                        $rawArgs[] = 'help';
-                        return null;
-                }
-
-                // no, we are not
-                // we need to insert inside the array
-                $arrayToPreserve = \array_slice($rawArgs, $argsIndex);
-                array_unshift($arrayToPreserve, 'help');
-
-                $amountToRemove = count($arrayToPreserve) - 1;
-                array_splice($rawArgs, $argsIndex, $amountToRemove, $arrayToPreserve);
-                
-                // we don't want phix to terminate yet
-                return null;
+                // all done
+                return 0;
         }
 }
