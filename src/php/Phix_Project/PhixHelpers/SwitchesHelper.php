@@ -46,6 +46,8 @@ namespace Phix_Project\PhixHelpers;
 
 use Phix_Project\Phix\Context;
 
+use Gradwell\CommandLineLib\DefinedSwitch;
+
 class SwitchesHelper
 {
         static public function showSwitchSummary(Context $context, $sortedSwitches)
@@ -91,6 +93,60 @@ class SwitchesHelper
                                 $so->output(null, ' ]');
                         }
                 }
+        }
+        
+        static public function showSwitchLongDetails(Context $context, DefinedSwitch $switch)
+        {
+                $so = $context->stdout;
 
+                $shortOrLongSwitches = $switch->getHumanReadableSwitchList();
+                $append = false;
+
+                foreach ($shortOrLongSwitches as $shortOrLongSwitch)
+                {
+                        if ($append)
+                        {
+                                $so->output(null, ' | ');
+                        }
+                        $append = true;
+
+                        $so->output($context->switchStyle, $shortOrLongSwitch);
+
+                        // is there an argument?
+                        if ($switch->testHasArgument())
+                        {
+                                if ($shortOrLongSwitch{1} == '-')
+                                {
+                                        $so->output(null, '=');
+                                }
+                                else
+                                {
+                                        $so->output(null, ' ');
+                                }
+                                $so->output($context->argStyle, $switch->arg->name);
+                        }
+                }
+
+                $so->outputLine(null, '');
+                $so->addIndent(4);
+                $so->outputLine(null, $switch->desc);
+                if (isset($switch->longdesc))
+                {
+                        $so->outputBlankLine();
+                        $so->outputLine(null, $switch->longdesc);
+                }
+
+                // output the default argument, if it is set
+                if ($switch->testHasArgument() && isset($switch->arg->defaultValue))
+                {
+                        $so->outputBlankLine();
+                        $so->output(null, 'The default value for ');
+                        $so->output($context->argStyle, $switch->arg->name);
+                        $so->output(null, ' is: ');
+                        $so->outputLine($context->exampleStyle, $switch->arg->defaultValue);
+                }
+
+                $so->addIndent(-4);
+                $so->outputBlankLine();
         }
 }

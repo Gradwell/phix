@@ -157,48 +157,8 @@ class HelpCommand extends CommandBase implements CommandInterface
                         $seenSwitches[$switch->name] = $switch;
 
                         // we have not seen this switch before
-                        $this->showSwitchLongDetails($context, $switch);
+                        SwitchesHelper::showSwitchLongDetails($context, $switch);
                 }
-        }
-
-        protected function showSwitchLongDetails(Context $context, DefinedSwitch $switch)
-        {
-                $so = $context->stdout;
-
-                $shortOrLongSwitches = $switch->getHumanReadableSwitchList();
-                $append = false;
-
-                foreach ($shortOrLongSwitches as $shortOrLongSwitch)
-                {
-                        if ($append)
-                        {
-                                $so->output(null, ' | ');
-                        }
-                        $append = true;
-
-                        $so->output($context->switchStyle, $shortOrLongSwitch);
-
-                        // is there an argument?
-                        if ($switch->testHasArgument())
-                        {
-                                if ($shortOrLongSwitch{1} == '-')
-                                {
-                                        $so->output(null, '=');
-                                }
-                                $so->output($context->argStyle, $switch->arg->name);
-                        }
-                }
-
-                $so->outputLine(null, '');
-                $so->addIndent(4);
-                $so->outputLine(null, $switch->desc);
-                if (isset($switch->longdesc))
-                {
-                        $so->outputBlankLine();
-                        $so->outputLine(null, $switch->longdesc);
-                }
-                $so->addIndent(-4);
-                $so->outputBlankLine();
         }
 
         protected function showCommandsList(Context $context)

@@ -94,7 +94,7 @@ OPTIONS
     -? | -h
         display a summary of the command-line structure
 
-    -I<path> | --include=<path>
+    -I <path> | --include=<path>
         add a folder to load commands from
 
         phix finds all of its commands by searching PHP's include_path for PHP
