@@ -47,7 +47,7 @@ use Phix_Project\Phix\Context;
 
 class DebugSwitch extends SwitchBase
 {
-        static public function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        static public function processBeforeCommandLoad(Context $context, $args)
         {
                 // do we have a debugging level set?
                 if (count($args) > 0)

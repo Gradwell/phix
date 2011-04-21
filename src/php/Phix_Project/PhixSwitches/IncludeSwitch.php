@@ -47,7 +47,7 @@ use Phix_Project\Phix\Context;
 
 class IncludeSwitch extends SwitchBase
 {
-        static public function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        static public function processBeforeCommandLoad(Context $context, $args)
         {
                 // just in case!
                 $se = $context->stderr;

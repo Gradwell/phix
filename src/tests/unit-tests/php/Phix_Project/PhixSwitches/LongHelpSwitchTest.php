@@ -64,11 +64,10 @@ class LongHelpSwitchTest extends \PHPUnit_Framework_TestCase
                 $context->phixDefinedSwitches = PhixSwitches::buildSwitches();
                 $context->stdout = new DevString();
                 $context->stderr = new DevString();
-                $args = array ('phix', 'help');
-                $argsIndex = 2;
+                $args = array ();
 
                 // perform the test
-                $return = LongHelpSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
+                $return = LongHelpSwitch::processBeforeCommandLoad($context, $args);
 
                 // check the results
                 $this->assertEquals(0, $return);

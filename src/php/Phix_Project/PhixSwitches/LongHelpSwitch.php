@@ -48,7 +48,7 @@ use Phix_Project\PhixCommands\HelpCommand;
 
 class LongHelpSwitch extends SwitchBase
 {
-        public static function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        public static function processBeforeCommandLoad(Context $context, $args)
         {
                 // we want --help to be a synonym for the 'help' command
                 $cmd = new HelpCommand();

@@ -58,14 +58,12 @@ class SwitchBaseTest extends \PHPUnit_Framework_TestCase
                 // do the test
                 $cloneContext = clone $context;
                 $cloneArgs    = $args;
-                $cloneIndex   = $argsIndex;
-                $return = SwitchBase::processBeforeCommandLoad($cloneContext, $cloneArgs, $cloneArgs, $cloneIndex);
+                $return = SwitchBase::processBeforeCommandLoad($cloneContext, $cloneArgs);
 
                 // make sure nothing happened
                 $this->assertTrue(is_null($return));
                 $this->assertEquals($context, $cloneContext);
                 $this->assertEquals($args, $cloneArgs);
-                $this->assertEquals($argsIndex, $cloneIndex);
         }
 
         public function testSupportsAfterCommandLoad()

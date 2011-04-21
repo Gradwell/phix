@@ -66,7 +66,7 @@ class IncludeSwitchTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals(0, count($context->searchPaths));
 
                 // perform the test
-                $return = IncludeSwitch::processBeforeCommandLoad($context, $args, $args, 0);
+                $return = IncludeSwitch::processBeforeCommandLoad($context, $args);
 
                 // test the results
                 $this->assertEquals(null, $return);
@@ -88,7 +88,7 @@ class IncludeSwitchTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals(0, count($context->searchPaths));
 
                 // perform the test
-                $return = IncludeSwitch::processBeforeCommandLoad($context, $args, $args, 0);
+                $return = IncludeSwitch::processBeforeCommandLoad($context, $args);
 
                 // test the results
                 $this->assertEquals(1, $return);

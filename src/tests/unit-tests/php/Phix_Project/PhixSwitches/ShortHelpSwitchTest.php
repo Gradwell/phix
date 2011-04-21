@@ -61,14 +61,13 @@ class ShortHelpSwitchTest extends \PHPUnit_Framework_TestCase
                 $context = new Context();
                 $context->stdout = new DevString();
                 $context->stderr = new DevString();
-                $args = array ('phix', 'h');
-                $argsIndex = 2;
+                $args = array ();
 
                 // pre-conditions?
                 $this->assertEquals(0, strlen($context->stdout->_getOutput()));
 
                 // do the test
-                $returnCode    = ShortHelpSwitch::processBeforeCommandLoad($context, $args, $args, $argsIndex);
+                $returnCode    = ShortHelpSwitch::processBeforeCommandLoad($context, $args);
                 $writtenString = $context->stdout->_getOutput();
 
                 // did it work?

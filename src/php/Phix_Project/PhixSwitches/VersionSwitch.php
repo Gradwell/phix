@@ -47,7 +47,7 @@ use Phix_Project\Phix\Context;
 
 class VersionSwitch extends SwitchBase
 {
-        static public function processBeforeCommandLoad(Context $context, $args, &$rawArgs, $argsIndex)
+        static public function processBeforeCommandLoad(Context $context, $args)
         {
                 $s = $context->stdout;
                 $s->outputLine($context->highlightStyle, $context->version);
