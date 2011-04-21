@@ -160,7 +160,7 @@ class CommandBase
         protected function showOptions(Context $context, $sortedSwitches, $args)
         {
                 // do we have any options to show?
-                if (count($sortedSwitches['allSwitches']) == 0 && count($args) == 0)
+                if (empty($sortedSwitches['allSwitches']) && empty($args))
                 {
                         // no we do not
                         return;
